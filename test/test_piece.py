@@ -1,4 +1,6 @@
 import unittest
+import colorama
+from colorama import Fore, Back, Style
 from game.board import *
 from game.piece import *
 
