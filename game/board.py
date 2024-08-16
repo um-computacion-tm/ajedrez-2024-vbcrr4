@@ -1,6 +1,7 @@
 import colorama
 from colorama import Fore, Back, Style
-from piece import *
+from .piece import *
+#empezar columnas de 0 a 7 en lugar de 1 a 8
 
 # Inicializa colorama para el uso de colores en la consola
 colorama.init(autoreset=True)

@@ -1,9 +1,12 @@
 import unittest
-
-from game.board import Board
+from game.board import *
 from game.piece import *
-
+#patchear salidas de print
 class TestBoard(unittest.TestCase):
+
+    def setUp(self):
+        # Crear una instancia de Board para usar en las pruebas
+        self.board = Board()
 
     def test_init(self):
         board = Board()
@@ -40,6 +43,8 @@ class TestBoard(unittest.TestCase):
         # Check if the black pawns are placed correctly
         for i in range(8):
             self.assertIsInstance(board.__positions__[6][i], Pawn)
+            
+
 
 if __name__ == '__main__':
     unittest.main()
