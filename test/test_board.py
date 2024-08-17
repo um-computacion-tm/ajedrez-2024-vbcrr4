@@ -1,50 +1,36 @@
 import unittest
-from game.board import *
-from game.piece import *
-#patchear salidas de print
+from game.board import Board
+
 class TestBoard(unittest.TestCase):
-
-    def setUp(self):
-        # Crear una instancia de Board para usar en las pruebas
-        self.board = Board()
-
-    def test_init(self):
+    def test_board_initialization(self):
         board = Board()
+        self.assertEqual(board.board[0], ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'])
+        self.assertEqual(board.board[1], ['P' for _ in range(8)])
+        self.assertEqual(board.board[6], ['p' for _ in range(8)])
+        self.assertEqual(board.board[7], ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'])
 
-        # Check if the board is initialized with a 8x8 matrix
-        self.assertEqual(len(board.__positions__), 8)
-        for row in board.__positions__:
-            self.assertEqual(len(row), 8)
+    def test_board_repr(self):
+        board = Board()
+        expected_board = """     a      b      c      d      e      f      g      h
+   ┌───────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
+8  │   R   │  N   │  B   │  Q   │  K   │  B   │  N   │  R   │ 8
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+7  │   P   │  P   │  P   │  P   │  P   │  P   │  P   │  P   │ 7
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+6  │       │      │      │      │      │      │      │      │ 6
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+5  │       │      │      │      │      │      │      │      │ 5
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+4  │       │      │      │      │      │      │      │      │ 4
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+3  │       │      │      │      │      │      │      │      │ 3
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+2  │   p   │  p   │  p   │  p   │  p   │  p   │  p   │  p   │ 2
+   ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+1  │   r   │  n   │  b   │  q   │  k   │  b   │  n   │  r   │ 1
+   └───────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘
+     a      b      c      d      e      f      g      h"""
+        self.assertEqual(repr(board), expected_board)
 
-        # Check if the white pieces are placed correctly
-        self.assertIsInstance(board.__positions__[0][0], Rook)
-        self.assertIsInstance(board.__positions__[0][1], Knight)
-        self.assertIsInstance(board.__positions__[0][2], Bishop)
-        self.assertIsInstance(board.__positions__[0][3], Queen)
-        self.assertIsInstance(board.__positions__[0][4], King)
-        self.assertIsInstance(board.__positions__[0][5], Bishop)
-        self.assertIsInstance(board.__positions__[0][6], Knight)
-        self.assertIsInstance(board.__positions__[0][7], Rook)
-
-        # Check if the black pieces are placed correctly
-        self.assertIsInstance(board.__positions__[7][0], Rook)
-        self.assertIsInstance(board.__positions__[7][1], Knight)
-        self.assertIsInstance(board.__positions__[7][2], Bishop)
-        self.assertIsInstance(board.__positions__[7][3], Queen)
-        self.assertIsInstance(board.__positions__[7][4], King)
-        self.assertIsInstance(board.__positions__[7][5], Bishop)
-        self.assertIsInstance(board.__positions__[7][6], Knight)
-        self.assertIsInstance(board.__positions__[7][7], Rook)
-
-        # Check if the white pawns are placed correctly
-        for i in range(8):
-            self.assertIsInstance(board.__positions__[1][i], Pawn)
-
-        # Check if the black pawns are placed correctly
-        for i in range(8):
-            self.assertIsInstance(board.__positions__[6][i], Pawn)
-            
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
