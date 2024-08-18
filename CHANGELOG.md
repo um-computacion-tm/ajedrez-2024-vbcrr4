@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## (0.0.2) 17/08/24
+### Changed
+- cambio en el codigo de board.py para que imprima el tablero
+- cambio en test del tablero
+### Issues
+- modificar codigo de piezas y tests
 ## (0.0.1) 15/08/24
 ### Added
 - Pawn, Rook, Knight, Bishop, Queen, King classes
