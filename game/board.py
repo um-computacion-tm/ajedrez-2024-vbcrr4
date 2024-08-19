@@ -11,11 +11,11 @@ class Board:
     def setup_pieces(self, board):
         # Colocamos las piezas en su posición inicial
         # Piezas blancas
-        board[0] = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-        board[1] = ['P' for _ in range(8)]
+        board[0] = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+        board[1] = ['p' for _ in range(8)]
         # Piezas negras
-        board[6] = ['p' for _ in range(8)]
-        board[7] = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+        board[6] = ['P' for _ in range(8)]
+        board[7] = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
 
     def __repr__(self):
         spaces = " " * 3

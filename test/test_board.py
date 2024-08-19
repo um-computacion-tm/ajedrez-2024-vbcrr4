@@ -4,18 +4,18 @@ from game.board import Board
 class TestBoard(unittest.TestCase):
     def test_board_initialization(self):
         board = Board()
-        self.assertEqual(board.board[0], ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'])
-        self.assertEqual(board.board[1], ['P' for _ in range(8)])
-        self.assertEqual(board.board[6], ['p' for _ in range(8)])
-        self.assertEqual(board.board[7], ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'])
+        self.assertEqual(board.board[0], ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'])
+        self.assertEqual(board.board[1], ['p' for _ in range(8)])
+        self.assertEqual(board.board[6], ['P' for _ in range(8)])
+        self.assertEqual(board.board[7], ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'])
 
     def test_board_repr(self):
         board = Board()
         expected_board = """     a      b      c      d      e      f      g      h
    ┌───────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
-8  │   R   │  N   │  B   │  Q   │  K   │  B   │  N   │  R   │ 8
+8  │   r   │  n   │  b   │  q   │  k   │  b   │  n   │  r   │ 8
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-7  │   P   │  P   │  P   │  P   │  P   │  P   │  P   │  P   │ 7
+7  │   p   │  p   │  p   │  p   │  p   │  p   │  p   │  p   │ 7
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
 6  │       │      │      │      │      │      │      │      │ 6
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
@@ -25,9 +25,9 @@ class TestBoard(unittest.TestCase):
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
 3  │       │      │      │      │      │      │      │      │ 3
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-2  │   p   │  p   │  p   │  p   │  p   │  p   │  p   │  p   │ 2
+2  │   P   │  P   │  P   │  P   │  P   │  P   │  P   │  P   │ 2
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-1  │   r   │  n   │  b   │  q   │  k   │  b   │  n   │  r   │ 1
+1  │   R   │  N   │  B   │  Q   │  K   │  B   │  N   │  R   │ 1
    └───────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘
      a      b      c      d      e      f      g      h"""
         self.assertEqual(repr(board), expected_board)

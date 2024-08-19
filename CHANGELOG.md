@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## (0.0.3) 18/08/24
+### Fixed
+- arreglo en el codigo de piece.py y sus respectivos tests
+### Adeded
+- creacion de codigo para movimientos de piezas y sus respectivos tests
+### Changed
+- cambio en el codigo de board.py para que imprima el tablero
+- cambio en test del tablero
 ## (0.0.2) 17/08/24
 ### Changed
 - cambio en el codigo de board.py para que imprima el tablero
