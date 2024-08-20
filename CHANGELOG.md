@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
+## (0.0.4) 19/08/24
+### Added
+- creacion de cell.py
+- creacion de test_cell.py
+### Changed
+- cambio en el codigo de board.py para que imprima el tablero
+- cambio en test del tablero
 ## (0.0.3) 18/08/24
 ### Fixed
 - arreglo en el codigo de piece.py y sus respectivos tests
