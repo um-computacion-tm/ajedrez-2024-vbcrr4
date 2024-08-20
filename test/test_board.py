@@ -11,7 +11,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_repr(self):
         board = Board()
-        expected_board = """     a      b      c      d      e      f      g      h
+        expected_board = """      a      b      c      d      e      f      g      h
    ┌───────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
 8  │   r   │  n   │  b   │  q   │  k   │  b   │  n   │  r   │ 8
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
@@ -29,7 +29,7 @@ class TestBoard(unittest.TestCase):
    ├───────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
 1  │   R   │  N   │  B   │  Q   │  K   │  B   │  N   │  R   │ 1
    └───────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘
-     a      b      c      d      e      f      g      h"""
+      a      b      c      d      e      f      g      h"""
         self.assertEqual(repr(board), expected_board)
 
 if __name__ == "__main__":

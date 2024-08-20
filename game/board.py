@@ -24,7 +24,7 @@ class Board:
         bottom_horizontal_line = spaces + "└─" + "──────┴" * 7 + "──────┘"
         
         # Agregamos la fila superior con las etiquetas de columnas
-        board_repr = " " * 5 + "      ".join([chr(i) for i in range(ord('a'), ord('h')+1)]) + "\n"
+        board_repr = "  " * 3 + "      ".join([chr(i) for i in range(ord('a'), ord('h')+1)]) + "\n"
         board_repr += horizontal_line
 
         for i in range(8):
@@ -37,7 +37,10 @@ class Board:
                 board_repr += middle_horizontal_line
         
         # Agregamos la fila inferior con las etiquetas de columnas
-        board_repr += bottom_horizontal_line + "\n" + " " * 5 + "      ".join([chr(i) for i in range(ord('a'), ord('h')+1)])
+        board_repr += bottom_horizontal_line + "\n" + "  " * 3 + "      ".join([chr(i) for i in range(ord('a'), ord('h')+1)])
         return board_repr
 
 
+#imprimir board
+#board = Board()
+#print(board)    
