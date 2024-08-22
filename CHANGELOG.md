@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.0.5) 21/08/24
+### Changed
+- cambio en el codigo de board.py para que imprima las piezas de cell.py
+- cambio en test del tablero
+- cambio en el codigo de piece.py 
+- reestructuracion de varias clases
+### Added
+- creacion de exepciones.py
+- creacion de un archivo por cada pieza para cumplir con los principios SOLID
+- creacion de test para cada pieza
 ## (0.0.4) 19/08/24
 ### Added
 - creacion de cell.py
