@@ -4,7 +4,7 @@ from .alfil import Alfil
 from .caballo import Caballo
 from .reina import Reina
 from .rey import Rey
-from .exepciones import *
+from .exepciones import InvalidMoveError
 class Board:
     def __init__(self):
         self.__board__ = self.create_board()
@@ -42,15 +42,17 @@ class Board:
 
     def move_piece(self, start_pos, end_pos):
         piece = self.__board__[start_pos[0]][start_pos[1]]
-        if piece and piece.is_valid_move(start_pos, end_pos):
+        if piece is None:
+            raise InvalidMoveError("No hay pieza en la posición de inicio")
+        if piece.is_valid_move(start_pos, end_pos):
             if self.is_clear_path(start_pos, end_pos):
                 # Realizar el movimiento
                 self.__board__[end_pos[0]][end_pos[1]] = piece
                 self.__board__[start_pos[0]][start_pos[1]] = None
             else:
-                raise ValueError("Movimiento bloqueado por otra pieza")
+                raise InvalidMoveError("Movimiento bloqueado por otra pieza")
         else:
-            raise ValueError("Movimiento inválido para esta pieza")
+            raise InvalidMoveError("Movimiento inválido para esta pieza")
 
     def is_clear_path(self, start_pos, end_pos):
         """
@@ -66,6 +68,15 @@ class Board:
             for row in range(start_pos[0] + step, end_pos[0], step):
                 if self.__board__[row][start_pos[1]] is not None:
                     return False
+        elif abs(start_pos[0] - end_pos[0]) == abs(start_pos[1] - end_pos[1]):  # Movimiento diagonal
+            row_step = 1 if start_pos[0] < end_pos[0] else -1
+            col_step = 1 if start_pos[1] < end_pos[1] else -1
+            row, col = start_pos[0] + row_step, start_pos[1] + col_step
+            while row != end_pos[0] and col != end_pos[1]:
+                if self.__board__[row][col] is not None:
+                    return False
+                row += row_step
+                col += col_step
         return True
     
     def __repr__(self):
@@ -99,5 +110,5 @@ class Board:
 
 
 #imprimir board
-#oard = Board()
-#print(board)    
+board = Board()
+print(board)    

@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.0.6) 23/08/24
+### Changed 
+- cambio de codigo en board.py, el metodo para verificar 'is_clear_path'
+### Issues
+- arreglar codigo de board.py
+- arreglar codigo de test_board.py
+- arreglar la forma de representar las piezas en el tablero
 ## (0.0.5) 21/08/24
 ### Changed
 - cambio en el codigo de board.py para que imprima las piezas de cell.py

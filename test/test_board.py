@@ -36,20 +36,27 @@ class TestBoard(unittest.TestCase):
         for i in range(8):
             self.assertIsInstance(self.board.__board__[6][i], Peon)
 
-    '''def test_move_piece_valid(self):
-        # Mover un peón blanco adelante una casilla
-        self.board.move_piece([1, 0], [2, 0])
-        self.assertIsInstance(self.board.__board__[2][0], Peon)
-        self.assertIsNone(self.board.__board__[1][0])'''
 
+    '''def test_move_piece_valid(self):
+        """Testea que un movimiento válido se realice correctamente."""
+        # Mover un peón blanco de la posición inicial
+        self.board.move_piece([1, 0], [2, 0])
+        self.assertIsInstance(self.board._Board__board__[2][0], Peon)
+        self.assertIsNone(self.board._Board__board__[1][0])'''
+        
     def test_move_piece_invalid(self):
-        # Intentar mover una pieza en un movimiento inválido
-        with self.assertRaises(ValueError):
-            self.board.move_piece([0, 0], [2, 2])  # Torre no puede moverse en diagonal
+        """Testea que un movimiento inválido lance la excepción InvalidMoveError."""
+    # Asegúrate de que la pieza es un Peon
+        piece = self.board.__board__[1][0]
+        self.assertIsInstance(piece, Peon)
+    # Intentar mover el peón dos posiciones hacia adelante (movimiento inválido si no es el primer movimiento)
+        with self.assertRaises(InvalidMoveError):
+            self.board.move_piece([1, 0], [3, 0])
+
 
     def test_move_piece_blocked(self):
         # Intentar mover una pieza a través de otra pieza
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidMoveError):
             self.board.move_piece([0, 0], [0, 3])  # Torre está bloqueada por otras piezas
 
     def test_is_clear_path_horizontal(self):
