@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.0.7) 24/08/24
+### Added
+- refactorizacion de codgigo de cell.py, para representar las piezas en celdas
+- agregado de test para cell.py
 ## (0.0.6) 23/08/24
 ### Changed 
 - cambio de codigo en board.py, el metodo para verificar 'is_clear_path'
