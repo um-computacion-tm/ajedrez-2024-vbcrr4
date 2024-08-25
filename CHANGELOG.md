@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.0.8) 25/08/24
+### Changed
+- cambio en la representacion de piezas en el tablero, ahora las celdas continenen el nombre de la pieza
+- cambio en el codigo de test_board.py para implementar las celdas
+### Issues
+- arreglar el codigo de test_board.py
 ## (0.0.7) 24/08/24
 ### Added
 - refactorizacion de codgigo de cell.py, para representar las piezas en celdas
