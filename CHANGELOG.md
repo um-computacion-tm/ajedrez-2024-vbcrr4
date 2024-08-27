@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.0.9) 26/08/24
+### Added
+- creacion de chess.py
+- creacion de test_chess.py
+### Issues
+- agregas mas test para chess.py
+- arreglar test de pieces.py y board.py
 ## (0.0.8) 25/08/24
 ### Changed
 - cambio en la representacion de piezas en el tablero, ahora las celdas continenen el nombre de la pieza
