@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.1.0) 28/08/24
+### Added
+- reestructuracion de de piece.py
+- creacion de test_piece.py
+### Issues
+- crear mas seguir modificando condigo de board.py y de pieces.py
+- agregar mas test para pieces.py
+- modificar codigo de las piezas 
 ## (0.0.9) 26/08/24
 ### Added
 - creacion de chess.py

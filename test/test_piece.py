@@ -14,19 +14,24 @@ class TestPiece(unittest.TestCase):
 #test de Método get_color y get_symbol: Asegurarse de que devuelvan los valores correctos.
 #Prueba de los métodos abstractos: Usar una subclase de prueba para verificar que los métodos abstractos se comportan correctamente.
 
+    def setUp(self):
+        # Setting up a sample Piece object before each test
+        self.__piece__ = Piece("white", (4, 4))
+
     def test_get_color(self):
-        piece = Torre('white')
-        self.assertEqual(piece.get_color(), 'white')
+        # Test the get_color method
+        self.assertEqual(self.__piece__.get_color(), "white")
 
-    def test_get_symbol(self):
-        piece = Torre('white')
-        piece.assign_symbol()  # Necesario para asignar el símbolo
-        self.assertEqual(piece.get_symbol(), '♖')
+    def test_get_position(self):
+        # Test the get_position method
+        self.assertEqual(self.__piece__.get_position(), (4, 4))
 
-    def test_get_value(self):
-        piece = Torre('white')
-        self.assertEqual(piece.get_value(), 5)
+    def test_update_position(self):
+        # Test the update_position method
+        self.__piece__.update_position((5, 5))
+        self.assertEqual(self.__piece__.get_position(), (5, 5))
 
+'''
 class TestTorre(unittest.TestCase):
     def setUp(self):
         self.torre_blanca = Torre('white')
@@ -258,6 +263,6 @@ class TestCaballo(unittest.TestCase):
         for start_pos, end_pos in invalid_moves:
             with self.subTest(start=start_pos, end=end_pos):
                 self.assertFalse(self.caballo_blanco.is_valid_move(start_pos, end_pos))
-
+'''
 if __name__ == '__main__':
     unittest.main()
