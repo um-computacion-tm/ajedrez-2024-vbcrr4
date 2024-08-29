@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.1.1) 29/08/24
+### Changed
+- agregado de un __str__ para Piece
+- agregando tests para test_piece.py
 ## (0.1.0) 28/08/24
 ### Added
 - reestructuracion de de piece.py

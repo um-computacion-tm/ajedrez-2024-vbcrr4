@@ -15,22 +15,62 @@ class TestPiece(unittest.TestCase):
 #Prueba de los métodos abstractos: Usar una subclase de prueba para verificar que los métodos abstractos se comportan correctamente.
 
     def setUp(self):
-        # Setting up a sample Piece object before each test
-        self.__piece__ = Piece("white", (4, 4))
+        # Este método se ejecuta antes de cada test
+        self.caballo = Caballo('white', (0, 1))
+        self.__piece__ = Piece('white', (0, 0))
 
     def test_get_color(self):
-        # Test the get_color method
-        self.assertEqual(self.__piece__.get_color(), "white")
+        self.assertEqual(self.__piece__.get_color(), 'white')
+        self.assertEqual(self.caballo.get_color(), 'white')
 
     def test_get_position(self):
-        # Test the get_position method
-        self.assertEqual(self.__piece__.get_position(), (4, 4))
-
+        self.assertEqual(self.__piece__.get_position(), (0, 0))
+        self.assertEqual(self.caballo.get_position(), (0, 1))
+    
     def test_update_position(self):
-        # Test the update_position method
-        self.__piece__.update_position((5, 5))
-        self.assertEqual(self.__piece__.get_position(), (5, 5))
+        new_position = (2, 3)
+        new_position2 = (2, 2)
+        self.__piece__.update_position(new_position)
+        self.assertEqual(self.__piece__.get_position(), new_position)
+        self.caballo.update_position(new_position2)
+        self.assertEqual(self.caballo.get_position(), new_position2)
 
+    def test_str(self):
+       self.assertEqual(str(self.caballo), '♘')
+
+
+    def test_diagonal_move_positions(self):
+        # Movimiento diagonal válido
+        self.__piece__.update_position((0, 0))
+        result = self.__piece__.diagonal_move_positions((3, 3))
+        expected = [(1, 1), (2, 2)]
+        self.assertEqual(result, expected)
+
+        # Movimiento no diagonal (debería devolver una lista vacía)
+        result = self.__piece__.diagonal_move_positions((2, 3))
+        self.assertEqual(result, [])
+
+    def test_vertical_move_positions(self):
+        # Movimiento vertical válido
+        self.__piece__.update_position((0, 0))
+        result = self.__piece__.vertical_move_positions((3, 0))
+        expected = [(1, 0), (2, 0)]
+        self.assertEqual(result, expected)
+
+        # Movimiento no vertical (debería devolver una lista vacía)
+        result = self.__piece__.vertical_move_positions((0, 3))
+        self.assertEqual(result, [])
+
+    def test_horizontal_move_positions(self):
+        # Movimiento horizontal válido
+        self.__piece__.update_position((0, 0))
+        result = self.__piece__.horizontal_move_positions((0, 3))
+        expected = [(0, 1), (0, 2)]
+        self.assertEqual(result, expected)
+
+        # Movimiento no horizontal (debería devolver una lista vacía)
+        result = self.__piece__.horizontal_move_positions((3, 0))
+        self.assertEqual(result, [])
 '''
 class TestTorre(unittest.TestCase):
     def setUp(self):

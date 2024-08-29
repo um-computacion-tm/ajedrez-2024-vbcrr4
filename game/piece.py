@@ -14,13 +14,16 @@ class Piece():
         self.__position__ = position_new
     
     def __str__(self):
-        return "Piece"
+        # Llama a assign_symbol, que se espera que esté definido en cada subclase
+        return self.assign_symbol()
 
-    
+    def assign_symbol(self):
+        # Método que las subclases deben sobrescribir
+        raise NotImplementedError("Este método debe ser implementado por las subclases.")
     
     def get_cords(self, position_new):
         end_row, end_col = position_new
-        start_row, start_col = self.__position
+        start_row, start_col = self.__position__
         return start_row, start_col, end_row, end_col
     
     def diagonal_move_positions(self, position_new):
