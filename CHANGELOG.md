@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.1.3) 3/09/24
+### Changed
+- cambio en el codigo de rey.py
+- cambio en el codigo de test_rey.py
+## (0.1.2) 1/09/24
+### Changed
+- cambio en el codigo de piece.py
+- cambio en el codigo de torre.py
+- cambio en ambos test de piece y torre
 ## (0.1.1) 29/08/24
 ### Changed
 - agregado de un __str__ para Piece

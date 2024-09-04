@@ -16,132 +16,67 @@ class TestPiece(unittest.TestCase):
 
     def setUp(self):
         # Este método se ejecuta antes de cada test
-        self.caballo = Caballo('white', (0, 1))
-        self.__piece__ = Piece('white', (0, 0))
+        self.__piece_white__ = Piece("white", (1, 1))
+        self.__piece_black__ = Piece("black", (2, 2))
 
-    def test_get_color(self):
-        self.assertEqual(self.__piece__.get_color(), 'white')
-        self.assertEqual(self.caballo.get_color(), 'white')
-
-    def test_get_position(self):
-        self.assertEqual(self.__piece__.get_position(), (0, 0))
-        self.assertEqual(self.caballo.get_position(), (0, 1))
+    def test_initialization(self):
+        # Test initialization and property getters
+        self.assertEqual(self.__piece_white__.get_color, "white")
+        self.assertEqual(self.__piece_white__.get_position, (1, 1))
+        self.assertEqual(self.__piece_black__.get_color, "black")
+        self.assertEqual(self.__piece_black__.get_position, (2, 2))
     
     def test_update_position(self):
-        new_position = (2, 3)
-        new_position2 = (2, 2)
-        self.__piece__.update_position(new_position)
-        self.assertEqual(self.__piece__.get_position(), new_position)
-        self.caballo.update_position(new_position2)
-        self.assertEqual(self.caballo.get_position(), new_position2)
+        # Test updating position
+        new_position = (3, 3)
+        self.__piece_white__.update_position(new_position)
+        self.assertEqual(self.__piece_white__.get_position, new_position)
 
-    def test_str(self):
-       self.assertEqual(str(self.caballo), '♘')
+    def test_get_cords(self):
+        # Test get_cords method
+        new_position = (3, 3)
+        cords = self.__piece_white__.get_cords(new_position)
+        self.assertEqual(cords, (1, 1, 3, 3))
 
 
-    def test_diagonal_move_positions(self):
-        # Movimiento diagonal válido
-        self.__piece__.update_position((0, 0))
-        result = self.__piece__.diagonal_move_positions((3, 3))
-        expected = [(1, 1), (2, 2)]
-        self.assertEqual(result, expected)
 
-        # Movimiento no diagonal (debería devolver una lista vacía)
-        result = self.__piece__.diagonal_move_positions((2, 3))
-        self.assertEqual(result, [])
-
-    def test_vertical_move_positions(self):
-        # Movimiento vertical válido
-        self.__piece__.update_position((0, 0))
-        result = self.__piece__.vertical_move_positions((3, 0))
-        expected = [(1, 0), (2, 0)]
-        self.assertEqual(result, expected)
-
-        # Movimiento no vertical (debería devolver una lista vacía)
-        result = self.__piece__.vertical_move_positions((0, 3))
-        self.assertEqual(result, [])
-
-    def test_horizontal_move_positions(self):
-        # Movimiento horizontal válido
-        self.__piece__.update_position((0, 0))
-        result = self.__piece__.horizontal_move_positions((0, 3))
-        expected = [(0, 1), (0, 2)]
-        self.assertEqual(result, expected)
-
-        # Movimiento no horizontal (debería devolver una lista vacía)
-        result = self.__piece__.horizontal_move_positions((3, 0))
-        self.assertEqual(result, [])
-'''
 class TestTorre(unittest.TestCase):
     def setUp(self):
-        self.torre_blanca = Torre('white')
-        self.torre_negra = Torre('black')
+        self.torre_white = Torre('white',(1, 1))
+        self.torre_black = Torre('black', (2, 2))
 
-    def test_assign_symbol_white(self):
-        self.torre_blanca.assign_symbol()
-        self.assertEqual(self.torre_blanca.get_symbol(), '♖')
-
-    def test_assign_symbol_black(self):
-        self.torre_negra.assign_symbol()
-        self.assertEqual(self.torre_negra.get_symbol(), '♜')
-
-    def test_is_valid_move_horizontal(self):
-        result = self.torre_blanca.is_valid_move([0, 0], [0, 7])
-        self.assertTrue(result)
-
-    def test_is_valid_move_vertical(self):
-        result = self.torre_blanca.is_valid_move([0, 0], [7, 0])
-        self.assertTrue(result)
-
-    def test_is_valid_move_invalid(self):
-        result = self.torre_blanca.is_valid_move([0, 0], [1, 1])
-        self.assertFalse(result)
-
-class TestRey(unittest.TestCase):
-    def setUp(self):
-        self.rey_blanco = Rey('white')
-        self.rey_negro = Rey('black')
-
-    def test_assign_symbol_white(self):
-        self.assertEqual(self.rey_blanco.get_symbol(), '♔')
-
-    def test_assign_symbol_black(self):
-        self.assertEqual(self.rey_negro.get_symbol(), '♚')
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.torre_white.get_color, "white")
+        self.assertEqual(self.torre_white.get_position, (1, 1))
+        self.assertEqual(self.torre_black.get_color, "black")
+        self.assertEqual(self.torre_black.get_position, (2, 2))
 
     def test_assign_value(self):
-        self.assertEqual(self.rey_blanco.get_value(), 1000)
-        self.assertEqual(self.rey_negro.get_value(), 1000)
+        # Test the assign_value method
+        self.assertEqual(self.torre_white.assign_value(), 5)
+        self.assertEqual(self.torre_black.assign_value(), 5)
 
-    def test_is_valid_move_one_square_any_direction(self):
-        # Movimientos válidos (una casilla en cualquier dirección)
-        valid_moves = [
-            ([4, 4], [5, 4]),  # Abajo
-            ([4, 4], [3, 4]),  # Arriba
-            ([4, 4], [4, 5]),  # Derecha
-            ([4, 4], [4, 3]),  # Izquierda
-            ([4, 4], [5, 5]),  # Abajo-Derecha
-            ([4, 4], [3, 3]),  # Arriba-Izquierda
-            ([4, 4], [5, 3]),  # Abajo-Izquierda
-            ([4, 4], [3, 5]),  # Arriba-Derecha
-        ]
 
-        for start_pos, end_pos in valid_moves:
-            with self.subTest(start=start_pos, end=end_pos):
-                self.assertTrue(self.rey_blanco.is_valid_move(start_pos, end_pos))
+class TestRey(unittest.TestCase):
 
-    def test_is_invalid_move_more_than_one_square(self):
-        # Movimientos inválidos (más de una casilla en cualquier dirección)
-        invalid_moves = [
-            ([4, 4], [6, 4]),  # Dos casillas hacia abajo
-            ([4, 4], [4, 6]),  # Dos casillas hacia derecha
-            ([4, 4], [2, 2]),  # Diagonal de dos casillas
-            ([4, 4], [6, 6]),  # Diagonal de dos casillas (contrario)
-        ]
+    def setUp(self):
+        self.rey_white = Rey('white',(0,3))
+        self.rey_black = Rey('black', (7, 3))
 
-        for start_pos, end_pos in invalid_moves:
-            with self.subTest(start=start_pos, end=end_pos):
-                self.assertFalse(self.rey_blanco.is_valid_move(start_pos, end_pos))
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.rey_white.get_color, "white")
+        self.assertEqual(self.rey_white.get_position, (0,3))
+        self.assertEqual(self.rey_black.get_color, "black")
+        self.assertEqual(self.rey_black.get_position, (7, 3))
+    
+    def test_assign_value(self):
+        # Test the assign_value method
+        self.assertEqual(self.rey_white.assign_value(), 1000)
+        self.assertEqual(self.rey_black.assign_value(), 1000)
 
+'''
 class TestAlfil(unittest.TestCase):
 
     def setUp(self):

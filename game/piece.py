@@ -3,10 +3,11 @@ class Piece():
     def __init__(self, color, position):
         self.__color__ = color
         self. __position__ = position
-
+    @property
     def get_color(self):
         return self.__color__
     
+    @property
     def get_position(self):
         return self.__position__
     
@@ -14,66 +15,66 @@ class Piece():
         self.__position__ = position_new
     
     def __str__(self):
-        # Llama a assign_symbol, que se espera que esté definido en cada subclase
-        return self.assign_symbol()
-
-    def assign_symbol(self):
-        # Método que las subclases deben sobrescribir
-        raise NotImplementedError("Este método debe ser implementado por las subclases.")
+        return self.__w_str__ if self.__color__  ==  "white" else self.__b_str__
     
     def get_cords(self, position_new):
         end_row, end_col = position_new
         start_row, start_col = self.__position__
         return start_row, start_col, end_row, end_col
     
-    def diagonal_move_positions(self, position_new):
+    def diagonal_move_positions(self, position_new, positions): 
         """
-        Devuelve las posiciones que la pieza atravesaría si realiza un movimiento diagonal.
+        Verifica si un movimiento diagonal es válido verificando el camino en el tablero.
         """
         start_row, start_col, end_row, end_col = self.get_cords(position_new)
-        positions_to_check = []
-
         # Comprueba si el movimiento es diagonal
-        if abs(start_row - end_row) == abs(start_col - end_col):
-            row_step = 1 if start_row < end_row else -1
-            col_step = 1 if start_col < end_col else -1
-            row, col = start_row + row_step, start_col + col_step
-            
-            # Genera todas las posiciones entre el inicio y el fin del movimiento
-            while row != end_row and col != end_col:
-                positions_to_check.append((row, col))
-                row += row_step
-                col += col_step
+        if abs(end_row - start_row) == abs(end_col - start_col):
+            row_step = 1 if end_row > start_row else -1  # Determina la dirección de la fila
+            col_step = 1 if end_col > start_col else -1  # Determina la dirección de la columna
 
-        return positions_to_check
-    
-    def vertical_move_positions(self, position_new):
+            # Recorre todas las posiciones entre la posición inicial y la final (sin incluir la final)
+            for i in range(1, abs(end_row - start_row)):
+                current_row = start_row + i * row_step
+                current_col = start_col + i * col_step
+                
+                # Verifica si hay una pieza en el camino
+                if positions[current_row][current_col] is not None:
+                    return False  # El camino no está despejado
+            return True  # El camino está despejado y el movimiento es válido
+
+        return False
+        
+    def vertical_move_positions(self, position_new, positions):
         """
-        Devuelve las posiciones que la pieza atravesaría si realiza un movimiento vertical.
+        Verifica si un movimiento vertical es válido verificando el camino en el tablero.
         """
         start_row, start_col, end_row, end_col = self.get_cords(position_new)
-        positions_to_check = []
 
-        # Comprueba si el movimiento es vertical
-        if start_col == end_col:
-            step = 1 if start_row < end_row else -1
-            for row in range(start_row + step, end_row, step):
-                positions_to_check.append((row, start_col))
+        if end_row != start_row and end_col == start_col:
+            step = 1 if end_row > start_row else -1  # Determina la dirección del movimiento (hacia arriba o hacia abajo)
+
+            # Recorre todas las posiciones entre la fila de inicio y la fila final (sin incluir la final)
+            for i in range(1, abs(end_row - start_row)):
+                if positions[start_row + i * step][start_col] is not None:
+                    return False  # El camino no está despejado
+            return True  # El camino está despejado y el movimiento es válido
         
-        return positions_to_check
+        return False
     
-    def horizontal_move_positions(self, position_new):
+    def horizontal_move_positions(self, position_new, positions):
         """
-        Devuelve las posiciones que la pieza atravesaría si realiza un movimiento horizontal.
+        Verifica si un movimiento horizontal es válido verificando el camino en el tablero.
         """
         start_row, start_col, end_row, end_col = self.get_cords(position_new)
-        positions_to_check = []
 
-        # Comprueba si el movimiento es horizontal
-        if start_row == end_row:
-            step = 1 if start_col < end_col else -1
-            for col in range(start_col + step, end_col, step):
-                positions_to_check.append((start_row, col))
+        if end_row == start_row and end_col != start_col:
+            step = 1 if end_col > start_col else -1  # Determina la dirección del movimiento (hacia la derecha o izquierda)
+        # Recorre todas las posiciones entre la columna de inicio y la columna final (sin incluir la final)
+            for i in range(1, abs(end_col - start_col)):
+            # Verifica si hay una pieza en el camino
+                if positions[end_row][start_col + i * step] is not None:
+                    return False 
+            return True  # El camino está despejado y el movimiento es válido
         
-        return positions_to_check
+        return False
     
