@@ -19,4 +19,4 @@ Este proyecto es una implementación del juego de ajedrez en Python. El objetivo
 ## Author
 - Valentin I. Becerra
 - [@vbcrr4](https://www.github.com/vbcrr4)
-- Legajo: 6180
+- Legajo: 62180
