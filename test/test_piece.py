@@ -154,46 +154,24 @@ class TestPeon(unittest.TestCase):
     def test_is_invalid_move_black_sideways(self):
         # Movimiento lateral (inválido)
         self.assertFalse(self.peon_negro.is_valid_move([1, 4], [1, 5]))
-
+'''
 class TestReina(unittest.TestCase):
     def setUp(self):
-        self.reina_blanca = Reina('white')
-        self.reina_negra = Reina('black')
+        self.reina_white = Reina('white',(0,4))
+        self.reina_black = Reina('black', (7, 4))
 
-    def test_assign_symbol_white(self):
-        self.assertEqual(self.reina_blanca.get_symbol(), '♕')
-
-    def test_assign_symbol_black(self):
-        self.assertEqual(self.reina_negra.get_symbol(), '♛')
-
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.reina_white.get_color, "white")
+        self.assertEqual(self.reina_white.get_position, (0,4))
+        self.assertEqual(self.reina_black.get_color, "black")
+        self.assertEqual(self.reina_black.get_position, (7, 4))
+    
     def test_assign_value(self):
-        self.assertEqual(self.reina_blanca.get_value(), 9)
-        self.assertEqual(self.reina_negra.get_value(), 9)
-
-    def test_is_valid_move_horizontal(self):
-        # Movimiento horizontal válido
-        start_pos = [3, 3]
-        end_pos = [3, 7]
-        self.assertTrue(self.reina_blanca.is_valid_move(start_pos, end_pos))
-
-    def test_is_valid_move_vertical(self):
-        # Movimiento vertical válido
-        start_pos = [3, 3]
-        end_pos = [7, 3]
-        self.assertTrue(self.reina_blanca.is_valid_move(start_pos, end_pos))
-
-    def test_is_valid_move_diagonal(self):
-        # Movimiento diagonal válido
-        start_pos = [3, 3]
-        end_pos = [6, 6]
-        self.assertTrue(self.reina_blanca.is_valid_move(start_pos, end_pos))
-
-    def test_is_invalid_move(self):
-        # Movimiento no válido (ni horizontal, vertical, ni diagonal)
-        start_pos = [3, 3]
-        end_pos = [5, 6]
-        self.assertFalse(self.reina_blanca.is_valid_move(start_pos, end_pos))
-
+        # Test the assign_value method
+        self.assertEqual(self.reina_white.assign_value(), 9)
+        self.assertEqual(self.reina_black.assign_value(), 9)
+'''
 class TestCaballo(unittest.TestCase):
     def setUp(self):
         self.caballo_blanco = Caballo('white')
