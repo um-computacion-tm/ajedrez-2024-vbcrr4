@@ -76,35 +76,35 @@ class TestRey(unittest.TestCase):
         self.assertEqual(self.rey_white.assign_value(), 1000)
         self.assertEqual(self.rey_black.assign_value(), 1000)
 
-'''
+
 class TestAlfil(unittest.TestCase):
 
     def setUp(self):
-        self.alfil_blanco = Alfil('white')
-        self.alfil_negro = Alfil('black')
+        self.alfil_white1 = Alfil('white',(0,2))
+        self.alfil_white2 = Alfil('white',(0,5))
+        self.alfil_black1 = Alfil('black', (7, 2))
+        self.alfil_black2 = Alfil('black', (7, 5))
 
-    def test_assign_symbol_white(self):
-        self.assertEqual(self.alfil_blanco.get_symbol(), '♗')
-
-    def test_assign_symbol_black(self):
-        self.assertEqual(self.alfil_negro.get_symbol(), '♝')
-
-    def test_assign_value(self):
-        self.assertEqual(self.alfil_blanco.get_value(), 3)
-        self.assertEqual(self.alfil_negro.get_value(), 3)
-
-    def test_is_valid_move_diagonal(self):
-        # Movimiento diagonal válido
-        start_pos = [2, 0]
-        end_pos = [5, 3]
-        self.assertTrue(self.alfil_blanco.is_valid_move(start_pos, end_pos))
-
-    def test_is_invalid_move(self):
-        # Movimiento no diagonal, inválido
-        start_pos = [2, 0]
-        end_pos = [4, 3]
-        self.assertFalse(self.alfil_blanco.is_valid_move(start_pos, end_pos))
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.alfil_white1.get_color, "white")
+        self.assertEqual(self.alfil_white1.get_position, (0,2))
+        self.assertEqual(self.alfil_white2.get_color, "white")
+        self.assertEqual(self.alfil_white2.get_position, (0,5))
+        self.assertEqual(self.alfil_black1.get_color, "black")
+        self.assertEqual(self.alfil_black1.get_position, (7, 2))
+        self.assertEqual(self.alfil_black2.get_color, "black")
+        self.assertEqual(self.alfil_black2.get_position, (7, 5))
     
+    def test_assign_value(self):
+        # Test the assign_value method
+        self.assertEqual(self.alfil_white1.assign_value(), 3)
+        self.assertEqual(self.alfil_white2.assign_value(), 3)
+        self.assertEqual(self.alfil_black1.assign_value(), 3)
+        self.assertEqual(self.alfil_black2.assign_value(), 3)
+        
+
+    '''
 class TestPeon(unittest.TestCase):
 
     def setUp(self):
