@@ -1,28 +1,46 @@
-from game.piece import Piece
+from .piece import Piece
 
 class Peon(Piece):
-    def __init__(self, color):
-        super().__init__(color)
-        self.__nombre__ = "Peon"
-        self.__value__ = self.assign_value()
-        self.assign_symbol()
-        self.assign_value()
-        
-    def assign_symbol(self):
-        self.__symbol__ = "♙" if self.__color__ == "white" else "♟"
+    __w_str__ = "♙"
+    __b_str__ = "♟"
+    def __init__(self, color, position):
+        super().__init__(color, position)
 
     def assign_value(self):
         return 1
 
-    def is_valid_move(self, start_pos, end_pos):
-            """
-            Verifica si el movimiento es válido para el Peón.
-            El Peón se mueve hacia adelante una casilla, excepto en su primer movimiento,
-            donde puede moverse dos casillas.
-            """
-            direct_x = start_pos[0] - end_pos[0]
-            direct_y = start_pos[1] - end_pos[1]
-            if self.__color__ == "white":
-                return (direct_x == 1 or (direct_x == 2 and start_pos[0] == 6)) and direct_y == 0
-            else:
-                return (direct_x == -1 or (direct_x == -2 and start_pos[0] == 1)) and direct_y == 0
+    def es_movimiento_valido(self, position_new, positions):
+        # Si es blanco, se mueve hacia arriba, si es negro, hacia abajo
+        if self.color == "blanco":
+            return self._es_movimiento_valido_blanco(position_new, positions)
+        elif self.color == "negro":
+            return self._es_movimiento_valido_negro(position_new, positions)
+        return False
+
+    def _es_movimiento_valido_blanco(self, position_new, positions):
+        # Los peones blancos se mueven hacia arriba en el tablero
+        return self._es_movimiento_valido_peon(position_new, positions, -1, 6)
+
+    def _es_movimiento_valido_negro(self, position_new, positions):
+        # Los peones negros se mueven hacia abajo en el tablero
+        return self._es_movimiento_valido_peon(position_new, positions, 1, 1)
+
+    def _es_movimiento_valido_peon(self, position_new, positions, direccion, fila_inicial):
+        start_row, start_col = self.__position__
+        end_row, end_col = position_new
+
+        # Movimiento hacia adelante en la misma columna
+        if end_col == start_col:
+            # Movimiento inicial: puede avanzar dos casillas
+            if start_row == fila_inicial and end_row == start_row + 2 * direccion:
+                if positions[start_row + direccion][start_col] is None and positions[end_row][end_col] is None:
+                    return True
+            # Movimiento normal de una casilla hacia adelante
+            elif end_row == start_row + direccion and positions[end_row][end_col] is None:
+                return True
+
+        # Movimiento de captura en diagonal
+        elif end_row == start_row + direccion and abs(end_col - start_col) == 1 and positions[end_row][end_col] is not None:
+            return True
+
+        return False

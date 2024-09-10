@@ -11,7 +11,7 @@ from game.reina import Reina
 
 class TestPiece(unittest.TestCase):
 #test de metodo 'assing_value' de la clase Piece  (aunque se puede probar indirectamente a través de las subclases)
-#test de Método get_color y get_symbol: Asegurarse de que devuelvan los valores correctos.
+#test de Método color y get_symbol: Asegurarse de que devuelvan los valores correctos.
 #Prueba de los métodos abstractos: Usar una subclase de prueba para verificar que los métodos abstractos se comportan correctamente.
 
     def setUp(self):
@@ -21,16 +21,16 @@ class TestPiece(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and property getters
-        self.assertEqual(self.__piece_white__.get_color, "white")
-        self.assertEqual(self.__piece_white__.get_position, (1, 1))
-        self.assertEqual(self.__piece_black__.get_color, "black")
-        self.assertEqual(self.__piece_black__.get_position, (2, 2))
+        self.assertEqual(self.__piece_white__.color, "white")
+        self.assertEqual(self.__piece_white__.position, (1, 1))
+        self.assertEqual(self.__piece_black__.color, "black")
+        self.assertEqual(self.__piece_black__.position, (2, 2))
     
     def test_update_position(self):
         # Test updating position
         new_position = (3, 3)
         self.__piece_white__.update_position(new_position)
-        self.assertEqual(self.__piece_white__.get_position, new_position)
+        self.assertEqual(self.__piece_white__.position, new_position)
 
     def test_get_cords(self):
         # Test get_cords method
@@ -47,10 +47,10 @@ class TestTorre(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and inherited properties
-        self.assertEqual(self.torre_white.get_color, "white")
-        self.assertEqual(self.torre_white.get_position, (1, 1))
-        self.assertEqual(self.torre_black.get_color, "black")
-        self.assertEqual(self.torre_black.get_position, (2, 2))
+        self.assertEqual(self.torre_white.color, "white")
+        self.assertEqual(self.torre_white.position, (1, 1))
+        self.assertEqual(self.torre_black.color, "black")
+        self.assertEqual(self.torre_black.position, (2, 2))
 
     def test_assign_value(self):
         # Test the assign_value method
@@ -66,10 +66,10 @@ class TestRey(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and inherited properties
-        self.assertEqual(self.rey_white.get_color, "white")
-        self.assertEqual(self.rey_white.get_position, (0,3))
-        self.assertEqual(self.rey_black.get_color, "black")
-        self.assertEqual(self.rey_black.get_position, (7, 3))
+        self.assertEqual(self.rey_white.color, "white")
+        self.assertEqual(self.rey_white.position, (0,3))
+        self.assertEqual(self.rey_black.color, "black")
+        self.assertEqual(self.rey_black.position, (7, 3))
     
     def test_assign_value(self):
         # Test the assign_value method
@@ -87,14 +87,14 @@ class TestAlfil(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and inherited properties
-        self.assertEqual(self.alfil_white1.get_color, "white")
-        self.assertEqual(self.alfil_white1.get_position, (0,2))
-        self.assertEqual(self.alfil_white2.get_color, "white")
-        self.assertEqual(self.alfil_white2.get_position, (0,5))
-        self.assertEqual(self.alfil_black1.get_color, "black")
-        self.assertEqual(self.alfil_black1.get_position, (7, 2))
-        self.assertEqual(self.alfil_black2.get_color, "black")
-        self.assertEqual(self.alfil_black2.get_position, (7, 5))
+        self.assertEqual(self.alfil_white1.color, "white")
+        self.assertEqual(self.alfil_white1.position, (0,2))
+        self.assertEqual(self.alfil_white2.color, "white")
+        self.assertEqual(self.alfil_white2.position, (0,5))
+        self.assertEqual(self.alfil_black1.color, "black")
+        self.assertEqual(self.alfil_black1.position, (7, 2))
+        self.assertEqual(self.alfil_black2.color, "black")
+        self.assertEqual(self.alfil_black2.position, (7, 5))
     
     def test_assign_value(self):
         # Test the assign_value method
@@ -110,10 +110,10 @@ class TestReina(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and inherited properties
-        self.assertEqual(self.reina_white.get_color, "white")
-        self.assertEqual(self.reina_white.get_position, (0,4))
-        self.assertEqual(self.reina_black.get_color, "black")
-        self.assertEqual(self.reina_black.get_position, (7, 4))
+        self.assertEqual(self.reina_white.color, "white")
+        self.assertEqual(self.reina_white.position, (0,4))
+        self.assertEqual(self.reina_black.color, "black")
+        self.assertEqual(self.reina_black.position, (7, 4))
     
     def test_assign_value(self):
         # Test the assign_value method
@@ -129,14 +129,14 @@ class TestCaballo(unittest.TestCase):
 
     def test_initialization(self):
         # Test initialization and inherited properties
-        self.assertEqual(self.caballo_white1.get_color, "white")
-        self.assertEqual(self.caballo_white1.get_position, (0,1))
-        self.assertEqual(self.caballo_white2.get_color, "white")
-        self.assertEqual(self.caballo_white2.get_position, (0,6))
-        self.assertEqual(self.caballo_black1.get_color, "black")
-        self.assertEqual(self.caballo_black1.get_position, (7, 1))
-        self.assertEqual(self.caballo_black2.get_color, "black")
-        self.assertEqual(self.caballo_black2.get_position, (7, 6))
+        self.assertEqual(self.caballo_white1.color, "white")
+        self.assertEqual(self.caballo_white1.position, (0,1))
+        self.assertEqual(self.caballo_white2.color, "white")
+        self.assertEqual(self.caballo_white2.position, (0,6))
+        self.assertEqual(self.caballo_black1.color, "black")
+        self.assertEqual(self.caballo_black1.position, (7, 1))
+        self.assertEqual(self.caballo_black2.color, "black")
+        self.assertEqual(self.caballo_black2.position, (7, 6))
     
     def test_assign_value(self):
         # Test the assign_value method
@@ -145,56 +145,32 @@ class TestCaballo(unittest.TestCase):
         self.assertEqual(self.caballo_black1.assign_value(), 3)
         self.assertEqual(self.caballo_black2.assign_value(), 3)
     
-'''
+
 class TestPeon(unittest.TestCase):
 
     def setUp(self):
-        self.peon_blanco = Peon('white')
-        self.peon_negro = Peon('black')
+        self.peon_white1 = Peon('white',(1,0))
+        self.peon_white2 = Peon('white',(1,1))
+        self.peon_black1 = Peon('black', (6, 0))
+        self.peon_black2 = Peon('black', (6, 1))
 
-    def test_assign_symbol_white(self):
-        self.assertEqual(self.peon_blanco.get_symbol(), '♙')
-
-    def test_assign_symbol_black(self):
-        self.assertEqual(self.peon_negro.get_symbol(), '♟')
-
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.peon_white1.color, "white")
+        self.assertEqual(self.peon_white1.position, (1,0))
+        self.assertEqual(self.peon_white2.color, "white")
+        self.assertEqual(self.peon_white2.position, (1,1))
+        self.assertEqual(self.peon_black1.color, "black")
+        self.assertEqual(self.peon_black1.position, (6, 0))
+        self.assertEqual(self.peon_black2.color, "black")
+        self.assertEqual(self.peon_black2.position, (6, 1))
+    
     def test_assign_value(self):
-        self.assertEqual(self.peon_blanco.get_value(), 1)
-        self.assertEqual(self.peon_negro.get_value(), 1)
+        # Test the assign_value method
+        self.assertEqual(self.peon_white1.assign_value(), 1)
+        self.assertEqual(self.peon_white2.assign_value(), 1)
+        self.assertEqual(self.peon_black1.assign_value(), 1)
+        self.assertEqual(self.peon_black2.assign_value(), 1)
 
-    def test_is_valid_move_white_one_step(self):
-        # Movimiento de una casilla hacia adelante (válido para peón blanco)
-        self.assertTrue(self.peon_blanco.is_valid_move([6, 4], [5, 4]))
-
-    def test_is_valid_move_white_two_steps_first_move(self):
-        # Movimiento de dos casillas hacia adelante (válido solo en el primer movimiento)
-        self.assertTrue(self.peon_blanco.is_valid_move([6, 4], [4, 4]))
-
-    def test_is_invalid_move_white_two_steps_after_first(self):
-        # Movimiento de dos casillas después del primer movimiento (inválido)
-        self.peon_blanco.is_valid_move([6, 4], [4, 4])  # Primer movimiento para avanzar dos
-        self.assertFalse(self.peon_blanco.is_valid_move([4, 4], [2, 4]))
-
-    def test_is_invalid_move_white_sideways(self):
-        # Movimiento lateral (inválido)
-        self.assertFalse(self.peon_blanco.is_valid_move([6, 4], [6, 5]))
-
-    def test_is_valid_move_black_one_step(self):
-        # Movimiento de una casilla hacia adelante (válido para peón negro)
-        self.assertTrue(self.peon_negro.is_valid_move([1, 4], [2, 4]))
-
-    def test_is_valid_move_black_two_steps_first_move(self):
-        # Movimiento de dos casillas hacia adelante (válido solo en el primer movimiento)
-        self.assertTrue(self.peon_negro.is_valid_move([1, 4], [3, 4]))
-
-    def test_is_invalid_move_black_two_steps_after_first(self):
-        # Movimiento de dos casillas después del primer movimiento (inválido)
-        self.peon_negro.is_valid_move([1, 4], [3, 4])  # Primer movimiento para avanzar dos
-        self.assertFalse(self.peon_negro.is_valid_move([3, 4], [5, 4]))
-
-    def test_is_invalid_move_black_sideways(self):
-        # Movimiento lateral (inválido)
-        self.assertFalse(self.peon_negro.is_valid_move([1, 4], [1, 5]))
-'''
 if __name__ == '__main__':
     unittest.main()

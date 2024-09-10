@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.1.7) 10/09/24
+### Changed
+- cambio en el codigo de peon.py
+- cambio en el codigo de los test de peon
 ## (0.1.6) 9/09/24
 ### Changed
 - cambio en el codigo de caballo.py
