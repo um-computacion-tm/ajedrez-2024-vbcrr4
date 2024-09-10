@@ -103,8 +103,49 @@ class TestAlfil(unittest.TestCase):
         self.assertEqual(self.alfil_black1.assign_value(), 3)
         self.assertEqual(self.alfil_black2.assign_value(), 3)
         
+class TestReina(unittest.TestCase):
+    def setUp(self):
+        self.reina_white = Reina('white',(0,4))
+        self.reina_black = Reina('black', (7, 4))
 
-    '''
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.reina_white.get_color, "white")
+        self.assertEqual(self.reina_white.get_position, (0,4))
+        self.assertEqual(self.reina_black.get_color, "black")
+        self.assertEqual(self.reina_black.get_position, (7, 4))
+    
+    def test_assign_value(self):
+        # Test the assign_value method
+        self.assertEqual(self.reina_white.assign_value(), 9)
+        self.assertEqual(self.reina_black.assign_value(), 9)
+
+class TestCaballo(unittest.TestCase):
+    def setUp(self):
+        self.caballo_white1 = Caballo('white',(0,1))
+        self.caballo_white2 = Caballo('white',(0,6))
+        self.caballo_black1 = Caballo('black', (7, 1))
+        self.caballo_black2 = Caballo('black', (7, 6))
+
+    def test_initialization(self):
+        # Test initialization and inherited properties
+        self.assertEqual(self.caballo_white1.get_color, "white")
+        self.assertEqual(self.caballo_white1.get_position, (0,1))
+        self.assertEqual(self.caballo_white2.get_color, "white")
+        self.assertEqual(self.caballo_white2.get_position, (0,6))
+        self.assertEqual(self.caballo_black1.get_color, "black")
+        self.assertEqual(self.caballo_black1.get_position, (7, 1))
+        self.assertEqual(self.caballo_black2.get_color, "black")
+        self.assertEqual(self.caballo_black2.get_position, (7, 6))
+    
+    def test_assign_value(self):
+        # Test the assign_value method
+        self.assertEqual(self.caballo_white1.assign_value(), 3)
+        self.assertEqual(self.caballo_white2.assign_value(), 3)
+        self.assertEqual(self.caballo_black1.assign_value(), 3)
+        self.assertEqual(self.caballo_black2.assign_value(), 3)
+    
+'''
 class TestPeon(unittest.TestCase):
 
     def setUp(self):
@@ -154,68 +195,6 @@ class TestPeon(unittest.TestCase):
     def test_is_invalid_move_black_sideways(self):
         # Movimiento lateral (inválido)
         self.assertFalse(self.peon_negro.is_valid_move([1, 4], [1, 5]))
-'''
-class TestReina(unittest.TestCase):
-    def setUp(self):
-        self.reina_white = Reina('white',(0,4))
-        self.reina_black = Reina('black', (7, 4))
-
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.reina_white.get_color, "white")
-        self.assertEqual(self.reina_white.get_position, (0,4))
-        self.assertEqual(self.reina_black.get_color, "black")
-        self.assertEqual(self.reina_black.get_position, (7, 4))
-    
-    def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.reina_white.assign_value(), 9)
-        self.assertEqual(self.reina_black.assign_value(), 9)
-'''
-class TestCaballo(unittest.TestCase):
-    def setUp(self):
-        self.caballo_blanco = Caballo('white')
-        self.caballo_negro = Caballo('black')
-
-    def test_assign_symbol_white(self):
-        self.assertEqual(self.caballo_blanco.get_symbol(), '♘')
-
-    def test_assign_symbol_black(self):
-        self.assertEqual(self.caballo_negro.get_symbol(), '♞')
-
-    def test_assign_value(self):
-        self.assertEqual(self.caballo_blanco.get_value(), 3)
-        self.assertEqual(self.caballo_negro.get_value(), 3)
-
-    def test_is_valid_move_L_shape(self):
-        # Movimientos válidos en forma de 'L'
-        valid_moves = [
-            ([3, 3], [5, 4]),  # 2 abajo, 1 derecha
-            ([3, 3], [1, 4]),  # 2 arriba, 1 derecha
-            ([3, 3], [4, 5]),  # 1 abajo, 2 derecha
-            ([3, 3], [2, 5]),  # 1 arriba, 2 derecha
-            ([3, 3], [5, 2]),  # 2 abajo, 1 izquierda
-            ([3, 3], [1, 2]),  # 2 arriba, 1 izquierda
-            ([3, 3], [4, 1]),  # 1 abajo, 2 izquierda
-            ([3, 3], [2, 1])   # 1 arriba, 2 izquierda
-        ]
-
-        for start_pos, end_pos in valid_moves:
-            with self.subTest(start=start_pos, end=end_pos):
-                self.assertTrue(self.caballo_blanco.is_valid_move(start_pos, end_pos))
-
-    def test_is_invalid_move(self):
-        # Movimientos no válidos (no en forma de 'L')
-        invalid_moves = [
-            ([3, 3], [4, 4]),  # 1 abajo, 1 derecha
-            ([3, 3], [5, 5]),  # 2 abajo, 2 derecha
-            ([3, 3], [3, 5]),  # 0 abajo, 2 derecha
-            ([3, 3], [1, 1])   # 2 arriba, 2 izquierda
-        ]
-
-        for start_pos, end_pos in invalid_moves:
-            with self.subTest(start=start_pos, end=end_pos):
-                self.assertFalse(self.caballo_blanco.is_valid_move(start_pos, end_pos))
 '''
 if __name__ == '__main__':
     unittest.main()
