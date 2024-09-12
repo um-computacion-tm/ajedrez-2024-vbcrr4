@@ -64,17 +64,17 @@ class Board:
         destino_piece = self.get_piece(destino[0], destino[1])
     
         if piece is None:
-            raise PieceNotFoundError("Piece not found on the board.")
+            raise PieceNotFoundError("Pieza no encontrada en el tablero.")
     
         # Validar si el movimiento es válido y si el camino está libre
         if not (self.is_diagonal_move(origen, destino) and piece.diagonal_move_positions(destino, self.__positions__)) \
         and not (self.is_vertical_move(origen, destino) and piece.vertical_move_positions(destino, self.__positions__)) \
         and not (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__)):
-            raise InvalidPieceMovement("Invalid Piece Movement, path is not clear or move is invalid.")
+            raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.")
     
         # Validar si hay una pieza en el destino que sea del mismo color
         if destino_piece is not None and piece.color == destino_piece.color:
-            raise InvalidMoveError("You cannot move where you have another piece.")
+            raise InvalidMoveError("No puedes moverte donde tienes otra pieza.")
 
     def update_positions(self, origen, destino):
         piece = self.get_piece(origen[0], origen[1])

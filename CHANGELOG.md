@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.2.0) 12/09/24
+- agregado de nuevas exepcones en exepciones.py
 ## (0.1.9) 12/09/24
 ### Changed
 - cambio en el codigo de piece.py
