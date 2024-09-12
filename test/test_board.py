@@ -11,72 +11,88 @@ from game.exepciones import *
 class TestBoard(unittest.TestCase):
     def setUp(self):
         """Configura un tablero de ajedrez para usar en las pruebas."""
-        self.board = Board()
+        self.__board__ = Board()
+    
+    def test_initial_setup(self):
+        # Verifica que las piezas se han inicializado correctamente
+        self.assertIsInstance(self.__board__.get_piece(0, 0), Torre)
+        self.assertIsInstance(self.__board__.get_piece(0, 4), Reina)
+        self.assertIsInstance(self.__board__.get_piece(7, 0), Torre)
+        self.assertIsInstance(self.__board__.get_piece(6, 0), Peon)
 
-    def test_create_board(self):
-        """Verifica que el tablero se cree correctamente con las piezas en sus posiciones iniciales."""
-        board = self.board.__board__
-        self.assertEqual(board[0][0].get_piece().get_color(), 'white')
-        self.assertEqual(board[7][7].get_piece().get_color(), 'black')
-        self.assertIsInstance(board[0][0].get_piece(), Torre)
-        self.assertIsInstance(board[0][3].get_piece(), Reina)
-        self.assertIsInstance(board[7][4].get_piece(), Rey)
+    def test_get_piece(self):
+        # Prueba obtener piezas en posiciones específicas
+        self.assertIsInstance(self.__board__.get_piece(0, 0), Torre)
+        self.assertIsInstance(self.__board__.get_piece(0, 1), Caballo)
+        self.assertIsInstance(self.__board__.get_piece(0, 2), Alfil)
+        self.assertIsInstance(self.__board__.get_piece(0, 3), Rey)
+        self.assertIsInstance(self.__board__.get_piece(0, 4), Reina)
+    
+    def test_get_piece(self):
+        # Prueba que obtener una pieza en una posición específica funcione correctamente
+        piece = self.__board__.get_piece(0, 0)
+        self.assertIsInstance(piece, Torre)
+        self.assertEqual(piece.color, "White")
 
-    '''def test_move_piece_valid(self):
-        """Verifica que un movimiento válido se realice correctamente."""
-        self.board.move_piece([1, 0], [2, 0])  # Peón blanco de la columna 'a' se mueve hacia adelante
-        self.assertIsInstance(self.board.__board__[2][0].get_piece(), Peon)
-        self.assertIsNone(self.board.__board__[1][0].get_piece())
+    def test_move_valid(self):
+        # Testea un movimiento válido (peón avanzando una casilla)
+        origen = (1, 0)
+        destino = (2, 0)
+        self.assertTrue(self.__board__.move(origen, destino))
+        self.assertIsNone(self.__board__.get_piece(origen[0], origen[1]))  # Verifica que la casilla original esté vacía
+        self.assertIsInstance(self.__board__.get_piece(destino[0], destino[1]), Peon)  # Verifica que el peón esté en la nueva casilla
 
-    def test_move_piece_invalid_for_piece(self):
-        """Verifica que un movimiento inválido para una pieza específica lance InvalidMoveError."""
+    def test_move_invalid_no_piece(self):
+        # Testea mover desde una casilla vacía
+        origen = (3, 3)
+        destino = (4, 4)
+        with self.assertRaises(PieceNotFoundError):
+            self.__board__.move(origen, destino)
+
+    def test_move_invalid_path_blocked(self):
+        # Prueba que un movimiento inválido (camino bloqueado) lanza la excepción correcta
+        origen = (0, 0)  # Torre blanca en (0, 0)
+        destino = (3, 0)
+        with self.assertRaises(InvalidPieceMovement):
+            self.__board__.move(origen, destino)
+
+    def test_move_invalid_destination_occupied(self):
+        # Prueba mover una pieza a una casilla ocupada por otra pieza del mismo color
+        origen = (0, 0)  # Torre blanca en (0, 0)
+        destino = (0, 1)  # Caballo blanco en (0, 1)
         with self.assertRaises(InvalidMoveError):
-            self.board.move_piece([1, 0], [3, 0])  # Movimiento inválido para un Peón blanco
+            self.__board__.move(origen, destino)
 
-    def test_move_piece_blocked(self):
-        """Verifica que un movimiento bloqueado por otra pieza lance InvalidMoveError."""
-        with self.assertRaises(InvalidMoveError):
-            self.board.move_piece([0, 0], [0, 3])  # La torre está bloqueada por otras piezas
+    def test_update_positions(self):
+        # Prueba que update_positions funcione correctamente
+        origen = (1, 0)
+        destino = (2, 0)
+        self.__board__.update_positions(origen, destino)
+        self.assertIsNone(self.__board__.get_piece(origen[0], origen[1]))
+        self.assertIsInstance(self.__board__.get_piece(destino[0], destino[1]), Peon)
 
-    def test_is_clear_path_horizontal(self):
-        """Verifica que is_clear_path detecte correctamente los bloqueos en movimientos horizontales."""
-        # Limpiar la fila 0 para realizar la prueba
-        for col in range(1, 8):
-            self.board.__board__[0][col].remove_piece()
+    def test_is_diagonal_move(self):
+        # Prueba que el método is_diagonal_move funcione correctamente
+        self.assertTrue(self.__board__.is_diagonal_move((0, 0), (2, 2)))
+        self.assertFalse(self.__board__.is_diagonal_move((0, 0), (2, 3)))
 
-        self.board.__board__[0][0].place_piece(Torre('white'))
-        self.assertTrue(self.board.is_clear_path([0, 0], [0, 7]))
+    def test_is_vertical_move(self):
+        # Prueba que el método is_vertical_move funcione correctamente
+        self.assertTrue(self.__board__.is_vertical_move((0, 0), (3, 0)))
+        self.assertFalse(self.__board__.is_vertical_move((0, 0), (3, 1)))
 
-        # Bloquear el camino nuevamente
-        self.board.__board__[0][3].place_piece(Peon('white'))
-        self.assertFalse(self.board.is_clear_path([0, 0], [0, 7]))
-
-    def test_is_clear_path_vertical(self):
-        """Verifica que is_clear_path detecte correctamente los bloqueos en movimientos verticales."""
-        # Limpiar la columna 0 para realizar la prueba
-        for row in range(1, 8):
-            self.board.__board__[row][0].remove_piece()
-
-        self.board.__board__[0][0].place_piece(Torre('white'))
-        self.assertTrue(self.board.is_clear_path([0, 0], [7, 0]))
-
-        # Bloquear el camino nuevamente
-        self.board.__board__[3][0].place_piece(Peon('white'))
-        self.assertFalse(self.board.is_clear_path([0, 0], [7, 0]))
-
-    def test_knight_can_jump(self):
-        """Verifica que el caballo pueda saltar sobre otras piezas sin depender de is_clear_path."""
-        self.board.move_piece([0, 1], [2, 2])  # El caballo blanco puede saltar sobre otras piezas
-        self.assertIsInstance(self.board.__board__[2][2].get_piece(), Caballo)
-        self.assertIsNone(self.board.__board__[0][1].get_piece())'''
+    def test_is_horizontal_move(self):
+        # Prueba que el método is_horizontal_move funcione correctamente
+        self.assertTrue(self.__board__.is_horizontal_move((0, 0), (0, 3)))
+        self.assertFalse(self.__board__.is_horizontal_move((0, 0), (1, 3)))
 
     def test_board_repr(self):
-        board = Board()
+        __board__ = Board()
         expected_board = """      a       b       c       d       e       f       g       h
    ┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┐
-  8│   ♖   │   ♘   │   ♗   │   ♕   │   ♔   │   ♗   │   ♘   │   ♖   │  8
+  8│   ♜   │   ♞   │   ♝   │   ♚   │   ♛   │   ♝   │   ♞   │   ♜   │  8
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
-  7│   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │  7
+  7│   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │  7
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
   6│       │       │       │       │       │       │       │       │  6
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
@@ -88,10 +104,10 @@ class TestBoard(unittest.TestCase):
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
   2│   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │  2
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
-  1│   ♜   │   ♞   │   ♝   │   ♛   │   ♚   │   ♝   │   ♞   │   ♜   │  1
+  1│   ♜   │   ♞   │   ♝   │   ♚   │   ♛   │   ♝   │   ♞   │   ♜   │  1
    └───────┴───────┴───────┴───────┴───────┴───────┴───────┴───────┘
       a       b       c       d       e       f       g       h"""
-        self.assertEqual(repr(board), expected_board)
+        self.assertEqual(repr(__board__), expected_board)
 
 if __name__ == "__main__":
     unittest.main()

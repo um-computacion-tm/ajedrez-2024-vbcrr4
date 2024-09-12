@@ -1,99 +1,107 @@
-from .peon import Peon
+from .piece import Piece
 from .torre import Torre
+from .peon import Peon
 from .alfil import Alfil
 from .caballo import Caballo
 from .reina import Reina
 from .rey import Rey
-from .cell  import Cell
-from .exepciones import InvalidMoveError
+from .exepciones import *
 class Board:
     def __init__(self):
-        self.__board__ = self.create_board()
+        #creacion del tablero de 8x8
+        #inicializacion de las piezas
+        self.__positions__ = []
+        for fila in range(8):
+            col = []
+            for columna in range(8):
+                col.append(None)
+            self.__positions__.append(col)
 
-    def create_board(self):
-        # Crear un tablero vacío de 8x8
-        board = [[Cell(None, (row, col)) for col in range(8)] for row in range(8)]
-        self.setup_pieces(board)
-        return board
+        self.__positions__[0][0] = Torre("White", (0, 0))
+        self.__positions__[0][1] = Caballo("White", (0, 1))
+        self.__positions__[0][2] = Alfil("White", (0, 2))
+        self.__positions__[0][3] = Rey("White", (0, 3))
+        self.__positions__[0][4] = Reina("White", (0, 4))
+        self.__positions__[0][5] = Alfil("White", (0, 5))
+        self.__positions__[0][6] = Caballo("White", (0, 6))
+        self.__positions__[0][7] = Torre("White", (0, 7))
+
+        for i in range(8):
+            self.__positions__[1][i] = Peon("White", (1, i))
+
+        self.__positions__[7][0] = Torre("Black", (7, 0))
+        self.__positions__[7][1] = Caballo("Black", (7, 1))
+        self.__positions__[7][2] = Alfil("Black", (7, 2))
+        self.__positions__[7][3] = Rey("Black", (7, 3))
+        self.__positions__[7][4] = Reina("Black", (7, 4))
+        self.__positions__[7][5] = Alfil("Black", (7, 5))
+        self.__positions__[7][6] = Caballo("Black", (7, 6))
+        self.__positions__[7][7] = Torre("Black", (7, 7))
+
+        for i in range(8):
+            self.__positions__[6][i] = Peon("Black", (6, i))
     
-    def setup_pieces(self, board):
-        # Colocar las piezas blancas en sus posiciones iniciales
-        board[0][0].place_piece(Torre('white'))
-        board[0][1].place_piece(Caballo('white'))
-        board[0][2].place_piece(Alfil('white'))
-        board[0][3].place_piece(Reina('white'))
-        board[0][4].place_piece(Rey('white'))
-        board[0][5].place_piece(Alfil('white'))
-        board[0][6].place_piece(Caballo('white'))
-        board[0][7].place_piece(Torre('white'))
-        for i in range(8):
-            board[1][i].place_piece(Peon('white'))
-        
-        # Colocar las piezas negras en sus posiciones iniciales
-        board[7][0].place_piece(Torre('black'))
-        board[7][1].place_piece(Caballo('black'))
-        board[7][2].place_piece(Alfil('black'))
-        board[7][3].place_piece(Reina('black'))
-        board[7][4].place_piece(Rey('black'))
-        board[7][5].place_piece(Alfil('black'))
-        board[7][6].place_piece(Caballo('black'))
-        board[7][7].place_piece(Torre('black'))
-        for i in range(8):
-            board[6][i].place_piece(Peon('black'))
+    def get_piece(self, row, col):
+        return self.__positions__[row][col]
 
-    def move_piece(self, start_pos, end_pos):
-        start_cell = self.__board__[start_pos[0]][start_pos[1]]
-        end_cell = self.__board__[end_pos[0]][end_pos[1]]
-        piece = start_cell.get_piece()
+    def move(self, origen, destino):
+        try:
+            self.can_move(origen, destino)
+            self.update_positions(origen, destino)
+            return True
+        except PieceNotFoundError as e:
+            print(f"Error: {e}")
+            raise
+        except InvalidPieceMovement as e:
+            print(f"Error: {e}")
+            raise
+        except InvalidMoveError as e:
+            print(f"Error: {e}")
+            raise  
 
+    def can_move(self, origen, destino):
+        piece = self.get_piece(origen[0], origen[1])
+        destino_piece = self.get_piece(destino[0], destino[1])
+    
         if piece is None:
-            raise InvalidMoveError("No hay pieza en la posición de inicio")
-        if piece.is_valid_move(start_pos, end_pos, self.__board__):
-            if self.is_clear_path(start_pos, end_pos):
-                # Realizar el movimiento
-                end_cell.place_piece(piece)
-                start_cell.remove_piece()
-            else:
-                raise InvalidMoveError("Movimiento bloqueado por otra pieza")
-        else:
-            raise InvalidMoveError("Movimiento inválido para esta pieza")
+            raise PieceNotFoundError("Piece not found on the board.")
+    
+        # Validar si el movimiento es válido y si el camino está libre
+        if not (self.is_diagonal_move(origen, destino) and piece.diagonal_move_positions(destino, self.__positions__)) \
+        and not (self.is_vertical_move(origen, destino) and piece.vertical_move_positions(destino, self.__positions__)) \
+        and not (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__)):
+            raise InvalidPieceMovement("Invalid Piece Movement, path is not clear or move is invalid.")
+    
+        # Validar si hay una pieza en el destino que sea del mismo color
+        if destino_piece is not None and piece.color == destino_piece.color:
+            raise InvalidMoveError("You cannot move where you have another piece.")
 
-    def is_clear_path(self, start_pos, end_pos):
-        """
-        Verifica que no haya piezas en el camino entre la posición inicial y final.
-        Utiliza la clase Cell para verificar si las celdas están ocupadas.
-        """
-        #importante los Caballos no pueden utiizar este motodo, ya que pueden saltar piezas
-        start_row, start_col = start_pos
-        end_row, end_col = end_pos
-    
-        # Movimiento horizontal
-        if start_row == end_row:
-            step = 1 if start_col < end_col else -1
-            for col in range(start_col + step, end_col, step):
-                if self.__board__[start_row][col].is_occupied():
-                    return False
-    
-        # Movimiento vertical
-        elif start_col == end_col:
-            step = 1 if start_row < end_row else -1
-            for row in range(start_row + step, end_row, step):
-                if self.__board__[row][start_col].is_occupied():
-                    return False
-    
-        # Movimiento diagonal
-        elif abs(start_row - end_row) == abs(start_col - end_col):
-            row_step = 1 if start_row < end_row else -1
-            col_step = 1 if start_col < end_col else -1
-            row, col = start_row + row_step, start_col + col_step
-            while row != end_row and col != end_col:
-                if self.__board__[row][col].is_occupied():
-                    return False
-                row += row_step
-                col += col_step
-    
-        return True
-    
+    def update_positions(self, origen, destino):
+        piece = self.get_piece(origen[0], origen[1])
+        destino_piece = self.get_piece(destino[0], destino[1])
+
+        # Actualizar posiciones en el tablero
+        self.__positions__[destino[0]][destino[1]] = piece
+        self.__positions__[origen[0]][origen[1]] = None
+        piece.update_position(destino)
+        if destino_piece is not None:
+            destino_piece.update_position(None)
+
+    def is_diagonal_move(self, origen, destino):
+        start_row, start_col = origen
+        end_row, end_col = destino
+        return abs(start_row - end_row) == abs(start_col - end_col)
+
+    def is_vertical_move(self, origen, destino):
+        start_row, start_col = origen
+        end_row, end_col = destino
+        return start_col == end_col and start_row != end_row
+
+    def is_horizontal_move(self, origen, destino):
+        start_row, start_col = origen
+        end_row, end_col = destino
+        return start_row == end_row and start_col != end_col
+
     def __repr__(self):
         spaces = " " * 3
         horizontal_line = spaces + "┌" + "───────┬" * 7 + "───────┐" + "\n"
@@ -107,8 +115,13 @@ class Board:
         for i in range(8):
             board_repr += f"  {8 - i}│"
             for j in range(8):
-                cell = self.__board__[i][j]
-                cell_repr = repr(cell).center(7)  
+                cell = self.__positions__[i][j]
+                if cell is None:
+                # Si la celda está vacía, representamos como 'None'
+                    cell_repr = " ".center(7)
+                else:
+                # Si hay una pieza, usamos su método __str__()
+                    cell_repr = str(cell).center(7)  
                 board_repr += f"{cell_repr}│"
             board_repr += f"  {8 - i}\n"
             if i != 7:
@@ -119,7 +132,10 @@ class Board:
         return board_repr
 
 
-if __name__ == "__main__":
-    board = Board()
-    print(board)  
 
+if __name__ == "__main__":
+    # Crear una instancia de Board
+    tablero = Board()
+
+    # Imprimir la representación del tablero usando __repr__
+    print(tablero)
