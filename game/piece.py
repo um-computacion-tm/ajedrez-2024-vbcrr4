@@ -4,11 +4,11 @@ class Piece():
         self.__color__ = color
         self. __position__ = position
     @property
-    def get_color(self):
+    def color(self):
         return self.__color__
     
     @property
-    def get_position(self):
+    def position(self):
         return self.__position__
     
     def update_position(self, position_new):
