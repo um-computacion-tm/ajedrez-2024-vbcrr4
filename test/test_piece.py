@@ -9,36 +9,91 @@ from game.caballo import Caballo
 from game.reina import Reina
 #agreagrar las exepciones
 
+
 class TestPiece(unittest.TestCase):
-#test de metodo 'assing_value' de la clase Piece  (aunque se puede probar indirectamente a través de las subclases)
-#test de Método color y get_symbol: Asegurarse de que devuelvan los valores correctos.
-#Prueba de los métodos abstractos: Usar una subclase de prueba para verificar que los métodos abstractos se comportan correctamente.
 
     def setUp(self):
-        # Este método se ejecuta antes de cada test
-        self.__piece_white__ = Piece("white", (1, 1))
-        self.__piece_black__ = Piece("black", (2, 2))
+        # Creamos una instancia de Piece antes de cada test
+        self.piece = Piece("white", (0, 0))
 
-    def test_initialization(self):
-        # Test initialization and property getters
-        self.assertEqual(self.__piece_white__.color, "white")
-        self.assertEqual(self.__piece_white__.position, (1, 1))
-        self.assertEqual(self.__piece_black__.color, "black")
-        self.assertEqual(self.__piece_black__.position, (2, 2))
-    
+    def test_get_color(self):
+        # Verifica que el color de la pieza se obtiene correctamente
+        self.assertEqual(self.piece.color, "white")
+
+    def test_get_position(self):
+        # Verifica que la posición inicial de la pieza se obtiene correctamente
+        self.assertEqual(self.piece.position, (0, 0))
+
     def test_update_position(self):
-        # Test updating position
-        new_position = (3, 3)
-        self.__piece_white__.update_position(new_position)
-        self.assertEqual(self.__piece_white__.position, new_position)
+        # Verifica que la posición de la pieza se actualiza correctamente
+        new_position = (2, 3)
+        self.piece.update_position(new_position)
+        self.assertEqual(self.piece.position, new_position)
 
-    def test_get_cords(self):
-        # Test get_cords method
-        new_position = (3, 3)
-        cords = self.__piece_white__.get_cords(new_position)
-        self.assertEqual(cords, (1, 1, 3, 3))
+    def test_str(self):
+        # Probar la conversión a string de la pieza según su color
+        # Esto requiere que la clase tenga `__w_str__` y `__b_str__` definidos
+        self.piece.__w_str__ = "♔"  # Rey blanco
+        self.piece.__b_str__ = "♚"  # Rey negro
+        
+        self.assertEqual(str(self.piece), "♔")  # Para una pieza blanca
 
+        self.piece = Piece("black", (7, 7))  # Para una pieza negra
+        self.piece.__w_str__ = "♔"
+        self.piece.__b_str__ = "♚"
+        self.assertEqual(str(self.piece), "♚")
 
+    def test_is_path_clear(self):
+        # Prueba que el camino esté despejado
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        start = (0, 0)
+        end = (3, 3)
+        row_step = 1
+        col_step = 1
+        self.assertTrue(self.piece.is_path_clear(start, end, positions, row_step, col_step))
+
+        # Prueba cuando el camino está bloqueado
+        positions[1][1] = Piece("white", (1, 1))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.is_path_clear(start, end, positions, row_step, col_step))
+
+    def test_diagonal_move_positions(self):
+        # Prueba un movimiento diagonal válido
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        self.piece.update_position((0, 0))
+        self.assertTrue(self.piece.diagonal_move_positions((3, 3), positions))
+
+        # Prueba un movimiento diagonal inválido (camino bloqueado)
+        positions[1][1] = Piece("white", (1, 1))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.diagonal_move_positions((3, 3), positions))
+
+        # Prueba un movimiento no diagonal (debe devolver False)
+        self.assertFalse(self.piece.diagonal_move_positions((2, 3), positions))
+
+    def test_vertical_move_positions(self):
+        # Prueba un movimiento vertical válido
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        self.piece.update_position((0, 0))
+        self.assertTrue(self.piece.vertical_move_positions((3, 0), positions))
+
+        # Prueba un movimiento vertical inválido (camino bloqueado)
+        positions[1][0] = Piece("white", (1, 0))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.vertical_move_positions((3, 0), positions))
+
+        # Prueba un movimiento no vertical (debe devolver False)
+        self.assertFalse(self.piece.vertical_move_positions((3, 1), positions))
+
+    def test_horizontal_move_positions(self):
+        # Prueba un movimiento horizontal válido
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        self.piece.update_position((0, 0))
+        self.assertTrue(self.piece.horizontal_move_positions((0, 3), positions))
+
+        # Prueba un movimiento horizontal inválido (camino bloqueado)
+        positions[0][1] = Piece("white", (0, 1))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.horizontal_move_positions((0, 3), positions))
+
+        # Prueba un movimiento no horizontal (debe devolver False)
+        self.assertFalse(self.piece.horizontal_move_positions((1, 3), positions))
 
 class TestTorre(unittest.TestCase):
     def setUp(self):
