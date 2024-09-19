@@ -22,15 +22,17 @@ class Piece():
         start_row, start_col = self.__position__
         return start_row, start_col, end_row, end_col
 
-    def is_path_clear(self, start, end, positions, row_step, col_step):
+    def is_path_clear(self, path, positions, row_step, col_step):
         """
         Verifica si el camino entre la posición inicial y la final está despejado.
+        path: tupla con la posición inicial (start_row, start_col) y la final (end_row, end_col).
         """
-        row, col = start
-        end_row, end_col = end
+        (start_row, start_col), (end_row, end_col) = path
+
+        row, col = start_row, start_col
 
         # Recorre todas las posiciones entre start y end (sin incluir la final)
-        for i in range(1, abs(end_row - row) + abs(end_col - col)):
+        for i in range(1, abs(end_row - start_row) + abs(end_col - start_col)):
             row += row_step
             col += col_step
             if positions[row][col] is not None:
@@ -48,7 +50,7 @@ class Piece():
             row_step = 1 if end_row > start_row else -1
             col_step = 1 if end_col > start_col else -1
             return self.is_path_clear(
-                (start_row, start_col), (end_row, end_col), positions, row_step, col_step
+                ((start_row, start_col), (end_row, end_col)), positions, row_step, col_step
             )
 
         return False
@@ -62,7 +64,7 @@ class Piece():
         if end_row != start_row and end_col == start_col:
             row_step = 1 if end_row > start_row else -1
             return self.is_path_clear(
-                (start_row, start_col), (end_row, end_col), positions, row_step, 0
+                ((start_row, start_col), (end_row, end_col)), positions, row_step, 0
             )
         
         return False
@@ -76,7 +78,7 @@ class Piece():
         if end_row == start_row and end_col != start_col:
             col_step = 1 if end_col > start_col else -1
             return self.is_path_clear(
-                (start_row, start_col), (end_row, end_col), positions, 0, col_step
+                ((start_row, start_col), (end_row, end_col)), positions, 0, col_step
             )
         
         return False

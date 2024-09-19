@@ -50,11 +50,11 @@ class TestPiece(unittest.TestCase):
         end = (3, 3)
         row_step = 1
         col_step = 1
-        self.assertTrue(self.piece.is_path_clear(start, end, positions, row_step, col_step))
+        self.assertTrue(self.piece.is_path_clear((start, end), positions, row_step, col_step))
 
         # Prueba cuando el camino está bloqueado
         positions[1][1] = Piece("white", (1, 1))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.is_path_clear(start, end, positions, row_step, col_step))
+        self.assertFalse(self.piece.is_path_clear((start, end), positions, row_step, col_step))
 
     def test_diagonal_move_positions(self):
         # Prueba un movimiento diagonal válido
