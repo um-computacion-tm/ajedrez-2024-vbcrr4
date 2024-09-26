@@ -9,6 +9,21 @@ class Caballo(Piece):
     def assign_value(self):
         return 3
 
+    def is_valid_move(self, row_diff, col_diff):
+        """
+        Verifica si las diferencias de filas y columnas corresponden a un movimiento en 'L' del caballo.
+        """
+        return (row_diff == 2 and col_diff == 1) or (row_diff == 1 and col_diff == 2)
+
+    
+    def is_valid_destination(self, end_row, end_col, positions):
+        """
+        Verifica si la casilla de destino está vacía o tiene una pieza del color contrario.
+        """
+        destination_piece = positions[end_row][end_col]
+        return destination_piece is None or destination_piece.get_color != self.get_color
+    
+
     def move_caballo(self, position_new, positions):
         """
         Verifica si el movimiento es válido para el Caballo.
@@ -21,13 +36,10 @@ class Caballo(Piece):
         row_diff = abs(end_row - start_row)
         col_diff = abs(end_col - start_col)
         
-        # El movimiento en 'L' tiene que ser 2 en una dirección y 1 en la otra
-        if (row_diff == 2 and col_diff == 1) or (row_diff == 1 and col_diff == 2):
-            # Verifica si la casilla de destino está vacía o tiene una pieza del color contrario
-            destination_piece = positions[end_row][end_col]
-            if destination_piece is None or destination_piece.get_color != self.get_color:
-                return True  
-
-        return False  
+        # Verifica si el movimiento es en 'L' y si el destino es válido
+        if self.is_valid_knight_move(row_diff, col_diff) and self.is_valid_destination(end_row, end_col, positions):
+            return True
+        
+        return False
 
      
