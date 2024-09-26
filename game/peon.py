@@ -10,37 +10,32 @@ class Peon(Piece):
         return 1
 
     def es_movimiento_valido(self, position_new, positions):
-        # Si es blanco, se mueve hacia arriba, si es negro, hacia abajo
+        """Valida el movimiento de un peón."""
         if self.color == "blanco":
-            return self._es_movimiento_valido_blanco(position_new, positions)
+            return self._es_movimiento_valido_direccion(position_new, positions, -1, 6)
         elif self.color == "negro":
-            return self._es_movimiento_valido_negro(position_new, positions)
+            return self._es_movimiento_valido_direccion(position_new, positions, 1, 1)
         return False
 
-    def _es_movimiento_valido_blanco(self, position_new, positions):
-        # Los peones blancos se mueven hacia arriba en el tablero
-        return self._es_movimiento_valido_peon(position_new, positions, -1, 6)
-
-    def _es_movimiento_valido_negro(self, position_new, positions):
-        # Los peones negros se mueven hacia abajo en el tablero
-        return self._es_movimiento_valido_peon(position_new, positions, 1, 1)
-
-    def _es_movimiento_valido_peon(self, position_new, positions, direccion, fila_inicial):
+    def _es_movimiento_valido_direccion(self, position_new, positions, direccion, fila_inicial):
+        """Valida el movimiento del peón dada una dirección."""
         start_row, start_col = self.__position__
         end_row, end_col = position_new
 
-        # Movimiento hacia adelante en la misma columna
         if end_col == start_col:
-            # Movimiento inicial: puede avanzar dos casillas
-            if start_row == fila_inicial and end_row == start_row + 2 * direccion:
-                if positions[start_row + direccion][start_col] is None and positions[end_row][end_col] is None:
-                    return True
-            # Movimiento normal de una casilla hacia adelante
-            elif end_row == start_row + direccion and positions[end_row][end_col] is None:
-                return True
-
-        # Movimiento de captura en diagonal
-        elif end_row == start_row + direccion and abs(end_col - start_col) == 1 and positions[end_row][end_col] is not None:
-            return True
-
+            return self._es_movimiento_adelante(start_row, end_row, start_col, positions, direccion, fila_inicial)
+        elif abs(end_col - start_col) == 1 and end_row == start_row + direccion:
+            return self._es_movimiento_captura(end_row, end_col, positions)
         return False
+
+    def _es_movimiento_adelante(self, start_row, end_row, start_col, positions, direccion, fila_inicial):
+        """Valida el movimiento del peón hacia adelante."""
+        if start_row == fila_inicial and end_row == start_row + 2 * direccion:
+            return positions[start_row + direccion][start_col] is None and positions[end_row][start_col] is None
+        elif end_row == start_row + direccion:
+            return positions[end_row][start_col] is None
+        return False
+
+    def _es_movimiento_captura(self, end_row, end_col, positions):
+        """Valida el movimiento de captura del peón."""
+        return positions[end_row][end_col] is not None
