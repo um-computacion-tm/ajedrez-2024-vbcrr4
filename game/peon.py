@@ -9,33 +9,32 @@ class Peon(Piece):
     def assign_value(self):
         return 1
 
-    def es_movimiento_valido(self, position_new, positions):
-        """Valida el movimiento de un peón."""
-        if self.color == "blanco":
-            return self._es_movimiento_valido_direccion(position_new, positions, -1, 6)
-        elif self.color == "negro":
-            return self._es_movimiento_valido_direccion(position_new, positions, 1, 1)
+    def validar_movimiento(self, positions, position_new):
+        """Verifica si el movimiento del soldado es válido."""
+        if self.color == "white":
+            return self._validar_movimiento_peon(positions, position_new, -1, 6)
+        elif self.color == "black":
+            return self._validar_movimiento_peon(positions, position_new, 1, 1)
         return False
 
-    def _es_movimiento_valido_direccion(self, position_new, positions, direccion, fila_inicial):
-        """Valida el movimiento del peón dada una dirección."""
-        start_row, start_col = self.__position__
-        end_row, end_col = position_new
+    def _validar_movimiento_peon(self, positions, position_new, direction, fila_inicial):
+        """Valida el movimiento del peón tanto en captura como en avance."""
+        fila_actual, columna_actual = self.__position__
+        nueva_fila, nueva_columna = position_new
 
-        if end_col == start_col:
-            return self._es_movimiento_adelante(start_row, end_row, start_col, positions, direccion, fila_inicial)
-        elif abs(end_col - start_col) == 1 and end_row == start_row + direccion:
-            return self._es_movimiento_captura(end_row, end_col, positions)
+        # Movimiento hacia adelante en la misma columna
+        if columna_actual == nueva_columna:
+            # Si es el primer movimiento del peón, puede avanzar dos casillas
+            if fila_actual == fila_inicial and nueva_fila == fila_actual + 2 * direction:
+                return positions[fila_actual + direction][columna_actual] is None and positions[nueva_fila][columna_actual] is None
+            # Movimiento normal de una casilla hacia adelante
+            elif nueva_fila == fila_actual + direction:
+                return positions[nueva_fila][columna_actual] is None
+
+        # Movimiento de captura en diagonal
+        elif abs(nueva_columna - columna_actual) == 1 and nueva_fila == fila_actual + direction:
+            return positions[nueva_fila][nueva_columna] is not None
+
         return False
 
-    def _es_movimiento_adelante(self, start_row, end_row, start_col, positions, direccion, fila_inicial):
-        """Valida el movimiento del peón hacia adelante."""
-        if start_row == fila_inicial and end_row == start_row + 2 * direccion:
-            return positions[start_row + direccion][start_col] is None and positions[end_row][start_col] is None
-        elif end_row == start_row + direccion:
-            return positions[end_row][start_col] is None
-        return False
 
-    def _es_movimiento_captura(self, end_row, end_col, positions):
-        """Valida el movimiento de captura del peón."""
-        return positions[end_row][end_col] is not None

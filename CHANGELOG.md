@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.2.6) 26/09/24
+### Changed
+- cambion en el codigo de peon.py
+- push de cambios en archivos varios
 ## (0.2.5) 22/09/24
 ### Changed
 - cambio en la complejidad de codigo para peon.py
