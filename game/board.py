@@ -5,7 +5,7 @@ from .alfil import Alfil
 from .caballo import Caballo
 from .reina import Reina
 from .rey import Rey
-from .exepciones import *
+from .exepciones import * 
 class Board:
     def __init__(self):
         #creacion del tablero de 8x8
@@ -62,19 +62,26 @@ class Board:
     def can_move(self, origen, destino):
         piece = self.get_piece(origen[0], origen[1])
         destino_piece = self.get_piece(destino[0], destino[1])
-    
+
         if piece is None:
             raise PieceNotFoundError("Pieza no encontrada en el tablero.")
-    
-        # Validar si el movimiento es válido y si el camino está libre
-        if not (self.is_diagonal_move(origen, destino) and piece.diagonal_move_positions(destino, self.__positions__)) \
-        and not (self.is_vertical_move(origen, destino) and piece.vertical_move_positions(destino, self.__positions__)) \
-        and not (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__)):
+
+        # Verifica si el movimiento es válido
+        if not self.is_valid_move(piece, origen, destino):
             raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.")
-    
-        # Validar si hay una pieza en el destino que sea del mismo color
+        
+        # Verifica si hay una pieza en el destino que sea del mismo color
         if destino_piece is not None and piece.color == destino_piece.color:
             raise InvalidMoveError("No puedes moverte donde tienes otra pieza.")
+    
+    def is_valid_move(self, piece, origen, destino):
+        """Verifica si el movimiento es válido para la pieza y el camino está despejado"""
+        return (
+            (self.is_diagonal_move(origen, destino) and piece.diagonal_move_positions(destino, self.__positions__)) or
+            (self.is_vertical_move(origen, destino) and piece.vertical_move_positions(destino, self.__positions__)) or
+            (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__))
+        )
+
 
     def update_positions(self, origen, destino):
         piece = self.get_piece(origen[0], origen[1])
@@ -133,9 +140,9 @@ class Board:
 
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # Crear una instancia de Board
-    tablero = Board()
+#    tablero = Board()
 
     # Imprimir la representación del tablero usando __repr__
-    print(tablero)
+#    print(tablero)

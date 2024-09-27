@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.2.8) 26/09/24
+### Changed
+- cambio en la complejidad de codigo para board.py
 ## (0.2.7) 26/09/24
 ### Changed
 - cambio en el codigo de peon.py, para reducir complejidad
