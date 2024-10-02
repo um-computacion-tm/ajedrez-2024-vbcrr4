@@ -1,26 +1,26 @@
-from game.piece import Piece
+from .piece import Piece
 
 class Rey(Piece):
-    def __init__(self, color):
-        super().__init__(color)
-        self.__nombre__ = "Rey"
-        self.__value__ = self.assign_value()
-        self.assign_symbol()
-        self.assign_value()
-
-    def assign_symbol(self):
-        self.__symbol__ = "♔" if self.__color__ == "white" else "♚"
+    __b_str__ = "♚"
+    __w_str__ = "♔"
+    def __init__(self, color, position):
+        super().__init__(color, position)
 
     def assign_value(self):
         return 1000
     
-    def is_valid_move(self, star_pos, end_pos):
+    def move_king(self, position_new, positions):
         """
-        Verifica si el movimiento es válido para el Rey.
-        El Rey se mueve en cualquier dirección, pero solo una casilla.
+        Verifica si un movimiento es válido para un rey.
         """
-        direct_x = abs(star_pos[0] - end_pos[0])
-        direct_y = abs(star_pos[1] - end_pos[1])
-        return (direct_x, direct_y) in [(0, 1), (1, 0), (1, 1)]
+        start_row, start_col, end_row, end_col = self.get_cords(position_new)
+        
+        # Verifica que el movimiento sea de máximo un cuadrado en cualquier dirección
+        if abs(end_row - start_row) <= 1 and abs(end_col - start_col) <= 1:
+            # Verifica si la posición de destino está ocupada por una pieza del mismo color
+            destination_piece = positions[end_row][end_col]
+            if destination_piece is None or destination_piece.get_color != self.get_color:
+                return True  # El movimiento es válido
+        return False  # El movimiento no es válido
     
 

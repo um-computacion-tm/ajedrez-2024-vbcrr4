@@ -6,3 +6,9 @@ class OutOfBoundsError(Exception):
 
 class InvalidColorError(Exception): 
     pass
+
+class InvalidPieceMovement(Exception):
+    pass
+
+class PieceNotFoundError(Exception):
+    pass

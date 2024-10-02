@@ -1,22 +1,20 @@
-from game.piece import Piece
+from .piece import Piece
 
 class Torre(Piece):
-    def __init__(self, color):
-        super().__init__(color)
-        self.__nombre__ = "Torre"
-        self.__value__ = self.assign_value()
-        self.assign_symbol()
-        self.assign_value()
-
-    def assign_symbol(self):
-        self.__symbol__ = "♖" if self.__color__ == "white" else "♜"
+    __w_str__ = "♖"
+    __b_str__ = "♜"
+    def __init__(self, color, position):
+        super().__init__(color, position)
 
     def assign_value(self):
         return 5
 
-    def is_valid_move(self, start_pos, end_pos):
+    def move_vertical_or_horizontal(self, position_new, positions):
         """
-        Verifica si el movimiento es válido para la Torre.
-        La Torre se mueve en líneas rectas horizontales o verticales.
+        Verifica si un movimiento vertical es válido para una torre.
         """
-        return start_pos[0] == end_pos[0] or start_pos[1] == end_pos[1]
+        if self.vertical_move_positions(position_new, positions) or self.horizontal_move_positions(position_new, positions):
+
+            return True
+        
+        return False

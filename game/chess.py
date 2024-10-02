@@ -1,9 +1,35 @@
-from board import Board
+from .board import Board
 
-class Chess:
+class Game:
     def __init__(self):
-        self.board = Board()
-        self.turn = "w"        
-    def move(self, from_row, from_col, to_row, to_col):
-        self.board.move(from_row, from_col, to_row, to_col)
-        self.turn = "b" if self.turn == "w" else "w"
+        self.__board__ = Board()
+        self.__winner__ = None
+        self.__turn__ = "white"
+
+    @property
+    def set_board(self):
+        return self.__board__
+    
+    def get_turn(self):
+        return self.__turn__
+    
+    def change_turn(self):
+        self.__turn__ = "black" if self.__turn__ == "white" else "white"
+
+    def inittial_game(self):
+        self.__board__ = Board()
+        self.__turn__ = "white"
+
+    def end_game(self):
+        self.__board__ = None
+        self.__turn__ = None
+
+    def get_piece(self, row, col):
+        return self.__board__.get_piece(row, col)
+    
+    def move (self):
+        pass
+    
+
+
+    
