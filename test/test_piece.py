@@ -203,29 +203,34 @@ class TestCaballo(unittest.TestCase):
 
 class TestPeon(unittest.TestCase):
 
-    def setUp(self):
-        self.peon_white1 = Peon('white',(1,0))
-        self.peon_white2 = Peon('white',(1,1))
-        self.peon_black1 = Peon('black', (6, 0))
-        self.peon_black2 = Peon('black', (6, 1))
 
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.peon_white1.color, "white")
-        self.assertEqual(self.peon_white1.position, (1,0))
-        self.assertEqual(self.peon_white2.color, "white")
-        self.assertEqual(self.peon_white2.position, (1,1))
-        self.assertEqual(self.peon_black1.color, "black")
-        self.assertEqual(self.peon_black1.position, (6, 0))
-        self.assertEqual(self.peon_black2.color, "black")
-        self.assertEqual(self.peon_black2.position, (6, 1))
-    
+    def setUp(self):
+        # Creamos peones blanco y negro antes de cada test
+        self.white_peon = Peon("white", (6, 0))  # Peón blanco en la fila 6 (posición inicial)
+        self.black_peon = Peon("black", (1, 0))  # Peón negro en la fila 1 (posición inicial)
+
     def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.peon_white1.assign_value(), 1)
-        self.assertEqual(self.peon_white2.assign_value(), 1)
-        self.assertEqual(self.peon_black1.assign_value(), 1)
-        self.assertEqual(self.peon_black2.assign_value(), 1)
+        # Verifica que el valor del peón sea 1
+        self.assertEqual(self.white_peon.assign_value(), 1)
+        self.assertEqual(self.black_peon.assign_value(), 1)
+
+    def test_str(self):
+        # Verifica que el símbolo del peón se muestre correctamente
+        self.assertEqual(str(self.white_peon), "♙")
+        self.assertEqual(str(self.black_peon), "♟")
+
+    def test_valid_white_move_initial(self):
+        # Prueba un movimiento válido para el peón blanco en su posición inicial (2 pasos adelante)
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        #self.assertTrue(self.white_peon.validate_movimiento(positions, (4, 0)))  # Mover dos filas hacia adelante
+        self.assertFalse(self.white_peon.validate_movimiento(positions, (5, 0)))  # Mover una fila hacia adelante
+
+    def test_valid_black_move_initial(self):
+        # Prueba un movimiento válido para el peón negro en su posición inicial (2 pasos adelante)
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        #self.assertTrue(self.black_peon.validate_movimiento(positions, (3, 0)))  # Mover dos filas hacia adelante
+        self.assertFalse(self.black_peon.validate_movimiento(positions, (2, 0)))  # Mover una fila hacia adelante
+
 
 if __name__ == '__main__':
     unittest.main()

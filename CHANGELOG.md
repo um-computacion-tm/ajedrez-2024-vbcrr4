@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.3.0) 2/10/24
+### Added
+- agregado de nuevo metodo para verificar si el camino esta libre para realizar un movimiento en peon.py
+- agregado de test para peon.py
 ## (0.2.9) 27/09/24
 ### Added 
 - creacion de codigo para test_chess.py

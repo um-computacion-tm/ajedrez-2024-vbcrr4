@@ -31,18 +31,18 @@ class Peon(Piece):
     
             # Valida que el movimiento sea en la misma columna
             if actual_row == initial_row:
-                if self.move_one_cell(positions, position_new, direction):
+                if self.move(positions, position_new, direction):
                     result = True
                 elif row == actual_row + 2 * direction and positions[actual_row + direction][actual_col] is None and positions[actual_row + 2 * direction][actual_col] is None:
                     result = True
-            elif self.move_one_cell(positions, position_new, direction):
+            elif self.move(positions, position_new, direction):
                 result = True
         elif row == actual_row + direction and abs(col - actual_col) == 1 and positions[row][col] is not None:
         # Movimiento de captura
             result = True
         return result
     
-    def move_(self, positions, position_new, direction):
+    def move(self, positions, position_new, direction):
         row, col, actual_row, actual_col = self.get_cords(position_new)
         if row == actual_row + direction and positions[actual_row + direction][actual_col] is None:
             return True
