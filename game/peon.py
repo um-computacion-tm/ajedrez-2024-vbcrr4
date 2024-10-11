@@ -1,28 +1,49 @@
-from game.piece import Piece
+from .piece import Piece
 
 class Peon(Piece):
-    def __init__(self, color):
-        super().__init__(color)
-        self.__nombre__ = "Peon"
-        self.__value__ = self.assign_value()
-        self.assign_symbol()
-        self.assign_value()
-
-    def assign_symbol(self):
-        self.__symbol__ = "♙" if self.__color__ == "white" else "♟"
+    __w_str__ = "♙"
+    __b_str__ = "♟"
+    def __init__(self, color, position):
+        super().__init__(color, position)
 
     def assign_value(self):
         return 1
 
-    def is_valid_move(self, start_pos, end_pos):
-        """
-        Verifica si el movimiento es válido para el Peón.
-        El Peón se mueve hacia adelante una casilla, excepto en su primer movimiento,
-        donde puede moverse dos casillas.
-        """
-        direct_x = start_pos[0] - end_pos[0]
-        direct_y = start_pos[1] - end_pos[1]
+    def validate_movimiento(self, positions, position_new):
         if self.__color__ == "white":
-            return (direct_x == 1 or (direct_x == 2 and start_pos[0] == 6)) and direct_y == 0
-        else:
-            return (direct_x == -1 or (direct_x == -2 and start_pos[0] == 1)) and direct_y == 0
+            return self.valid_white_move(positions, position_new)
+        elif self.__color__ == "black":
+            return self.valid_black_move(positions, position_new)
+        return False
+
+    def valid_black_move(self, positions, position_new):
+
+        return self.is_valid_move(positions, position_new, 1, 1)
+    
+    def valid_white_move(self, positions, position_new):
+        return self.is_valid_move(positions, position_new, -1, 6)
+
+
+    def is_valid_move(self, positions, position_new, direction, initial_row):
+        row, col, actual_row, actual_col = self.get_cords(position_new)
+        result = False
+        if col == actual_col: 
+    
+            # Valida que el movimiento sea en la misma columna
+            if actual_row == initial_row:
+                if self.move(positions, position_new, direction):
+                    result = True
+                elif row == actual_row + 2 * direction and positions[actual_row + direction][actual_col] is None and positions[actual_row + 2 * direction][actual_col] is None:
+                    result = True
+            elif self.move(positions, position_new, direction):
+                result = True
+        elif row == actual_row + direction and abs(col - actual_col) == 1 and positions[row][col] is not None:
+        # Movimiento de captura
+            result = True
+        return result
+    
+    def move(self, positions, position_new, direction):
+        row, col, actual_row, actual_col = self.get_cords(position_new)
+        if row == actual_row + direction and positions[actual_row + direction][actual_col] is None:
+            return True
+        return False

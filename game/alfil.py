@@ -1,26 +1,21 @@
-from game.piece import Piece
+from .piece import Piece
 
 class Alfil(Piece):
-    def __init__(self, color):
-        super().__init__(color)
-        self.__nombre__ = "Alfil"
-        self.__value__ = self.assign_value()
-        self.assign_symbol()
-        self.assign_value()
-
-    def assign_symbol(self):
-        self.__symbol__ = "♗" if self.__color__ == "white" else "♝"
+    __w_str__ = "♗"
+    __b_str__ = "♝"
+    def __init__(self, color, positions):
+        super().__init__(color, positions)
 
     def assign_value(self):
         return 3
   
-    def is_valid_move(self, star_pos, end_pos):
+    def alfil_move(self, position_new, positions):
         """
         Verifica si el movimiento es válido para el Alfil.
-        El Alfil se mueve en diagonales.
+        El Alfil se mueve en líneas diagonales.
         """
-        direct_x = abs(star_pos[0] - end_pos[0])
-        direct_y = abs(star_pos[1] - end_pos[1])
-        return direct_x == direct_y
-    
+        if self.diagonal_move_positions(position_new, positions):
+            return True
+        
+        return False
     

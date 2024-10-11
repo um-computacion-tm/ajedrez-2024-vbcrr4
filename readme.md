@@ -17,5 +17,6 @@ Este proyecto es una implementación del juego de ajedrez en Python. El objetivo
 [![Test Coverage](https://api.codeclimate.com/v1/badges/feae1058b7acb7817753/test_coverage)](https://codeclimate.com/github/um-computacion-tm/ajedrez-2024-vbcrr4/test_coverage)
 
 ## Author
-
+- Valentin I. Becerra
 - [@vbcrr4](https://www.github.com/vbcrr4)
+- Legajo: 62180
