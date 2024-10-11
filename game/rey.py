@@ -19,7 +19,7 @@ class Rey(Piece):
         if abs(end_row - start_row) <= 1 and abs(end_col - start_col) <= 1:
             # Verifica si la posición de destino está ocupada por una pieza del mismo color
             destination_piece = positions[end_row][end_col]
-            if destination_piece is None or destination_piece.get_color != self.get_color:
+            if destination_piece is None or destination_piece.color != self.color:
                 return True  # El movimiento es válido
         return False  # El movimiento no es válido
     

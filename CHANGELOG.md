@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.3.2) 11/10/24
+### Changed
+- cambio en el codigo de rey.py
+- cambio en el codigo de los test para rey.py
 ## (0.3.1) 11/10/24
 ### Changed
 - cambio en el codigo de caballo.py

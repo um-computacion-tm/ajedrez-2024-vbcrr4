@@ -116,20 +116,45 @@ class TestTorre(unittest.TestCase):
 class TestRey(unittest.TestCase):
 
     def setUp(self):
-        self.rey_white = Rey('white',(0,3))
-        self.rey_black = Rey('black', (7, 3))
+        # Creamos reyes blanco y negro antes de cada test
+        self.white_king = Rey("white", (7, 4))  # Rey blanco en la posición inicial
+        self.black_king = Rey("black", (0, 4))  # Rey negro en la posición inicial
 
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.rey_white.color, "white")
-        self.assertEqual(self.rey_white.position, (0,3))
-        self.assertEqual(self.rey_black.color, "black")
-        self.assertEqual(self.rey_black.position, (7, 3))
-    
     def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.rey_white.assign_value(), 1000)
-        self.assertEqual(self.rey_black.assign_value(), 1000)
+        # Verifica que el valor del rey sea 1000
+        self.assertEqual(self.white_king.assign_value(), 1000)
+        self.assertEqual(self.black_king.assign_value(), 1000)
+
+    def test_str(self):
+        # Verifica que el símbolo del rey se muestre correctamente
+        self.assertEqual(str(self.white_king), "♔")
+        self.assertEqual(str(self.black_king), "♚")
+
+    def test_move_king_valid(self):
+        # Verifica que los movimientos válidos del rey sean permitidos
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertTrue(self.white_king.move_king((6, 4), positions))  # Movimiento hacia abajo
+        self.assertTrue(self.white_king.move_king((6, 5), positions))  # Movimiento en diagonal
+        self.assertTrue(self.white_king.move_king((7, 5), positions))  # Movimiento lateral
+
+    def test_move_king_invalid(self):
+        # Verifica que los movimientos inválidos del rey no sean permitidos
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertFalse(self.white_king.move_king((5, 4), positions))  # Movimiento de 2 casillas hacia abajo
+        self.assertFalse(self.white_king.move_king((7, 6), positions))  # Movimiento de 2 casillas hacia la derecha
+
+    def test_move_king_blocked_by_same_color(self):
+        # Verifica que el rey no pueda moverse a una casilla ocupada por una pieza del mismo color
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[6][4] = Rey("white", (6, 4))  # Colocamos otro rey blanco en la posición (6, 4)
+        self.assertFalse(self.white_king.move_king((6, 4), positions))  # Movimiento inválido, casilla ocupada
+
+    def test_move_king_capture_opponent(self):
+        # Verifica que el rey pueda capturar una pieza del color contrario
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[6][4] = Rey("black", (6, 4))  # Colocamos un rey negro en la posición (6, 4)
+        self.assertTrue(self.white_king.move_king((6, 4), positions))  # Movimiento válido, captura
+
 
 
 class TestAlfil(unittest.TestCase):
@@ -176,7 +201,7 @@ class TestReina(unittest.TestCase):
         self.assertEqual(self.reina_black.assign_value(), 9)
 
 class TestCaballo(unittest.TestCase):
-    
+
     def setUp(self):
         # Creamos caballos blanco y negro antes de cada test
         self.white_knight = Caballo("white", (7, 1))  # Caballo blanco en la fila 7, columna 1 (posición inicial)
