@@ -176,29 +176,67 @@ class TestReina(unittest.TestCase):
         self.assertEqual(self.reina_black.assign_value(), 9)
 
 class TestCaballo(unittest.TestCase):
-    def setUp(self):
-        self.caballo_white1 = Caballo('white',(0,1))
-        self.caballo_white2 = Caballo('white',(0,6))
-        self.caballo_black1 = Caballo('black', (7, 1))
-        self.caballo_black2 = Caballo('black', (7, 6))
-
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.caballo_white1.color, "white")
-        self.assertEqual(self.caballo_white1.position, (0,1))
-        self.assertEqual(self.caballo_white2.color, "white")
-        self.assertEqual(self.caballo_white2.position, (0,6))
-        self.assertEqual(self.caballo_black1.color, "black")
-        self.assertEqual(self.caballo_black1.position, (7, 1))
-        self.assertEqual(self.caballo_black2.color, "black")
-        self.assertEqual(self.caballo_black2.position, (7, 6))
     
+    def setUp(self):
+        # Creamos caballos blanco y negro antes de cada test
+        self.white_knight = Caballo("white", (7, 1))  # Caballo blanco en la fila 7, columna 1 (posición inicial)
+        self.black_knight = Caballo("black", (0, 1))  # Caballo negro en la fila 0, columna 1 (posición inicial)
+
     def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.caballo_white1.assign_value(), 3)
-        self.assertEqual(self.caballo_white2.assign_value(), 3)
-        self.assertEqual(self.caballo_black1.assign_value(), 3)
-        self.assertEqual(self.caballo_black2.assign_value(), 3)
+        # Verifica que el valor del caballo sea 3
+        self.assertEqual(self.white_knight.assign_value(), 3)
+        self.assertEqual(self.black_knight.assign_value(), 3)
+
+    def test_str(self):
+        # Verifica que el símbolo del caballo se muestre correctamente
+        self.assertEqual(str(self.white_knight), "♘")
+        self.assertEqual(str(self.black_knight), "♞")
+
+    def test_is_valid_move(self):
+        # Verifica que los movimientos en "L" sean válidos
+        self.assertTrue(self.white_knight.is_valid_move(2, 1))  # Movimiento válido
+        self.assertTrue(self.white_knight.is_valid_move(1, 2))  # Movimiento válido
+        self.assertFalse(self.white_knight.is_valid_move(2, 2))  # Movimiento inválido
+        self.assertFalse(self.white_knight.is_valid_move(3, 0))  # Movimiento inválido
+
+    def test_is_valid_destination(self):
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+
+        # Casilla vacía
+        self.assertTrue(self.white_knight.is_valid_destination(5, 2, positions))
+
+        # Casilla ocupada por una pieza del mismo color (invalida)
+        positions[5][2] = Caballo("white", (5, 2))
+        self.assertFalse(self.white_knight.is_valid_destination(5, 2, positions))
+
+        # Casilla ocupada por una pieza de color contrario (válido para captura)
+        positions[5][2] = Caballo("black", (5, 2))
+        self.assertTrue(self.white_knight.is_valid_destination(5, 2, positions))
+
+    def test_move_caballo_valid(self):
+        # Prueba un movimiento válido en forma de "L"
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertTrue(self.white_knight.move_caballo((5, 2), positions))  # Movimiento válido
+        self.assertTrue(self.white_knight.move_caballo((6, 3), positions))  # Movimiento válido
+
+    def test_move_caballo_invalid(self):
+        # Prueba un movimiento inválido que no es en forma de "L"
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertFalse(self.white_knight.move_caballo((6, 6), positions))  # Movimiento inválido
+        self.assertFalse(self.white_knight.move_caballo((7, 3), positions))  # Movimiento inválido
+
+    def test_move_caballo_capture(self):
+        # Prueba un movimiento válido de captura
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[5][2] = Caballo("black", (5, 2))  # Colocamos un caballo negro en la casilla (5, 2)
+        self.assertTrue(self.white_knight.move_caballo((5, 2), positions))  # Movimiento válido de captura
+
+    def test_move_caballo_blocked_by_same_color(self):
+        # Prueba que el caballo no pueda moverse a una casilla ocupada por una pieza del mismo color
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[5][2] = Caballo("white", (5, 2))  # Colocamos un caballo blanco en la casilla (5, 2)
+        self.assertFalse(self.white_knight.move_caballo((5, 2), positions))  # Movimiento inválido (casilla ocupada)
+
     
 
 class TestPeon(unittest.TestCase):

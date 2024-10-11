@@ -21,7 +21,7 @@ class Caballo(Piece):
         Verifica si la casilla de destino está vacía o tiene una pieza del color contrario.
         """
         destination_piece = positions[end_row][end_col]
-        return destination_piece is None or destination_piece.get_color != self.get_color
+        return destination_piece is None or destination_piece.color != self.color
     
 
     def move_caballo(self, position_new, positions):
@@ -37,7 +37,7 @@ class Caballo(Piece):
         col_diff = abs(end_col - start_col)
         
         # Verifica si el movimiento es en 'L' y si el destino es válido
-        if self.is_valid_knight_move(row_diff, col_diff) and self.is_valid_destination(end_row, end_col, positions):
+        if self.is_valid_move(row_diff, col_diff) and self.is_valid_destination(end_row, end_col, positions):
             return True
         
         return False
