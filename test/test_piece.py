@@ -160,28 +160,45 @@ class TestRey(unittest.TestCase):
 class TestAlfil(unittest.TestCase):
 
     def setUp(self):
-        self.alfil_white1 = Alfil('white',(0,2))
-        self.alfil_white2 = Alfil('white',(0,5))
-        self.alfil_black1 = Alfil('black', (7, 2))
-        self.alfil_black2 = Alfil('black', (7, 5))
+        # Creamos alfiles blanco y negro antes de cada test
+        self.white_alfil = Alfil("white", (7, 2))  # Alfil blanco en la posición inicial
+        self.black_alfil = Alfil("black", (0, 2))  # Alfil negro en la posición inicial
 
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.alfil_white1.color, "white")
-        self.assertEqual(self.alfil_white1.position, (0,2))
-        self.assertEqual(self.alfil_white2.color, "white")
-        self.assertEqual(self.alfil_white2.position, (0,5))
-        self.assertEqual(self.alfil_black1.color, "black")
-        self.assertEqual(self.alfil_black1.position, (7, 2))
-        self.assertEqual(self.alfil_black2.color, "black")
-        self.assertEqual(self.alfil_black2.position, (7, 5))
-    
     def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.alfil_white1.assign_value(), 3)
-        self.assertEqual(self.alfil_white2.assign_value(), 3)
-        self.assertEqual(self.alfil_black1.assign_value(), 3)
-        self.assertEqual(self.alfil_black2.assign_value(), 3)
+        # Verifica que el valor del alfil sea 3
+        self.assertEqual(self.white_alfil.assign_value(), 3)
+        self.assertEqual(self.black_alfil.assign_value(), 3)
+
+    def test_str(self):
+        # Verifica que el símbolo del alfil se muestre correctamente
+        self.assertEqual(str(self.white_alfil), "♗")
+        self.assertEqual(str(self.black_alfil), "♝")
+
+    def test_alfil_move_valid(self):
+        # Prueba movimientos válidos en diagonal
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertTrue(self.white_alfil.alfil_move((5, 0), positions))  # Movimiento diagonal válido
+        self.assertTrue(self.white_alfil.alfil_move((4, 5), positions))  # Otro movimiento diagonal válido
+
+    def test_alfil_move_invalid(self):
+        # Prueba movimientos inválidos (no diagonales) para el alfil
+        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
+        self.assertFalse(self.white_alfil.alfil_move((7, 3), positions))  # Movimiento horizontal inválido
+        self.assertFalse(self.white_alfil.alfil_move((5, 2), positions))  # Movimiento vertical inválido
+
+    def test_alfil_move_blocked(self):
+        # Verifica que el movimiento del alfil sea inválido si hay una pieza bloqueando el camino
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[6][3] = Alfil("white", (6, 3))  # Colocamos una pieza en la diagonal del alfil
+        self.assertFalse(self.white_alfil.alfil_move((5, 4), positions))  # Movimiento inválido, bloqueado
+
+
+    def test_alfil_move_blocked_by_same_color(self):
+        # Verifica que el alfil no pueda moverse a una casilla ocupada por una pieza del mismo color
+        positions = [[None for _ in range(8)] for _ in range(8)]
+        positions[5][0] = Alfil("white", (5, 0))  # Colocamos un alfil blanco en la diagonal
+        self.assertFalse(self.white_alfil.alfil_move((5, 0), positions))  # Movimiento inválido, casilla ocupada
+
         
 class TestReina(unittest.TestCase):
     def setUp(self):
