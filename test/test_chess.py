@@ -1,48 +1,56 @@
 import unittest
 from game.chess import Game
-from game.board import Board
+from game.piece import *
+from game.exepciones import *   
+from unittest.mock import Mock
 
-class TestChess(unittest.TestCase):
+class TestGame(unittest.TestCase):
 
     def setUp(self):
         # Creamos una instancia de Game antes de cada test
         self.game = Game()
+        self.game.__board__ = Mock()  # Usamos un mock para el tablero para aislar las pruebas
 
-    def test_initial_game_state(self):
-        # Verifica el estado inicial del juego
-        self.assertIsInstance(self.game.set_board, Board)
+    def test_get_turn(self):
+        # Verifica que el turno inicial es "white"
         self.assertEqual(self.game.get_turn(), "white")
 
     def test_change_turn(self):
-        # Verifica que el turno cambie correctamente
-        self.assertEqual(self.game.get_turn(), "white")  # Turno inicial
-        self.game.change_turn()
+        # Verifica el cambio de turno entre "white" y "black"
+        self.assertEqual(self.game.change_turn(), "black")  # Cambia a negro
         self.assertEqual(self.game.get_turn(), "black")
-        self.game.change_turn()
+        self.assertEqual(self.game.change_turn(), "white")  # Cambia de vuelta a blanco
         self.assertEqual(self.game.get_turn(), "white")
 
-    def test_inittial_game(self):
-        # Verifica que el juego se inicialice correctamente
-        self.game.change_turn()  # Cambiamos el turno para probar la reinicialización
-        self.game.inittial_game()  # Reinicia el juego
-        self.assertEqual(self.game.get_turn(), "white")  # Debe reiniciarse a "white"
-        self.assertIsInstance(self.game.set_board, Board)
+    def test_validate_move_valid_piece(self):
+        # Simulamos un movimiento válido con una pieza del turno correcto
+        piece = Mock()  # Mock de una pieza válida
+        self.game.__board__.get_piece.return_value = piece
+        self.game.__board__.color_pieces.return_value = "white"  # El color de la pieza es "white"
+        
+        result = self.game.validate_move(0, 0)
+        self.assertEqual(result, piece)  # Debe devolver la pieza si todo es correcto
 
-    def test_end_game(self):
-        # Verifica que el juego termine correctamente
-        self.game.end_game()
-        self.assertIsNone(self.game.set_board)
-        self.assertIsNone(self.game.get_turn())
+    def test_validate_move_no_piece(self):
+        # Simulamos una posición sin pieza, lo que debe lanzar PieceNotFoundError
+        self.game.__board__.get_piece.return_value = None
+        
+        with self.assertRaises(PieceNotFoundError):
+            self.game.validate_move(0, 0, from_input=["a", 1])
 
-    def test_get_piece(self):
-        # Verifica que se pueda obtener una pieza del tablero
-        piece = self.game.get_piece(0, 0)
-        self.assertIsNotNone(piece)  # Debería haber una pieza en (0, 0)
-        self.assertEqual(piece.color, "White")  # Suponiendo que es una pieza blanca
+    def test_validate_move_wrong_color(self):
+        # Simulamos un movimiento con una pieza del color incorrecto para el turno
+        piece = Mock()
+        self.game.__board__.get_piece.return_value = piece
+        self.game.__board__.color_pieces.return_value = "black"  # El color de la pieza es "black"
+        
+        with self.assertRaises(InvalidColorError):
+            self.game.validate_move(0, 0)
 
-        # Verificar que no haya pieza en una casilla vacía
-        empty_piece = self.game.get_piece(3, 3)
-        self.assertIsNone(empty_piece)  # No debería haber una pieza en (3, 3)
+    def test_print_board(self):
+        # Verifica que se llama al método print_board del tablero
+        self.game.print_board()
+        self.game.__board__.print_board.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()

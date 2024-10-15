@@ -1,8 +1,8 @@
 from .piece import Piece
 
 class Alfil(Piece):
-    __w_str__ = "♗"
-    __b_str__ = "♝"
+    __w_str__ = "♝"
+    __b_str__ = "♗"
     def __init__(self, color, positions):
         super().__init__(color, positions)
 

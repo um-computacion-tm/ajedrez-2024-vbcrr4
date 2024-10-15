@@ -1,4 +1,4 @@
-from .piece import Piece
+
 from .torre import Torre
 from .peon import Peon
 from .alfil import Alfil
@@ -17,29 +17,29 @@ class Board:
                 col.append(None)
             self.__positions__.append(col)
 
-        self.__positions__[0][0] = Torre("White", (0, 0))
-        self.__positions__[0][1] = Caballo("White", (0, 1))
-        self.__positions__[0][2] = Alfil("White", (0, 2))
-        self.__positions__[0][3] = Rey("White", (0, 3))
-        self.__positions__[0][4] = Reina("White", (0, 4))
-        self.__positions__[0][5] = Alfil("White", (0, 5))
-        self.__positions__[0][6] = Caballo("White", (0, 6))
-        self.__positions__[0][7] = Torre("White", (0, 7))
+        self.__positions__[0][0] = Torre("Black", (0, 0))
+        self.__positions__[0][1] = Caballo("Black", (0, 1))
+        self.__positions__[0][2] = Alfil("Black", (0, 2))
+        self.__positions__[0][3] = Rey("Black", (0, 3))
+        self.__positions__[0][4] = Reina("Black", (0, 4))
+        self.__positions__[0][5] = Alfil("Black", (0, 5))
+        self.__positions__[0][6] = Caballo("Black", (0, 6))
+        self.__positions__[0][7] = Torre("Black", (0, 7))
 
         for i in range(8):
-            self.__positions__[1][i] = Peon("White", (1, i))
+            self.__positions__[1][i] = Peon("Black", (1, i))
 
-        self.__positions__[7][0] = Torre("Black", (7, 0))
-        self.__positions__[7][1] = Caballo("Black", (7, 1))
-        self.__positions__[7][2] = Alfil("Black", (7, 2))
-        self.__positions__[7][3] = Rey("Black", (7, 3))
-        self.__positions__[7][4] = Reina("Black", (7, 4))
-        self.__positions__[7][5] = Alfil("Black", (7, 5))
-        self.__positions__[7][6] = Caballo("Black", (7, 6))
-        self.__positions__[7][7] = Torre("Black", (7, 7))
+        self.__positions__[7][0] = Torre("White", (7, 0))
+        self.__positions__[7][1] = Caballo("White", (7, 1))
+        self.__positions__[7][2] = Alfil("White", (7, 2))
+        self.__positions__[7][3] = Rey("White", (7, 3))
+        self.__positions__[7][4] = Reina("White", (7, 4))
+        self.__positions__[7][5] = Alfil("White", (7, 5))
+        self.__positions__[7][6] = Caballo("White", (7, 6))
+        self.__positions__[7][7] = Torre("White", (7, 7))
 
         for i in range(8):
-            self.__positions__[6][i] = Peon("Black", (6, i))
+            self.__positions__[6][i] = Peon("White", (6, i))
     
     def get_piece(self, row, col):
         return self.__positions__[row][col]
@@ -139,10 +139,3 @@ class Board:
         return board_repr
 
 
-
-#if __name__ == "__main__":
-    # Crear una instancia de Board
-#    tablero = Board()
-
-    # Imprimir la representación del tablero usando __repr__
-#    print(tablero)

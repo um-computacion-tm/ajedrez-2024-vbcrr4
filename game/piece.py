@@ -15,7 +15,7 @@ class Piece():
         self.__position__ = position_new
     
     def __str__(self):
-        return self.__w_str__ if self.__color__ == "white" else self.__b_str__
+        return self.__w_str__ if self.__color__ == "White" else self.__b_str__
     
     def get_cords(self, position_new):
         end_row, end_col = position_new
