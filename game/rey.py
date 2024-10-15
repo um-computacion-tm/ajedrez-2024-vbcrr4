@@ -1,8 +1,8 @@
 from .piece import Piece
 
 class Rey(Piece):
-    __b_str__ = "♚"
-    __w_str__ = "♔"
+    __b_str__ = "♔"
+    __w_str__ = "♚"
     def __init__(self, color, position):
         super().__init__(color, position)
 

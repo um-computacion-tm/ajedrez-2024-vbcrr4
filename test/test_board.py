@@ -20,7 +20,7 @@ class TestBoard(unittest.TestCase):
         self.assertIsInstance(self.__board__.get_piece(7, 0), Torre)
         self.assertIsInstance(self.__board__.get_piece(6, 0), Peon)
 
-    def test_get_piece(self):
+    def test_get_piecee(self):
         # Prueba obtener piezas en posiciones específicas
         self.assertIsInstance(self.__board__.get_piece(0, 0), Torre)
         self.assertIsInstance(self.__board__.get_piece(0, 1), Caballo)
@@ -31,6 +31,12 @@ class TestBoard(unittest.TestCase):
     def test_get_piece(self):
         # Prueba que obtener una pieza en una posición específica funcione correctamente
         piece = self.__board__.get_piece(0, 0)
+        self.assertIsInstance(piece, Torre)
+        self.assertEqual(piece.color, "Black")
+    
+    def test_get_piece2(self):
+        # Prueba que obtener una pieza en una posición específica funcione correctamente
+        piece = self.__board__.get_piece(7, 7)
         self.assertIsInstance(piece, Torre)
         self.assertEqual(piece.color, "White")
 
@@ -87,12 +93,13 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.__board__.is_horizontal_move((0, 0), (1, 3)))
 
     def test_board_repr(self):
+        self.maxDiff = None
         __board__ = Board()
         expected_board = """      a       b       c       d       e       f       g       h
    ┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┐
-  8│   ♜   │   ♞   │   ♝   │   ♚   │   ♛   │   ♝   │   ♞   │   ♜   │  8
+  8│   ♖   │   ♘   │   ♗   │   ♔   │   ♕   │   ♗   │   ♘   │   ♖   │  8
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
-  7│   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │   ♟   │  7
+  7│   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │   ♙   │  7
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
   6│       │       │       │       │       │       │       │       │  6
    ├───────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┤
@@ -107,9 +114,16 @@ class TestBoard(unittest.TestCase):
   1│   ♜   │   ♞   │   ♝   │   ♚   │   ♛   │   ♝   │   ♞   │   ♜   │  1
    └───────┴───────┴───────┴───────┴───────┴───────┴───────┴───────┘
       a       b       c       d       e       f       g       h"""
+ 
         self.assertEqual(repr(__board__), expected_board)
+
+
+
+
+
+
 
 if __name__ == "__main__":
     unittest.main()
+   
 
-  

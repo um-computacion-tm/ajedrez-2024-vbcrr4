@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.3.5) 15/10/24
+### Changed
+- arreglo en la representacion del board para que se coloquen bien las representaciones de las piezas.
+- cambio en la representacion de las piezas las blancas se reprensentan con "♜" y las negras con "♖"
+- cambio en los test de piece.py y de board.py 
 ## (0.3.4) 14/10/24
 ### Added
 - nuevos metodos para chess.py
