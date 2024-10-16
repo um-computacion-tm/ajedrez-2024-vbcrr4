@@ -43,35 +43,54 @@ class Board:
     
     def get_piece(self, row, col):
         return self.__positions__[row][col]
+    
+    def set_piece_on_board(self, row, col, piece):
+
+        self.__positions__[row][col] = piece
+
+    def find_piece(self, piece):
+        if piece is not None:
+            for row in range(8):
+                for col in range(8):
+                    if self.__positions__[row][col] == piece:
+                        return (row, col)
+            return None
+        else:
+            return None
+        
 
     def move(self, origen, destino):
         try:
             self.can_move(origen, destino)
-            self.update_positions(origen, destino)
+            self.execute_move(origen, destino)
             return True
         except PieceNotFoundError as e:
-            print(f"Error: {e}")
+            #print(f"Error: {e}")
             raise
         except InvalidPieceMovement as e:
-            print(f"Error: {e}")
+            #print(f"Error: {e}")
             raise
         except InvalidMoveError as e:
-            print(f"Error: {e}")
-            raise  
+            #print(f"Error: {e}")
+            raise 
+        except CantEatKingError as e:
+            raise
 
     def can_move(self, origen, destino):
-        piece = self.get_piece(origen[0], origen[1])
+        origen_piece = self.get_piece(origen)
         destino_piece = self.get_piece(destino[0], destino[1])
 
-        if piece is None:
+        if origen is None:
             raise PieceNotFoundError("Pieza no encontrada en el tablero.")
-
+        elif origen_piece is None:
+            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
+        
         # Verifica si el movimiento es válido
-        if not self.is_valid_move(piece, origen, destino):
+        if not self.is_valid_move(origen_piece, origen, destino):
             raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.")
         
         # Verifica si hay una pieza en el destino que sea del mismo color
-        if destino_piece is not None and piece.color == destino_piece.color:
+        if destino_piece is not None and origen_piece.color == destino_piece.color:
             raise InvalidMoveError("No puedes moverte donde tienes otra pieza.")
     
     def is_valid_move(self, piece, origen, destino):
@@ -82,17 +101,55 @@ class Board:
             (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__))
         )
 
+    def execute_move(self, origen, destino):
+        # Obtiene la pieza en la posición de origen
+        pieza_origen = self.get_piece(origen[0], origen[1])
+        
+        if pieza_origen is None:
+            raise PieceNotFoundError(f"No hay ninguna pieza en {origen}.")
+        
+        # Obtiene la pieza en la posición de destino (si existe)
+        pieza_destino = self.get_piece(destino[0], destino[1])
 
-    def update_positions(self, origen, destino):
-        piece = self.get_piece(origen[0], origen[1])
-        destino_piece = self.get_piece(destino[0], destino[1])
+        # Actualiza la posición de la pieza de origen en el tablero
+        self.set_piece_on_board(destino[0], destino[1], pieza_origen)
+        self.set_piece_on_board(origen[0], origen[1], None)  # Vacía la posición de origen
 
-        # Actualizar posiciones en el tablero
-        self.__positions__[destino[0]][destino[1]] = piece
-        self.__positions__[origen[0]][origen[1]] = None
-        piece.update_position(destino)
-        if destino_piece is not None:
-            destino_piece.update_position(None)
+        # Actualiza la posición interna de la pieza de origen
+        pieza_origen.update_position(destino)
+
+        # Si hay una pieza en el destino (es decir, fue capturada), actualizar su posición
+        if pieza_destino is not None:
+            pieza_destino.update_position(None)
+
+    
+    def find_king(self, color):
+        """Busca el rey del color dado en el tablero.
+        Retorna la posición (fila, columna) del rey o None si no se encuentra.
+        """
+        for row in range(8):
+            for col in range(8):
+                piece = self.get_piece(row, col)
+                if piece is not None and isinstance(piece, Rey) and piece.color.lower() == color.lower():
+                    return (row, col)  # Retorna la posición del rey
+        return None  # Si no se encuentra el rey
+
+    def only_kings_left(self):
+        """Verifica si solo quedan los reyes en el tablero.
+        Retorna True si solo quedan los dos reyes, False en caso contrario.
+        """
+        king_count = 0
+        for row in range(8):
+            for col in range(8):
+                piece = self.get_piece(row, col)
+                if piece is not None:
+                    if isinstance(piece, Rey):
+                        king_count += 1
+                    else:
+                        # Si hay alguna pieza que no es un rey, retornar False
+                        return False
+        # Si hay exactamente 2 reyes en el tablero, retornar True
+        return king_count == 2
 
     def is_diagonal_move(self, origen, destino):
         start_row, start_col = origen
@@ -138,4 +195,7 @@ class Board:
         board_repr += bottom_horizontal_line + "\n" + "  " * 3 + "       ".join([chr(i) for i in range(ord('a'), ord('h')+1)])
         return board_repr
 
-
+    def reset_board(self):
+        for row in range(8):
+            for col in range(8):
+                self.__positions__[row][col] = None
