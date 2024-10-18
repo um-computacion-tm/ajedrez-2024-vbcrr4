@@ -9,7 +9,7 @@ class Torre(Piece):
     def assign_value(self):
         return 5
 
-    def move_vertical_or_horizontal(self, position_new, positions):
+    def torre_move(self, positions, position_new):
         """
         Verifica si un movimiento vertical es válido para una torre.
         """

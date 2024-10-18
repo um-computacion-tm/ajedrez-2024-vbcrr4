@@ -9,7 +9,7 @@ class Rey(Piece):
     def assign_value(self):
         return 1000
     
-    def move_king(self, position_new, positions):
+    def move_king(self, positions, position_new):
         """
         Verifica si un movimiento es válido para un rey.
         """

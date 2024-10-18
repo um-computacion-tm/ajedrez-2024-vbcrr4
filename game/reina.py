@@ -10,7 +10,7 @@ class Reina(Piece):
         return 9
     
   
-    def move_queen(self, position_new, positions):
+    def reina_move(self, positions, position_new):
         """
         Verifica si el movimiento es válido para la Reina.
         La Reina se mueve en líneas rectas horizontales, verticales o diagonales.

@@ -18,8 +18,8 @@ class Piece():
         return self.__w_str__ if self.__color__ == "White" else self.__b_str__
     
     def get_cords(self, position_new):
-        end_row, end_col = position_new
         start_row, start_col = self.__position__
+        end_row, end_col = position_new
         return start_row, start_col, end_row, end_col
 
     def is_path_clear(self, path, positions, row_step, col_step):

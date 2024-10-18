@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.3.7) 18/10/24
+### Added
+- nueva exepcion para un input invalido
+### Changed
+- arreglo en los test de las piezas
+- cambio en la estructuracion de algunos metodos como los de las piezas
+### Issues
+- subir chess.py con el codigo nuevo, pero antes debo de terminar de testear todo de manera correcta.
+## (0.3.6) 15/10/24
+### Added
+- nueva exepcion para un input invalido.
 ## (0.3.5) 15/10/24
 ### Changed
 - arreglo en la representacion del board para que se coloquen bien las representaciones de las piezas.

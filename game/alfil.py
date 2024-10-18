@@ -9,7 +9,7 @@ class Alfil(Piece):
     def assign_value(self):
         return 3
   
-    def alfil_move(self, position_new, positions):
+    def alfil_move(self, positions, position_new):
         """
         Verifica si el movimiento es válido para el Alfil.
         El Alfil se mueve en líneas diagonales.

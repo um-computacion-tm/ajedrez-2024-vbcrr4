@@ -10,11 +10,11 @@ class Peon(Piece):
         return 1
 
     def validate_movimiento(self, positions, position_new):
-        if self.__color__ == "white":
+        if self.__color__ == "White":
             return self.valid_white_move(positions, position_new)
-        elif self.__color__ == "black":
+        elif self.__color__ == "Black":
             return self.valid_black_move(positions, position_new)
-        return False
+        return False    #17
 
     def valid_black_move(self, positions, position_new):
 
@@ -25,25 +25,38 @@ class Peon(Piece):
 
 
     def is_valid_move(self, positions, position_new, direction, initial_row):
-        row, col, actual_row, actual_col = self.get_cords(position_new)
+        start_row, start_col = self.position  # Posición actual del peón
+        end_row, end_col = position_new       # Nueva posición del peón
+        
+        # Prints para depuración
+        print(f"Posición actual del peón: ({start_row}, {start_col})")
+        print(f"Posición destino: ({end_row}, {end_col})")
+        print(f"Direction: {direction}, Fila inicial: {initial_row}")
+        
         result = False
-        if col == actual_col: 
-    
-            # Valida que el movimiento sea en la misma columna
-            if actual_row == initial_row:
+        if start_col == end_col:  # Movimiento en la misma columna
+            if start_row == initial_row:
                 if self.move(positions, position_new, direction):
-                    result = True
-                elif row == actual_row + 2 * direction and positions[actual_row + direction][actual_col] is None and positions[actual_row + 2 * direction][actual_col] is None:
-                    result = True
-            elif self.move(positions, position_new, direction):
-                result = True
-        elif row == actual_row + direction and abs(col - actual_col) == 1 and positions[row][col] is not None:
-        # Movimiento de captura
+                    result = True  #40
+                elif start_row == end_row + 2 * direction and positions[start_row + direction][start_col] is None and positions[start_row + 2 * direction][start_col] is None:
+                    result = True  #42
+            elif self.move(positions, position_new, direction):  #43
+                result = True  #44
+        # Movimiento de captura en diagonal
+        elif end_row == start_row + direction and abs(end_col - start_col) == 1 and positions[end_row][end_col] is not None:
+            print("Movimiento de captura detectado")  # Debug
             result = True
+        
         return result
-    
+
+
+
+
     def move(self, positions, position_new, direction):
-        row, col, actual_row, actual_col = self.get_cords(position_new)
-        if row == actual_row + direction and positions[actual_row + direction][actual_col] is None:
-            return True
+        start_row, start_col, end_row, end_col = self.get_cords(position_new)
+        # Prints para depuración
+        print(f"Moviendo desde ({end_row}, {end_col}) hacia ({start_row}, {start_col}) en dirección {direction}")
+    
+        if start_row == end_row + direction and positions[end_row + direction][end_col] is None:
+            return True  #61
         return False
