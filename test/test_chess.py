@@ -1,56 +1,104 @@
 import unittest
 from game.chess import Game
-from game.piece import *
-from game.exepciones import *   
-from unittest.mock import Mock
+from game.board import Board
+from game.exepciones import *
+from game.rey import Rey
+from game.peon import Peon
 
 class TestGame(unittest.TestCase):
-
     def setUp(self):
-        # Creamos una instancia de Game antes de cada test
-        self.game = Game()
-        self.game.__board__ = Mock()  # Usamos un mock para el tablero para aislar las pruebas
+        self.__game__ = Game()
 
-    def test_get_turn(self):
-        # Verifica que el turno inicial es "white"
-        self.assertEqual(self.game.get_turn(), "white")
+    def test_initial_turn(self):
+        # Verificar que el turno inicial sea "White"
+        self.assertEqual(self.__game__.get_turn(), "White")
 
     def test_change_turn(self):
-        # Verifica el cambio de turno entre "white" y "black"
-        self.assertEqual(self.game.change_turn(), "black")  # Cambia a negro
-        self.assertEqual(self.game.get_turn(), "black")
-        self.assertEqual(self.game.change_turn(), "white")  # Cambia de vuelta a blanco
-        self.assertEqual(self.game.get_turn(), "white")
+        # Verificar el cambio de turnos
+        self.__game__.change_turn()
+        self.assertEqual(self.__game__.get_turn(), "Black")
+        self.__game__.change_turn()
+        self.assertEqual(self.__game__.get_turn(), "White")
 
-    def test_validate_move_valid_piece(self):
-        # Simulamos un movimiento válido con una pieza del turno correcto
-        piece = Mock()  # Mock de una pieza válida
-        self.game.__board__.get_piece.return_value = piece
-        self.game.__board__.color_pieces.return_value = "white"  # El color de la pieza es "white"
+    def test_translate_input_valid(self):
+        # Verificar que se traduzcan correctamente las entradas válidas
+        self.assertEqual(self.__game__.traductor_de_input("A2"), (0, 6))
+        self.assertEqual(self.__game__.traductor_de_input("H8"), (7, 0))
+
+    def test_translate_input_invalid(self):
+        # Verificar que se levanten excepciones para entradas inválidas
+        with self.assertRaises(InvalidInputError):
+            self.__game__.traductor_de_input("QI9")  # Fuera del rango de tablero
+        with self.assertRaises(InvalidInputError):
+            self.__game__.traductor_de_input("AQ9")  # Fila inválida
+        with self.assertRaises(InvalidInputError):
+            self.__game__.traductor_de_input("A")   # Longitud incorrecta
+        with self.assertRaises(InvalidInputError):
+            self.__game__.traductor_de_input("1QA")  # Formato incorrecto
+
+    def test_valid_moves(self):
+    
+        # Verificar que el turno inicial es de las blancas
+        self.assertEqual(self.__game__.get_turn(), "White")
         
-        result = self.game.validate_move(0, 0)
-        self.assertEqual(result, piece)  # Debe devolver la pieza si todo es correcto
-
-    def test_validate_move_no_piece(self):
-        # Simulamos una posición sin pieza, lo que debe lanzar PieceNotFoundError
-        self.game.__board__.get_piece.return_value = None
+        # Verificar un movimiento válido de una pieza blanca
+        self.assertTrue(self.__game__.movimiento("B1", "C3"))
         
-        with self.assertRaises(PieceNotFoundError):
-            self.game.validate_move(0, 0, from_input=["a", 1])
+        # Verificar que después de un movimiento válido, el turno cambie a "Black"
+        self.assertEqual(self.__game__.get_turn(), "Black")
 
-    def test_validate_move_wrong_color(self):
-        # Simulamos un movimiento con una pieza del color incorrecto para el turno
-        piece = Mock()
-        self.game.__board__.get_piece.return_value = piece
-        self.game.__board__.color_pieces.return_value = "black"  # El color de la pieza es "black"
+        # Realizar un movimiento para las piezas negras
+        self.assertTrue(self.__game__.movimiento("A7", "A6"))
         
-        with self.assertRaises(InvalidColorError):
-            self.game.validate_move(0, 0)
+        # Verificar que el turno vuelva a ser "White"
+        self.assertEqual(self.__game__.get_turn(), "White")
 
-    def test_print_board(self):
-        # Verifica que se llama al método print_board del tablero
-        self.game.print_board()
-        self.game.__board__.print_board.assert_called_once()
 
-if __name__ == '__main__':
+    def test_invalid_move(self):
+        # Verificar excepciones por movimientos inválidos
+        with self.assertRaises(InvalidMoveError):
+            self.__game__.movimiento("A3", "A8")
+
+        with self.assertRaises(InvalidMoveError):
+            self.__game__.movimiento("B2", "B8")
+
+
+    def test_verify_victory(self):
+        # Simular que las blancas ganan
+        self.__game__.__board__.reset_board()
+        self.__game__.change_turn()
+        self.__game__.__board__.place_piece(5, 2, Peon('White', (5, 2)))
+        self.__game__.__board__.place_piece(4, 2, Rey('White', (4, 2)))
+        self.__game__.__board__.place_piece(3, 2, Rey('Black', (3, 2)))
+        self.assertEqual(self.__game__.verify_victory(), "Ganan las Blancas")
+
+
+        # Simular un empate (solo quedan los reyes)
+        self.__game__.__board__.reset_board()
+        self.__game__.__board__.place_piece(0, 0, Rey('White', (0, 0)))
+        self.__game__.__board__.place_piece(7, 7, Rey('Black', (7, 7)))
+        self.assertEqual(self.__game__.verify_victory(), "Empate")
+
+        # Simular victoria de las negras
+        self.__game__.__board__.reset_board()
+        self.__game__.change_turn()
+        self.__game__.__board__.place_piece(5, 2, Peon('Black', (5, 2)))
+        self.__game__.__board__.place_piece(4, 2, Rey('Black', (4, 2)))
+        self.__game__.__board__.place_piece(3, 2, Rey('White', (3, 2)))
+
+        self.assertEqual(self.__game__.verify_victory(), "Ganan las Negras")
+
+    def test_verify_victory_no_king(self):
+            # Verificar que el juego detecta la victoria cuando no hay rey
+            self.__game__.__board__.reset_board()
+            self.__game__.__board__.place_piece(0, 0, Rey('White', (0, 0)))
+            self.assertEqual(self.__game__.verify_victory(), "El juego continúa.")
+            self.__game__.__board__.remove_piece(0, 0)
+            self.assertEqual(self.__game__.verify_victory(), "Ganan las Negras")
+
+
+ 
+
+if __name__ == "__main__":
     unittest.main()
+
