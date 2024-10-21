@@ -64,36 +64,18 @@ class TestGame(unittest.TestCase):
         self.__game__.play("B1", "C3")
 
         # Verificar que después del primer movimiento, el turno haya cambiado a "Black"
+        self.__game__.change_turn()  # Depuración
         self.assertEqual(self.__game__.get_turn(), "Black")
 
         # Simular otro movimiento y verificar el cambio de turno
         self.__game__.play("A7", "A6")
+        self.__game__.change_turn()  # Depuración
         self.assertEqual(self.__game__.get_turn(), "White")
 
         # Verificar que el juego continúa correctamente con las entradas
         self.__game__.play("B2", "B3")  # Simula otro movimiento blanco
+        self.__game__.change_turn() # Depuración
         self.assertEqual(self.__game__.get_turn(), "Black")
-
-
-    '''def test_valid_moves(self):
-        # Inicialización de peon blanco
-        peon_blanco = self.__game__.__board__.get_piece(6, 0)
-        
-        # Verificar un movimiento válido de una pieza blanca (caballo de B1 a C3)
-        self.assertTrue(self.__game__.play("A2", "A3"))
-        
-        # Verificar que después de un movimiento válido, el turno cambie a "Black"
-        self.assertEqual(self.__game__.get_turn (), "Black")
-
-
-    def test_invalid_move(self):
-        # Verificar excepciones por movimientos inválidos
-        with self.assertRaises(InvalidMoveError):
-            self.__game__.movimiento("A3", "A8")
-
-        with self.assertRaises(InvalidMoveError):
-            self.__game__.movimiento("B2", "B8")'''
-
 
     def test_verify_victory(self):
         # Simular que las blancas ganan

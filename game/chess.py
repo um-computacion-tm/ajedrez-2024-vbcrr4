@@ -10,28 +10,28 @@ class Game:
     def show_board(self):
         print(self.__board__)
     
-    def play(self, start_pos, end_pos):
+    def play(self, start_pos=None, end_pos=None):
         while not self.game_over():
+            if not start_pos or not end_pos:
+                start_pos = input(f"Es el turno de {self.__turn__}. Ingresa la posición de la pieza que deseas mover: ")
+                if start_pos == "Q":
+                    break
+                end_pos = input("Ingrese la posición a donde te quieres mover: ")
 
-            start_pos = input(f"Es el turno de {self.__turn__}. Ingresa la posición de la pieza que deseas mover: ")
-
-            if start_pos == "Q":
-                break
-
-            end_pos = input("Ingrese la posicion a donde te quieres mover: ")
-
+            print(f"Intentando mover desde {start_pos} hasta {end_pos}")  # Depuración
             if self.valid_moves(start_pos, end_pos):
                 print(f"Movimiento válido de {start_pos} a {end_pos}")  # Depuración
                 self.movimiento(start_pos, end_pos)
-
-                # Cambiar el turno solo si el movimiento es válido
-                self.change_turn()
+                self.change_turn()  # Cambiar turno solo después de un movimiento válido
                 print(f"Turno cambiado a: {self.__turn__}")  # Depuración
             else:
                 print(f"Movimiento inválido de {start_pos} a {end_pos}")  # Depuración
-                continue
+                return  # Salir de la función en caso de un movimiento inválido en los tests
+            start_pos, end_pos = None, None  # Reset para el siguiente ciclo
 
         print(self.verify_victory())
+
+
 
     def movimiento(self, pos_actual, pos_destino):
         try:
@@ -122,7 +122,7 @@ class Game:
     
     def change_turn(self):
         self.__turn__ = "Black" if self.__turn__ == "White" else "White"
-
+        #return self.__turn__
     
     def verify_victory(self):
         # Verificar si algún rey ha sido capturado
@@ -154,7 +154,6 @@ class Game:
             pos = pos.strip()
             if len(pos) != 2:
                 raise InvalidInputError
-#("El input ingresado no es válido. Debe tener dos caracteres.")
             # Diccionario para traducir letras a números
             letras_de_col = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
             numeros_de_row = {'8': 0, '7': 1, '6': 2, '5': 3, '4': 4, '3': 5, '2': 6, '1': 7}
