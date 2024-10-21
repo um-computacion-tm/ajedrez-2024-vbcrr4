@@ -44,7 +44,7 @@ class Board:
     
     def get_piece(self, row, col):
         piece = self.__positions__[row][col]
-        print(f"Consultando pieza en posición get piece ({row}, {col}): {piece}")
+        #print(f"Consultando pieza en posición get piece ({row}, {col}): {piece}")
         return piece
     
     def place_piece(self, row, col, piece):
@@ -80,7 +80,7 @@ class Board:
             if self.validate_out_of_board(destino):
                 raise InvalidMoveError(f"El destino {destino} está fuera del tablero.")
 
-            print(f"Metodo move:Intentando mover pieza desde {origen} hasta {destino}")
+            #print(f"Metodo move:Intentando mover pieza desde {origen} hasta {destino}")
             self.can_move(origen, destino)
             self.execute_move(origen, destino)
             return True
@@ -103,19 +103,19 @@ class Board:
         origen_piece = self.get_piece(row, col)
         destino_piece = self.get_piece(destino[0], destino[1])
         
-        print(f"Pieza en origen ({origen}): {origen_piece}")
-        print(f"Pieza en destino ({destino}): {destino_piece}")
+        #print(f"Pieza en origen ({origen}): {origen_piece}")
+        #print(f"Pieza en destino ({destino}): {destino_piece}")
 
         if origen_piece is None:
-            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
+            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen. (board)")
         
         # Verifica si el movimiento es válido
         if not self.is_valid_move(origen_piece, origen, destino):
-            raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.")
+            raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.(board)")
         
         # Verifica si hay una pieza en el destino que sea del mismo color
         if destino_piece is not None and origen_piece.color == destino_piece.color:
-            raise InvalidMoveError("No puedes moverte donde tienes otra pieza.")
+            raise InvalidMoveError("No puedes moverte donde tienes otra pieza del mismo color.(board)")
 
     
     def is_valid_move(self, piece, origen, destino):
