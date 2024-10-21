@@ -29,9 +29,9 @@ class Peon(Piece):
         end_row, end_col = position_new       # Nueva posición del peón
         
         # Prints para depuración
-        print(f"Posición actual del peón: ({start_row}, {start_col})")
-        print(f"Posición destino: ({end_row}, {end_col})")
-        print(f"Direction: {direction}, Fila inicial: {initial_row}")
+        #print(f"Posición actual del peón: ({start_row}, {start_col})")
+        #print(f"Posición destino: ({end_row}, {end_col})")
+        #print(f"Direction: {direction}, Fila inicial: {initial_row}")
         
         result = False
         if start_col == end_col:  # Movimiento en la misma columna
@@ -44,7 +44,7 @@ class Peon(Piece):
                 result = True  #44
         # Movimiento de captura en diagonal
         elif end_row == start_row + direction and abs(end_col - start_col) == 1 and positions[end_row][end_col] is not None:
-            print("Movimiento de captura detectado")  # Debug
+            #print("Movimiento de captura detectado")  # Debug
             result = True
         
         return result
@@ -55,7 +55,7 @@ class Peon(Piece):
     def move(self, positions, position_new, direction):
         start_row, start_col, end_row, end_col = self.get_cords(position_new)
         # Prints para depuración
-        print(f"Moviendo desde ({end_row}, {end_col}) hacia ({start_row}, {start_col}) en dirección {direction}")
+        ##print(f"Moviendo desde ({end_row}, {end_col}) hacia ({start_row}, {start_col}) en dirección {direction}")
     
         if start_row == end_row + direction and positions[end_row + direction][end_col] is None:
             return True  #61

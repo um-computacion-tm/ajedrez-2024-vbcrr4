@@ -1,23 +1,24 @@
-class Piece():
-    def __init__(self, color, position):
+from typing import Tuple
+class Piece:
+    def __init__(self, color: str, position: Tuple[int, int]):
         self.__color__ = color
         self.__position__ = position
     
     @property
-    def color(self):
+    def color(self) -> str:
         return self.__color__
     
     @property
-    def position(self):
+    def position(self) -> Tuple[int, int]:
         return self.__position__
     
-    def update_position(self, position_new):
+    def update_position(self, position_new: Tuple[int, int]) -> None:
         self.__position__ = position_new
     
     def __str__(self):
         return self.__w_str__ if self.__color__ == "White" else self.__b_str__
     
-    def get_cords(self, position_new):
+    def get_cords(self, position_new):  
         start_row, start_col = self.__position__
         end_row, end_col = position_new
         return start_row, start_col, end_row, end_col

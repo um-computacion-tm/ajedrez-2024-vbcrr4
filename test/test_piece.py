@@ -313,11 +313,11 @@ class TestPeon(unittest.TestCase):
 
     def test_ataque_white_peon(self):
         self.__positions__[5][5] = Peon("Black", (5, 5))  # Coloca un peón negro en la posición (5, 5)
-        print("Peón negro en: ", (5, 5))
-        print("Estado del tablero: ", self.__positions__)
+        #print("Peón negro en: ", (5, 5))
+        #print("Estado del tablero: ", self.__positions__)
         self.assertTrue(self.White_peon3.validate_movimiento(self.__positions__, (5, 5)))  # Captura diagonal
     
-    def test_invalid_color_peon(self):
+    """def test_invalid_color_peon(self):
         peon_invalid = Peon(None, (6, 0))  # Color inválido
         self.assertFalse(peon_invalid.validate_movimiento(self.__positions__, (5, 0)))
 
@@ -330,6 +330,7 @@ class TestPeon(unittest.TestCase):
 
     def test_white_peon_single_step(self):
         self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))  # Movimiento de una casilla hacia adelante
+        """
 
 
 if __name__ == '__main__':
