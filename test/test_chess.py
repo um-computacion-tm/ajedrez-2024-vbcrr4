@@ -19,12 +19,6 @@ class TestGame(unittest.TestCase):
         # Verificar que el turno inicial sea "White"
         self.assertEqual(self.__game__.get_turn(), "White")
 
-    """def test_own_pieces(self):
-        # Verificar que la pieza a mover es del mismo color que turno
-        self.assertIsInstance(self.__game__.own_pieces(6, 0), Piece)
-        with self.assertRaises(InvalidColorError):
-            self.__game__.own_pieces(1, 0)"""
-
     def test_change_turn(self):
         # Verificar el cambio de turnos
         self.__game__.change_turn()
@@ -34,8 +28,8 @@ class TestGame(unittest.TestCase):
 
     def test_translate_input_valid(self):
         # Verificar que se traduzcan correctamente las entradas válidas
-        self.assertEqual(self.__game__.traductor_de_input("A2"), (0, 6))
-        self.assertEqual(self.__game__.traductor_de_input("H8"), (7, 0))
+        self.assertEqual(self.__game__.traductor_de_input("A2"), (6, 0))
+        self.assertEqual(self.__game__.traductor_de_input("H8"), (0, 7))
 
     def test_translate_input_invalid(self):
         # Verificar que se levanten excepciones para entradas inválidas
@@ -99,6 +93,47 @@ class TestGame(unittest.TestCase):
         self.__game__.__board__.place_piece(4, 2, Rey('Black', (4, 2)))
 
         self.assertEqual(self.__game__.verify_victory(), "Ganan las Negras")
+
+    def test_invalid_moves_chess(self):
+
+        # Movimiento inválido (fuera del tablero)
+        #self.assertFalse(self.__game__.valid_moves("A2", "A9"))
+
+        # Movimiento inválido (misma pieza en destino)
+        self.assertFalse(self.__game__.valid_moves("A2", "A1"))
+
+        # Movimiento inválido (posición vacía)
+        self.assertFalse(self.__game__.valid_moves("C3", "C4"))
+
+    def test_valid_moves_chess(self):
+       
+        # Colocar un Peón blanco en la posición A2
+        #self.__game__.__board__.place_piece(0, 6, Peon("White", (0, 6)))
+        #self.__game__.__board__.place_piece()
+        # Forzar el turno a White antes de mover
+        self.__game__.__turn__ = "White"
+        
+        # Depuración: Imprimir el turno actual
+        print(f"Turno actual: {self.__game__.get_turn()}")
+        
+        # Depuración: Mostrar el tablero antes del movimiento
+        print("Tablero antes del movimiento:")
+        self.__game__.show_board()
+
+        # Intentar mover el peón blanco de A2 a A3
+        result = self.__game__.movimiento("A2", "A3")
+
+        # Depuración: Verificar si el movimiento fue exitoso
+        print(f"Resultado del movimiento: {result}")
+        
+        # Depuración: Mostrar el tablero después del movimiento
+        print("Tablero después del movimiento:")
+        self.__game__.show_board()
+
+        # Verificar que el movimiento sea válido
+        self.assertTrue(result)
+
+        
 
 
 if __name__ == "__main__":

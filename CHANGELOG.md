@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.4.3) 22/10/24
+### Fixed
+- arreglo de actualizacion de la posicion, el metodo de traduccion de input estaba retornando de forma incorrecta las posiciones y eso me impedía realizar los movimientos correctos. :/
 ## (0.4.2) 22/10/24
 ### Added 
 - cracion de cli.py t de test_cli.py

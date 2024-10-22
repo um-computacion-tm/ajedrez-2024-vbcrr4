@@ -39,9 +39,11 @@ class Game:
             start_x, start_y = self.traductor_de_input(pos_actual)
             end_x, end_y = self.traductor_de_input(pos_destino)
             # Obtener la pieza en la posición inicial y verificar que sea del color correcto
-            origen = self.own_pieces(start_x, start_y, pos_actual)
+            origen = (start_x, start_y)
+            print(f"desde row{start_x},desde col{start_y} pos actual{pos_actual}.hasta row{end_x},hasta col{end_y}")
             destino = (end_x, end_y)
             # Mover la pieza en el tablero
+            print(f"origen{origen}, destino{destino}")
             mover_pieza = self.__board__.move(origen, destino)
             # Verificar si el movimiento es válido
             movimiento_check = self.check_move(mover_pieza)
@@ -84,20 +86,26 @@ class Game:
             return False
         
     def own_pieces(self, row, col, pos_actual):
-    
-        #metodo para verificar si la pieza es del mismo color que el turno
+        # Obtener la pieza en la posición dada
         piece = self.__board__.get_piece(row, col)
-        #print(f"Verificando si la pieza en ({row}, {col}) es del color correcto: {piece, piece_signal}")
+        
+        # Depuración: Verificar qué pieza hay en la posición
+        print(f"Verificando pieza en {pos_actual} -> ({row}, {col}): {piece}")
+        
         if piece is None:
             raise PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
-            
+        
         color_turn = self.__turn__
         piece_color = self.__board__.color_pieces(row, col)
 
+        # Depuración: Mostrar el color de la pieza y el turno actual
+        print(f"Color de la pieza en {pos_actual}: {piece_color}, Turno actual: {color_turn}")
+
         if color_turn != piece_color:
-            #print(f"Error: La pieza es del color {color_piece}, pero el jugador actual es {color_turn}.")
             raise InvalidColorError("No puedes mover una pieza de otro color.(chess)")
+        
         return piece
+
         
   
     def check_move(self, move):
@@ -166,7 +174,7 @@ class Game:
             if letra is None or numero is None:
                 raise InvalidInputError(f"El input ingresado [{pos}] no es válido.")
 
-            return letra, numero
+            return numero, letra 
         except InvalidInputError as e:
             print(e)
             raise
