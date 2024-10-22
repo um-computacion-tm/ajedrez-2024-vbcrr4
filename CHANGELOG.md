@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.4.2) 22/10/24
+### Added 
+- cracion de cli.py t de test_cli.py
+### Removed
+- eliminacion de carpetas __pychache__ y de env
 ## (0.4.1) 21/10/24
 ### Fixed
 - arreglo de codigo de chess.py
