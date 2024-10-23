@@ -1,8 +1,8 @@
 from .piece import Piece
 
 class Peon(Piece):
-    __w_str__ = "♙"
-    __b_str__ = "♟"
+    __w_str__ = "♟"
+    __b_str__ = "♙"
     def __init__(self, color, position):
         super().__init__(color, position)
 
@@ -10,11 +10,11 @@ class Peon(Piece):
         return 1
 
     def validate_movimiento(self, positions, position_new):
-        if self.__color__ == "white":
+        if self.__color__ == "White":
             return self.valid_white_move(positions, position_new)
-        elif self.__color__ == "black":
+        elif self.__color__ == "Black":
             return self.valid_black_move(positions, position_new)
-        return False
+        return False    #17
 
     def valid_black_move(self, positions, position_new):
 
@@ -25,25 +25,34 @@ class Peon(Piece):
 
 
     def is_valid_move(self, positions, position_new, direction, initial_row):
-        row, col, actual_row, actual_col = self.get_cords(position_new)
+        start_row, start_col = self.position  # Posición actual del peón
+        end_row, end_col = position_new       # Nueva posición del peón
+
         result = False
-        if col == actual_col: 
-    
-            # Valida que el movimiento sea en la misma columna
-            if actual_row == initial_row:
-                if self.move(positions, position_new, direction):
-                    result = True
-                elif row == actual_row + 2 * direction and positions[actual_row + direction][actual_col] is None and positions[actual_row + 2 * direction][actual_col] is None:
-                    result = True
-            elif self.move(positions, position_new, direction):
+
+        # Movimiento vertical simple
+        if start_col == end_col:
+            # Movimiento de una casilla hacia adelante
+            if start_row + direction == end_row and positions[end_row][end_col] is None:
                 result = True
-        elif row == actual_row + direction and abs(col - actual_col) == 1 and positions[row][col] is not None:
-        # Movimiento de captura
+            # Movimiento inicial de dos casillas hacia adelante
+            elif start_row == initial_row and start_row + 2 * direction == end_row and positions[start_row + direction][start_col] is None and positions[end_row][end_col] is None:
+                result = True
+
+        # Movimiento diagonal para capturar
+        elif abs(start_col - end_col) == 1 and start_row + direction == end_row and positions[end_row][end_col] is not None:
             result = True
+
         return result
-    
+
+
     def move(self, positions, position_new, direction):
-        row, col, actual_row, actual_col = self.get_cords(position_new)
-        if row == actual_row + direction and positions[actual_row + direction][actual_col] is None:
+        start_row, start_col = self.position
+        end_row, end_col = position_new
+
+        # Movimiento de una casilla hacia adelante
+        if start_row + direction == end_row and positions[end_row][end_col] is None:
             return True
+
         return False
+

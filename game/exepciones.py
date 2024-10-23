@@ -12,3 +12,9 @@ class InvalidPieceMovement(Exception):
 
 class PieceNotFoundError(Exception):
     pass
+
+class InvalidInputError(Exception):
+    pass
+
+class CantEatKingError(Exception):
+    pass

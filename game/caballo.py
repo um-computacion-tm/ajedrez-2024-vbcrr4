@@ -1,8 +1,8 @@
 from .piece import Piece
 
 class Caballo(Piece):
-    __w_str__ = "♘"
-    __b_str__ = "♞"
+    __w_str__ = "♞"
+    __b_str__ = "♘"
     def __init__(self, color, position):
         super().__init__(color, position)
 
@@ -24,7 +24,7 @@ class Caballo(Piece):
         return destination_piece is None or destination_piece.color != self.color
     
 
-    def move_caballo(self, position_new, positions):
+    def move_caballo(self, positions, position_new):
         """
         Verifica si el movimiento es válido para el Caballo.
         El Caballo se mueve en forma de 'L', es decir, 2 casillas en una dirección

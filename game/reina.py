@@ -1,8 +1,8 @@
 from .piece import Piece
 
 class Reina(Piece):
-    __w_str__ = "♕"
-    __b_str__ = "♛"
+    __w_str__ = "♛"
+    __b_str__ = "♕"
     def __init__(self, color,position):
         super().__init__(color, position)
 
@@ -10,14 +10,14 @@ class Reina(Piece):
         return 9
     
   
-    def move_queen(self, position_new, positions):
+    def reina_move(self, positions, position_new):
         """
         Verifica si el movimiento es válido para la Reina.
         La Reina se mueve en líneas rectas horizontales, verticales o diagonales.
         """
     
         # Verifica el movimiento 
-        if self.vertical_move_positions(position_new, positions) or self.horizontal_move_positions(position_new, positions) or self.diagonal_move_positions(position_new, positions):
+        if self.vertical_move_positions(positions, position_new) or self.horizontal_move_positions(positions, position_new) or self.diagonal_move_positions(positions, position_new):
             return True
         
         return False  # El movimiento no es válido
