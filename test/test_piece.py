@@ -306,6 +306,57 @@ class TestPeon(unittest.TestCase):
         #print("Peón negro en: ", (5, 5))
         #print("Estado del tablero: ", self.__positions__)
         self.assertTrue(self.White_peon3.validate_movimiento(self.__positions__, (5, 5)))  # Captura diagonal
+
+    def test_movimiento_inicial_dos_casillas_blanco(self):
+        # Movimiento inicial válido de dos casillas para el peón blanco
+        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (4, 0)))
+
+    def test_movimiento_inicial_dos_casillas_negro(self):
+        # Movimiento inicial válido de dos casillas para el peón negro
+        self.assertTrue(self.Black_peon.validate_movimiento(self.__positions__, (3, 0)))
+
+
+    def test_movimiento_invalido_vertical_obstaculo(self):
+        # Intentar mover un peón hacia adelante cuando hay una pieza en el camino
+        self.__positions__[5][0] = Peon("White", (5, 0))  # Obstáculo delante del peón blanco
+        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))
+
+    def test_movimiento_invalido_horizontal(self):
+        # Intentar mover el peón horizontalmente (lo cual no es permitido)
+        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (6, 1)))
+
+    def test_captura_diagonal_blanco(self):
+        # Colocamos un peón negro en una posición que el peón blanco puede capturar
+        self.__positions__[5][1] = Peon("Black", (5, 1))
+        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (5, 1)))
+
+    def test_captura_diagonal_negro(self):
+        # Colocamos un peón blanco en una posición que el peón negro puede capturar
+        self.__positions__[2][1] = Peon("White", (2, 1))
+        self.assertTrue(self.Black_peon.validate_movimiento(self.__positions__, (2, 1)))
+
+    def test_movimiento_vertical_simple_blanco(self):
+        # Movimiento válido de una casilla hacia adelante para el peón blanco
+        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))
+
+    def test_movimiento_vertical_simple_negro(self):
+        # Movimiento válido de una casilla hacia adelante para el peón negro
+        self.assertTrue(self.Black_peon.validate_movimiento(self.__positions__, (2, 0)))
+
+    def test_movimiento_invalido_fuera_de_limites(self):
+        # Intentar mover el peón fuera del tablero
+        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (8, 0)))
+        self.assertFalse(self.Black_peon.validate_movimiento(self.__positions__, (-1, 0)))
+
+    def test_movimiento_invalido_sin_captura_diagonal(self):
+        # Intentar mover diagonalmente sin que haya una pieza enemiga para capturar
+        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (5, 1)))
+
+    def test_captura_invalida_vertical(self):
+        # Intentar capturar en movimiento vertical (lo cual no es permitido)
+        self.__positions__[5][0] = Peon("Black", (5, 0))  # Peón enemigo justo en frente
+        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))
+
     
 
 
