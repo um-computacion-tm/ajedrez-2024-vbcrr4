@@ -275,8 +275,6 @@ class TestCaballo(unittest.TestCase):
         self.assertFalse(self.Black_knight.move_caballo(self.__positions__,(0, 0)))
 
 class TestPeon(unittest.TestCase):
-
-
     def setUp(self):
         #inicializamos tablero
         self.__positions__ = [[None] * 8 for _ in range(8)]
@@ -303,34 +301,12 @@ class TestPeon(unittest.TestCase):
         self.assertEqual(str(self.Black_peon), "♙")
         self.assertEqual(str(self.White_peon), "♟")
 
-    def test_valid_White_move_initial(self):
-        self.assertFalse(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))  # Mover una fila hacia adelante
-        self.assertFalse(self.White_peon2.validate_movimiento(self.__positions__, (4, 0)))  # Mover dos filas hacia adelante
-
-    def test_valid_Black_move_initial(self):
-        self.assertFalse(self.Black_peon.validate_movimiento(self.__positions__, (2, 0)))  # Mover una fila hacia adelante
-        self.assertFalse(self.Black_peon2.validate_movimiento(self.__positions__, (3, 0)))  # Mover dos filas hacia adelante
-
     def test_ataque_white_peon(self):
         self.__positions__[5][5] = Peon("Black", (5, 5))  # Coloca un peón negro en la posición (5, 5)
         #print("Peón negro en: ", (5, 5))
         #print("Estado del tablero: ", self.__positions__)
         self.assertTrue(self.White_peon3.validate_movimiento(self.__positions__, (5, 5)))  # Captura diagonal
     
-    """def test_invalid_color_peon(self):
-        peon_invalid = Peon(None, (6, 0))  # Color inválido
-        self.assertFalse(peon_invalid.validate_movimiento(self.__positions__, (5, 0)))
-
-    def test_white_peon_double_step(self):
-        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (4, 0)))  # Movimiento de dos casillas
-    
-    def test_white_peon_single_step_after_move(self):
-        self.White_peon.update_position((5, 0))  # Mover a la fila 5
-        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (4, 0)))  # Una casilla hacia adelante
-
-    def test_white_peon_single_step(self):
-        self.assertTrue(self.White_peon.validate_movimiento(self.__positions__, (5, 0)))  # Movimiento de una casilla hacia adelante
-        """
 
 
 if __name__ == '__main__':

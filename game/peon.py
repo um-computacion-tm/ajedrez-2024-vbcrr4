@@ -27,26 +27,32 @@ class Peon(Piece):
     def is_valid_move(self, positions, position_new, direction, initial_row):
         start_row, start_col = self.position  # Posición actual del peón
         end_row, end_col = position_new       # Nueva posición del peón
-    
+
         result = False
-        if start_col == end_col:  # Movimiento en la misma columna
-            if start_row == initial_row:
-                if self.move(positions, position_new, direction):
-                    result = True  #40
-                elif start_row == end_row + 2 * direction and positions[start_row + direction][start_col] is None and positions[start_row + 2 * direction][start_col] is None:
-                    result = True  #42
-            elif self.move(positions, position_new, direction):  #43
-                result = True  #44
-        # Movimiento de captura en diagonal
-        elif end_row == start_row + direction and abs(end_col - start_col) == 1 and positions[end_row][end_col] is not None:
-            #print("Movimiento de captura detectado")  # Debug
+
+        # Movimiento vertical simple
+        if start_col == end_col:
+            # Movimiento de una casilla hacia adelante
+            if start_row + direction == end_row and positions[end_row][end_col] is None:
+                result = True
+            # Movimiento inicial de dos casillas hacia adelante
+            elif start_row == initial_row and start_row + 2 * direction == end_row and positions[start_row + direction][start_col] is None and positions[end_row][end_col] is None:
+                result = True
+
+        # Movimiento diagonal para capturar
+        elif abs(start_col - end_col) == 1 and start_row + direction == end_row and positions[end_row][end_col] is not None:
             result = True
-        
+
         return result
 
-    def move(self, positions, position_new, direction):
-        start_row, start_col, end_row, end_col = self.get_cords(position_new)
 
-        if start_row == end_row + direction and positions[end_row + direction][end_col] is None:
-            return True  #61
+    def move(self, positions, position_new, direction):
+        start_row, start_col = self.position
+        end_row, end_col = position_new
+
+        # Movimiento de una casilla hacia adelante
+        if start_row + direction == end_row and positions[end_row][end_col] is None:
+            return True
+
         return False
+
