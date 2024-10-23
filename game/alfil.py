@@ -14,7 +14,7 @@ class Alfil(Piece):
         Verifica si el movimiento es válido para el Alfil.
         El Alfil se mueve en líneas diagonales.
         """
-        if self.diagonal_move_positions(position_new, positions):
+        if self.diagonal_move_positions(positions, position_new):
             return True
         
         return False

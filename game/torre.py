@@ -13,7 +13,7 @@ class Torre(Piece):
         """
         Verifica si un movimiento vertical es válido para una torre.
         """
-        if self.vertical_move_positions(position_new, positions) or self.horizontal_move_positions(position_new, positions):
+        if self.vertical_move_positions(positions, position_new) or self.horizontal_move_positions(positions, position_new):
 
             return True
         

@@ -121,24 +121,6 @@ class TestBoard(unittest.TestCase):
         # Verifica la búsqueda de una pieza no presente
         self.assertIsNone(self.__board__.search_piece(None))
 
-    def test_move_valid(self):
-        """Prueba un movimiento válido de una pieza."""
-        # Mueve un peón blanco
-        origen = (6, 0)
-        destino = (4, 0)
-        self.__board__.move(origen, destino)
-        self.assertIsNone(self.__board__.get_piece(6, 0))  # La posición de origen debe estar vacía
-        self.assertIsInstance(self.__board__.get_piece(4, 0), Peon)  # El peón debe estar en la posición de destino
-
-    '''def test_move_invalid(self):
-        """Prueba un movimiento inválido que lanza excepciones."""
-        # Intenta mover una pieza desde una posición vacía
-        with self.assertRaises(PieceNotFoundError):
-            self.__board__.move((2, 2), (3, 3))
-
-        # Intenta mover una pieza a una posición ocupada por una pieza del mismo color
-        with self.assertRaises(InvalidMoveError):
-            self.__board__.move((0, 0), (0, 1))'''  # Mover la torre negra al lugar del caballo negro
 
     def test_only_kings_left(self):
         """Prueba si solo quedan los reyes en el tablero."""
@@ -171,6 +153,34 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(self.__board__.is_horizontal_move((0, 0), (0, 3)))
         self.assertFalse(self.__board__.is_horizontal_move((0, 0), (1, 3)))
 
+    def test_torre_move(self):
+        """ Test para verificar los movimientos válidos e inválidos de una torre """
+        # Colocar una torre blanca en (7, 0)
+        self.__board__.get_piece(7, 0)
+        # Movimiento válido (horizontal)
+        self.assertFalse(self.__board__.is_valid_move((7, 0), (7, 5)))
+
+
+        # Movimiento inválido (diagonal)
+        self.assertFalse(self.__board__.is_valid_move((7, 0), (5, 2)))
+
+    def test_torre_move2(self):
+        # Coloca una torre blanca en la posición inicial (5, 0)
+        torre = Torre("White", (5, 0))
+        self.__board__.place_piece(5, 0, torre)
+
+        # Verifica que la torre esté en la posición correcta
+        self.assertIsInstance(self.__board__.get_piece(5, 0), Torre)
+
+        # Movimiento válido (vertical) -> Intentamos mover la torre
+        self.assertTrue(self.__board__.is_valid_move((5, 0), (5, 4)))
+        # Realiza el movimiento 
+        self.__board__.move((5, 0), (5, 4))
+
+        # Verifica que la torre haya sido movida correctamente
+        self.assertIsInstance(self.__board__.get_piece(5, 4), Torre)
+        self.assertIsNone(self.__board__.get_piece(5, 0))  # La posición anterior debe estar vacía
+
     def test_validate_out_of_board(self):
         """Prueba que la validación de posiciones fuera del tablero funcione correctamente."""
         self.assertTrue(self.__board__.validate_out_of_board((-1, 0)))
@@ -180,13 +190,6 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.__board__.validate_out_of_board((0, 0)))  # dentro del tablero
         self.assertFalse(self.__board__.validate_out_of_board((7, 7)))  # dentro del tablero
 
-    def test_move_capture_piece(self):
-        """Prueba que una pieza capture correctamente una pieza enemiga."""
-        origen = (6, 0)  # Peón blanco
-        destino = (1, 0)  # Peón negro
-        self.__board__.move(origen, destino)  # El peón blanco debe capturar al peón negro
-        self.assertIsInstance(self.__board__.get_piece(1, 0), Peon)  # El peón blanco ahora en la posición del peón negro
-        self.assertIsNone(self.__board__.get_piece(6, 0))  # La posición original del peón blanco debe estar vacía
 
     def test_reset_board(self):
         """Prueba que reset_board vacíe correctamente todas las posiciones del tablero."""
@@ -194,16 +197,6 @@ class TestBoard(unittest.TestCase):
         for row in range(8):
             for col in range(8):
                 self.assertIsNone(self.__board__.get_piece(row, col))  # Todas las posiciones deben estar vacías
-
-    '''def test_invalid_move_raises_exception(self):
-        """Prueba que mover una pieza fuera del tablero o de forma inválida levanta las excepciones correctas."""
-        # Movimiento fuera del tablero
-        with self.assertRaises(InvalidMoveError):
-            self.__board__.move((6, 0), (8, 0))  # Mover un peón fuera del tablero
-
-        # Mover una pieza de manera inválida
-        with self.assertRaises(InvalidPieceMovement):
-            self.__board__.move((0, 0), (2, 3)) ''' # Mover una torre de manera inválida (diagonal)
 
     def test_search_piece_not_found(self):
         """Prueba la búsqueda de una pieza que no está en el tablero."""

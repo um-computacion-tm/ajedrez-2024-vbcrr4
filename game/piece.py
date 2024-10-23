@@ -40,7 +40,7 @@ class Piece:
                 return False  # El camino no está despejado
         return True  # El camino está despejado
 
-    def diagonal_move_positions(self, position_new, positions): 
+    def diagonal_move_positions(self, positions, position_new): 
         """
         Verifica si un movimiento diagonal es válido.
         """
@@ -56,7 +56,7 @@ class Piece:
 
         return False
 
-    def vertical_move_positions(self, position_new, positions):
+    def vertical_move_positions(self, positions, position_new):
         """
         Verifica si un movimiento vertical es válido.
         """
@@ -70,7 +70,7 @@ class Piece:
         
         return False
     
-    def horizontal_move_positions(self, position_new, positions):
+    def horizontal_move_positions(self, positions, position_new ):
         """
         Verifica si un movimiento horizontal es válido.
         """

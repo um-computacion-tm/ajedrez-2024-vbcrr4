@@ -17,7 +17,7 @@ class Reina(Piece):
         """
     
         # Verifica el movimiento 
-        if self.vertical_move_positions(position_new, positions) or self.horizontal_move_positions(position_new, positions) or self.diagonal_move_positions(position_new, positions):
+        if self.vertical_move_positions(positions, position_new) or self.horizontal_move_positions(positions, position_new) or self.diagonal_move_positions(positions, position_new):
             return True
         
         return False  # El movimiento no es válido

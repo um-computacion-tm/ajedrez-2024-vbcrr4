@@ -60,40 +60,40 @@ class TestPiece(unittest.TestCase):
         # Prueba un movimiento diagonal válido
         positions = [[None for _ in range(8)] for _ in range(8)]
         self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.diagonal_move_positions((3, 3), positions))
+        self.assertTrue(self.piece.diagonal_move_positions( positions, (3, 3)))
 
         # Prueba un movimiento diagonal inválido (camino bloqueado)
         positions[1][1] = Piece("White", (1, 1))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.diagonal_move_positions((3, 3), positions))
+        self.assertFalse(self.piece.diagonal_move_positions(positions, (3, 3)))
 
         # Prueba un movimiento no diagonal (debe devolver False)
-        self.assertFalse(self.piece.diagonal_move_positions((2, 3), positions))
+        self.assertFalse(self.piece.diagonal_move_positions( positions, (2, 3)))
 
     def test_vertical_move_positions(self):
         # Prueba un movimiento vertical válido
         positions = [[None for _ in range(8)] for _ in range(8)]
         self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.vertical_move_positions((3, 0), positions))
+        self.assertTrue(self.piece.vertical_move_positions( positions, (3, 0)))
 
         # Prueba un movimiento vertical inválido (camino bloqueado)
         positions[1][0] = Piece("White", (1, 0))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.vertical_move_positions((3, 0), positions))
+        self.assertFalse(self.piece.vertical_move_positions( positions, (3, 0)))
 
         # Prueba un movimiento no vertical (debe devolver False)
-        self.assertFalse(self.piece.vertical_move_positions((3, 1), positions))
+        self.assertFalse(self.piece.vertical_move_positions(positions, (3, 1)))
 
     def test_horizontal_move_positions(self):
         # Prueba un movimiento horizontal válido
         positions = [[None for _ in range(8)] for _ in range(8)]
         self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.horizontal_move_positions((0, 3), positions))
+        self.assertTrue(self.piece.horizontal_move_positions(positions, (0, 3)))
 
         # Prueba un movimiento horizontal inválido (camino bloqueado)
         positions[0][1] = Piece("White", (0, 1))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.horizontal_move_positions((0, 3), positions))
+        self.assertFalse(self.piece.horizontal_move_positions( positions, (0, 3)))
 
         # Prueba un movimiento no horizontal (debe devolver False)
-        self.assertFalse(self.piece.horizontal_move_positions((1, 3), positions))
+        self.assertFalse(self.piece.horizontal_move_positions(positions, (1, 3)))
 
 class TestTorre(unittest.TestCase):
     def setUp(self):

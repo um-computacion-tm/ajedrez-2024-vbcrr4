@@ -39,7 +39,7 @@ class Game:
             start_x, start_y = self.traductor_de_input(pos_actual)
             end_x, end_y = self.traductor_de_input(pos_destino)
             # Obtener la pieza en la posición inicial y verificar que sea del color correcto
-            origen = (start_x, start_y)
+            origen = self.own_pieces(start_x, start_y, pos_actual)
             print(f"desde row{start_x},desde col{start_y} pos actual{pos_actual}.hasta row{end_x},hasta col{end_y}")
             destino = (end_x, end_y)
             # Mover la pieza en el tablero
@@ -100,14 +100,13 @@ class Game:
 
         # Depuración: Mostrar el color de la pieza y el turno actual
         print(f"Color de la pieza en {pos_actual}: {piece_color}, Turno actual: {color_turn}")
+        #print(f"row ({row}), col ({col})")
 
         if color_turn != piece_color:
             raise InvalidColorError("No puedes mover una pieza de otro color.(chess)")
         
-        return piece
+        return (row,col)
 
-        
-  
     def check_move(self, move):
         """
         Verifica el estado del juego después de un movimiento.

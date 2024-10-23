@@ -44,7 +44,7 @@ class Board:
     
     def get_piece(self, row, col):
         piece = self.__positions__[row][col]
-        #print(f"Consultando pieza en posición get piece ({row}, {col}): {piece}")
+        #print(f"Pieza en ({row}, {col}): {piece}")
         return piece
     
     def place_piece(self, row, col, piece):
@@ -102,29 +102,58 @@ class Board:
         row, col = origen
         origen_piece = self.get_piece(row, col)
         destino_piece = self.get_piece(destino[0], destino[1])
-        
-        #print(f"Pieza en origen ({origen}): {origen_piece}")
-        #print(f"Pieza en destino ({destino}): {destino_piece}")
-
+    
+        print(f"Verificando movimiento de {origen_piece} desde {origen} a {destino}")
         if origen_piece is None:
             raise PieceNotFoundError("No hay ninguna pieza en la posición de origen. (board)")
         
         # Verifica si el movimiento es válido
-        if not self.is_valid_move(origen_piece, origen, destino):
-            raise InvalidPieceMovement("Movimiento de pieza inválido, el camino no está despejado o el movimiento no es válido.(board)")
+        if not self.is_valid_move(origen, destino):
+            raise InvalidPieceMovement(f"Movimiento de pieza inválido {origen_piece}, el camino no está despejado {destino_piece} o el movimiento no es válido.(board)")
         
         # Verifica si hay una pieza en el destino que sea del mismo color
         if destino_piece is not None and origen_piece.color == destino_piece.color:
             raise InvalidMoveError("No puedes moverte donde tienes otra pieza del mismo color.(board)")
+    
 
     
-    def is_valid_move(self, piece, origen, destino):
+    def is_valid_move(self, origen, destino):
         """Verifica si el movimiento es válido para la pieza y el camino está despejado"""
-        return (
-            (self.is_diagonal_move(origen, destino) and piece.diagonal_move_positions(destino, self.__positions__)) or
-            (self.is_vertical_move(origen, destino) and piece.vertical_move_positions(destino, self.__positions__)) or
-            (self.is_horizontal_move(origen, destino) and piece.horizontal_move_positions(destino, self.__positions__))
-        )
+
+        origen_piece = self.get_piece(origen[0], origen[1])  # Obtener la pieza en la posición de origen
+
+        if origen_piece is None:
+            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen. (board)")
+
+        #print(f"Verificando movimiento de {origen_piece} desde {origen} a {destino}")
+
+        # Verificar si la pieza es una torre
+        if isinstance(origen_piece, Torre):
+            return origen_piece.torre_move(self.__positions__, destino)
+        
+        # Verificar si la pieza es una reina
+        if isinstance(origen_piece, Reina):
+            return origen_piece.reina_move(self.__positions__, destino)
+
+        # Verificar si la pieza es un caballo
+        if isinstance(origen_piece, Caballo):
+            return origen_piece.move_caballo(self.__positions__, destino)
+
+        # Verificar si la pieza es un rey
+        if isinstance(origen_piece, Rey):
+            return origen_piece.move_king(self.__positions__, destino)
+
+        # Verificar si la pieza es un peón
+        if isinstance(origen_piece, Peon):
+            return origen_piece.validate_movimiento(self.__positions__, destino)
+
+        # Verificar si la pieza es un alfil
+        if isinstance(origen_piece, Alfil):
+            return origen_piece.alfil_move(self.__positions__, destino)
+        
+        #print(f"Movimiento inválido para {origen_piece}")
+        return False
+    
 
     def execute_move(self, origen, destino):
         # Obtiene la pieza en la posición de origen
@@ -175,7 +204,15 @@ class Board:
                         return False
         # Si hay exactamente 2 reyes en el tablero, retornar True
         return king_count == 2
-
+    def is_caballo_move(self, origen, destino):
+        start_row, start_col = origen
+        end_row, end_col = destino
+        row_diff = abs(end_row - start_row)
+        col_diff = abs(end_col - start_col)
+        if (row_diff == 2 and col_diff == 1) or (row_diff == 1 and col_diff == 2):
+            return True
+        else:
+            return False
     def is_diagonal_move(self, origen, destino):
         start_row, start_col = origen
         end_row, end_col = destino

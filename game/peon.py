@@ -27,12 +27,7 @@ class Peon(Piece):
     def is_valid_move(self, positions, position_new, direction, initial_row):
         start_row, start_col = self.position  # Posición actual del peón
         end_row, end_col = position_new       # Nueva posición del peón
-        
-        # Prints para depuración
-        #print(f"Posición actual del peón: ({start_row}, {start_col})")
-        #print(f"Posición destino: ({end_row}, {end_col})")
-        #print(f"Direction: {direction}, Fila inicial: {initial_row}")
-        
+    
         result = False
         if start_col == end_col:  # Movimiento en la misma columna
             if start_row == initial_row:
@@ -49,14 +44,9 @@ class Peon(Piece):
         
         return result
 
-
-
-
     def move(self, positions, position_new, direction):
         start_row, start_col, end_row, end_col = self.get_cords(position_new)
-        # Prints para depuración
-        ##print(f"Moviendo desde ({end_row}, {end_col}) hacia ({start_row}, {start_col}) en dirección {direction}")
-    
+
         if start_row == end_row + direction and positions[end_row + direction][end_col] is None:
             return True  #61
         return False

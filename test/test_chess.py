@@ -14,7 +14,7 @@ from game.reina import Reina
 class TestGame(unittest.TestCase):
     def setUp(self):
         self.__game__ = Game()
-
+       
     def test_initial_turn(self):
         # Verificar que el turno inicial sea "White"
         self.assertEqual(self.__game__.get_turn(), "White")
@@ -106,13 +106,9 @@ class TestGame(unittest.TestCase):
         self.assertFalse(self.__game__.valid_moves("C3", "C4"))
 
     def test_valid_moves_chess(self):
-       
-        # Colocar un Peón blanco en la posición A2
-        #self.__game__.__board__.place_piece(0, 6, Peon("White", (0, 6)))
-        #self.__game__.__board__.place_piece()
+    
         # Forzar el turno a White antes de mover
         self.__game__.__turn__ = "White"
-        
         # Depuración: Imprimir el turno actual
         print(f"Turno actual: {self.__game__.get_turn()}")
         
@@ -133,6 +129,28 @@ class TestGame(unittest.TestCase):
         # Verificar que el movimiento sea válido
         self.assertTrue(result)
 
+    def test_valid_moves_chess2(self):
+    
+        self.__game__.change_turn()
+        # Depuración: Imprimir el turno actual
+        #print(f"Turno actual: {self.__game__.get_turn()}")
+        
+        # Depuración: Mostrar el tablero antes del movimiento
+        #print("Tablero antes del movimiento:")
+        #self.__game__.show_board()
+
+        # Intentar mover 
+        result = self.__game__.movimiento("B8", "C6")
+
+        # Depuración: Verificar si el movimiento fue exitoso
+        #print(f"Resultado del movimiento: {result}")
+        
+        # Depuración: Mostrar el tablero después del movimiento
+        #print("Tablero después del movimiento:")
+        #self.__game__.show_board()
+
+        # Verificar que el movimiento sea válido
+        self.assertTrue(result)
         
 
 
