@@ -59,10 +59,6 @@ class TestPiece(unittest.TestCase):
         return positions
 
     def test_diagonal_move_positions2(self):
-        
-        # Prueba un movimiento diagonal válido
-        self.assertTrue(self.piece.diagonal_move_positions(self.positions, (3, 3)))
-
         # Prueba un movimiento diagonal inválido (camino bloqueado)
         self.positions[1][1] = Piece("White", (1, 1))  # Colocamos una pieza en el camino
         self.assertFalse(self.piece.diagonal_move_positions(self.positions, (3, 3)))
@@ -71,10 +67,6 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(self.piece.diagonal_move_positions(self.positions, (2, 3)))
 
     def test_vertical_move_positions2(self):
-        
-        # Prueba un movimiento vertical válido
-        self.assertTrue(self.piece.vertical_move_positions(self.positions, (3, 0)))
-
         # Prueba un movimiento vertical inválido (camino bloqueado)
         self.positions[1][0] = Piece("White", (1, 0))  # Colocamos una pieza en el camino
         self.assertFalse(self.piece.vertical_move_positions(self.positions, (3, 0)))
@@ -83,17 +75,21 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(self.piece.vertical_move_positions(self.positions, (3, 1)))
 
     def test_horizontal_move_positions2(self):
-
-        # Prueba un movimiento horizontal válido
-        self.assertTrue(self.piece.horizontal_move_positions(self.positions, (0, 3)))
-
         # Prueba un movimiento horizontal inválido (camino bloqueado)
         self.positions[0][1] = Piece("White", (0, 1))  # Colocamos una pieza en el camino
         self.assertFalse(self.piece.horizontal_move_positions(self.positions, (0, 3)))
-
         # Prueba un movimiento no horizontal
         self.assertFalse(self.piece.horizontal_move_positions(self.positions, (1, 3)))
 
+    def test_valid_moves(self):
+        # Prueba un movimiento horizontal válido
+        self.assertTrue(self.piece.horizontal_move_positions(self.positions, (0, 3)))
+
+        # Prueba un movimiento vertical válido
+        self.assertTrue(self.piece.vertical_move_positions(self.positions, (3, 0)))
+
+        # Prueba un movimiento diagonal válido
+        self.assertTrue(self.piece.diagonal_move_positions(self.positions, (3, 3)))
 
 if __name__ == '__main__':
     unittest.main()
