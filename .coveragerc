@@ -4,7 +4,7 @@ source =
     test
 omit =
     venv/*
-    */test/*
+    */test*
     */__init__.py
     */__main__.py
 [report]
