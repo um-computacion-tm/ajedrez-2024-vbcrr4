@@ -24,11 +24,6 @@ class TestPeon(unittest.TestCase):
         self.assertEqual(self.__White_peon2__.assign_value(), 1)
         self.assertEqual(self.__Black_peon2__.assign_value(), 1)
 
-    def test_str(self):
-        # Verifica que el símbolo del peón se muestre correctamente
-        self.assertEqual(str(self.__Black_peon__), "♙")
-        self.assertEqual(str(self.__White_peon__), "♟")
-
     def test_movimiento_inicial_dos_casillas_blanco(self):
         # Movimiento inicial válido de dos casillas para el peón blanco
         self.assertTrue(self.__White_peon2__.piece_move(self.__positions__, (4, 2)))

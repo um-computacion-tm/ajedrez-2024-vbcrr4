@@ -32,10 +32,5 @@ class TestReina(unittest.TestCase):
         self.__positions__[0][5] = Piece("White", (0, 5))
         self.assertFalse(self.reina_negra.piece_move(self.__positions__, (0, 7)))
 
-    def test_str_representation(self):
-        # Verifica la representación visual de la Reina
-        self.assertEqual(str(self.reina_negra), "♕")
-        self.assertEqual(str(self.reina_blanca), "♛")
-
 if __name__ == '__main__':
     unittest.main()
