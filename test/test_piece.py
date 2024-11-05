@@ -14,11 +14,12 @@ class TestPiece(unittest.TestCase):
 
     def setUp(self):
         # Creamos una instancia de Piece antes de cada test
-        self.piece = Piece("white", (0, 0))
+        self.piece = Piece("Black", (0, 0))
+        self.piece2 = Piece("White", (7, 7))
 
     def test_get_color(self):
         # Verifica que el color de la pieza se obtiene correctamente
-        self.assertEqual(self.piece.color, "white")
+        self.assertEqual(self.piece.color, "Black")
 
     def test_get_position(self):
         # Verifica que la posición inicial de la pieza se obtiene correctamente
@@ -33,15 +34,15 @@ class TestPiece(unittest.TestCase):
     def test_str(self):
         # Probar la conversión a string de la pieza según su color
         # Esto requiere que la clase tenga `__w_str__` y `__b_str__` definidos
-        self.piece.__w_str__ = "♔"  # Rey blanco
-        self.piece.__b_str__ = "♚"  # Rey negro
+        self.piece.__w_str__ = "♜"
+        self.piece.__b_str__ = "♖"
         
-        self.assertEqual(str(self.piece), "♔")  # Para una pieza blanca
+        self.assertEqual(str(self.piece), "♖")  
 
-        self.piece = Piece("black", (7, 7))  # Para una pieza negra
-        self.piece.__w_str__ = "♔"
-        self.piece.__b_str__ = "♚"
-        self.assertEqual(str(self.piece), "♚")
+        self.piece = Piece("White", (7, 7))  # Para una pieza negra
+        self.piece.__w_str__ = "♜"
+        self.piece.__b_str__ = "♖"
+        self.assertEqual(str(self.piece), "♜")
 
     def test_is_path_clear(self):
         # Prueba que el camino esté despejado
@@ -53,263 +54,342 @@ class TestPiece(unittest.TestCase):
         self.assertTrue(self.piece.is_path_clear((start, end), positions, row_step, col_step))
 
         # Prueba cuando el camino está bloqueado
-        positions[1][1] = Piece("white", (1, 1))  # Colocamos una pieza en el camino
+        positions[1][1] = Piece("White", (1, 1))  # Colocamos una pieza en el camino
         self.assertFalse(self.piece.is_path_clear((start, end), positions, row_step, col_step))
+    
+    def create_empty_board(self):
+        """Crea un tablero vacío de 8x8."""
+        return [[None for _ in range(8)] for _ in range(8)]
 
-    def test_diagonal_move_positions(self):
+    def prepare_test(self, start_pos):
+        """Configura el tablero vacío y actualiza la posición de la pieza."""
+        positions = self.create_empty_board()
+        self.piece.update_position(start_pos)
+        return positions
+
+    def test_diagonal_move_positions2(self):
+        positions = self.prepare_test((0, 0))
+        
         # Prueba un movimiento diagonal válido
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.diagonal_move_positions((3, 3), positions))
+        self.assertTrue(self.piece.diagonal_move_positions(positions, (3, 3)))
 
         # Prueba un movimiento diagonal inválido (camino bloqueado)
-        positions[1][1] = Piece("white", (1, 1))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.diagonal_move_positions((3, 3), positions))
+        positions[1][1] = Piece("White", (1, 1))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.diagonal_move_positions(positions, (3, 3)))
 
-        # Prueba un movimiento no diagonal (debe devolver False)
-        self.assertFalse(self.piece.diagonal_move_positions((2, 3), positions))
+        # Prueba un movimiento no diagonal
+        self.assertFalse(self.piece.diagonal_move_positions(positions, (2, 3)))
 
-    def test_vertical_move_positions(self):
+    def test_vertical_move_positions2(self):
+        positions = self.prepare_test((0, 0))
+        
         # Prueba un movimiento vertical válido
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.vertical_move_positions((3, 0), positions))
+        self.assertTrue(self.piece.vertical_move_positions(positions, (3, 0)))
 
         # Prueba un movimiento vertical inválido (camino bloqueado)
-        positions[1][0] = Piece("white", (1, 0))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.vertical_move_positions((3, 0), positions))
+        positions[1][0] = Piece("White", (1, 0))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.vertical_move_positions(positions, (3, 0)))
 
-        # Prueba un movimiento no vertical (debe devolver False)
-        self.assertFalse(self.piece.vertical_move_positions((3, 1), positions))
+        # Prueba un movimiento no vertical
+        self.assertFalse(self.piece.vertical_move_positions(positions, (3, 1)))
 
-    def test_horizontal_move_positions(self):
+    def test_horizontal_move_positions2(self):
+        positions = self.prepare_test((0, 0))
+        
         # Prueba un movimiento horizontal válido
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        self.piece.update_position((0, 0))
-        self.assertTrue(self.piece.horizontal_move_positions((0, 3), positions))
+        self.assertTrue(self.piece.horizontal_move_positions(positions, (0, 3)))
 
         # Prueba un movimiento horizontal inválido (camino bloqueado)
-        positions[0][1] = Piece("white", (0, 1))  # Colocamos una pieza en el camino
-        self.assertFalse(self.piece.horizontal_move_positions((0, 3), positions))
+        positions[0][1] = Piece("White", (0, 1))  # Colocamos una pieza en el camino
+        self.assertFalse(self.piece.horizontal_move_positions(positions, (0, 3)))
 
-        # Prueba un movimiento no horizontal (debe devolver False)
-        self.assertFalse(self.piece.horizontal_move_positions((1, 3), positions))
+        # Prueba un movimiento no horizontal
+        self.assertFalse(self.piece.horizontal_move_positions(positions, (1, 3)))
 
 class TestTorre(unittest.TestCase):
     def setUp(self):
-        self.torre_white = Torre('white',(1, 1))
-        self.torre_black = Torre('black', (2, 2))
-
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.torre_white.color, "white")
-        self.assertEqual(self.torre_white.position, (1, 1))
-        self.assertEqual(self.torre_black.color, "black")
-        self.assertEqual(self.torre_black.position, (2, 2))
+        #inicializacion de tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
+        #
+        self.torre_White = Torre('White',(1, 1))
+        self.__positions__[1][1] = self.torre_White
 
     def test_assign_value(self):
         # Test the assign_value method
-        self.assertEqual(self.torre_white.assign_value(), 5)
-        self.assertEqual(self.torre_black.assign_value(), 5)
+        self.assertEqual(self.torre_White.assign_value(), 5)
 
+    def test_valid_white_move(self):
+        # Test a valid move for the white tower
+        self.assertTrue(self.torre_White.piece_move(self.__positions__,(1, 5)))
+        self.assertTrue(self.torre_White.piece_move(self.__positions__,(5, 1)))
+    
+    def test_torre_blocked_move(self):
+        # Test a move that is blocked by another
+        self.__positions__[1][3] = Torre('White', (1, 3))
+        self.assertFalse(self.torre_White.piece_move(self.__positions__,(1, 5)))
 
 class TestRey(unittest.TestCase):
 
     def setUp(self):
+        #inicializacion de tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
         # Creamos reyes blanco y negro antes de cada test
-        self.white_king = Rey("white", (7, 4))  # Rey blanco en la posición inicial
-        self.black_king = Rey("black", (0, 4))  # Rey negro en la posición inicial
+        self.White_king = Rey("White", (7, 4))  # Rey blanco en la posición inicial
+        self.Black_king = Rey("Black", (0, 4))  # Rey negro en la posición inicial
+        self.__positions__[7][4] = self.White_king
+        self.__positions__[0][4] = self.Black_king
 
     def test_assign_value(self):
         # Verifica que el valor del rey sea 1000
-        self.assertEqual(self.white_king.assign_value(), 1000)
-        self.assertEqual(self.black_king.assign_value(), 1000)
+        self.assertEqual(self.White_king.assign_value(), 1000)
+        self.assertEqual(self.Black_king.assign_value(), 1000)
 
     def test_str(self):
         # Verifica que el símbolo del rey se muestre correctamente
-        self.assertEqual(str(self.white_king), "♔")
-        self.assertEqual(str(self.black_king), "♚")
+        self.assertEqual(str(self.White_king), "♚")
+        self.assertEqual(str(self.Black_king), "♔")
 
-    def test_move_king_valid(self):
+    def test_king_white_move_valid(self):
         # Verifica que los movimientos válidos del rey sean permitidos
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertTrue(self.white_king.move_king((6, 4), positions))  # Movimiento hacia abajo
-        self.assertTrue(self.white_king.move_king((6, 5), positions))  # Movimiento en diagonal
-        self.assertTrue(self.white_king.move_king((7, 5), positions))  # Movimiento lateral
+        self.assertTrue(self.White_king.piece_move(self.__positions__,(6, 4)))  # Movimiento hacia abajo
+        self.assertTrue(self.White_king.piece_move(self.__positions__,(6, 5)))  # Movimiento en diagonal
+        self.assertTrue(self.White_king.piece_move(self.__positions__,(7, 5)))  # Movimiento lateral
 
-    def test_move_king_invalid(self):
-        # Verifica que los movimientos inválidos del rey no sean permitidos
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertFalse(self.white_king.move_king((5, 4), positions))  # Movimiento de 2 casillas hacia abajo
-        self.assertFalse(self.white_king.move_king((7, 6), positions))  # Movimiento de 2 casillas hacia la derecha
+    def test_king_black_move_valid(self):
+        # Verifica que los movimientos válidos del rey sean permitidos
+        self.assertTrue(self.Black_king.piece_move(self.__positions__,(0, 3)))  # Movimiento hacia arriba
+        self.assertTrue(self.Black_king.piece_move(self.__positions__,(0, 5)))  # Movimiento en diagonal
 
-    def test_move_king_blocked_by_same_color(self):
-        # Verifica que el rey no pueda moverse a una casilla ocupada por una pieza del mismo color
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[6][4] = Rey("white", (6, 4))  # Colocamos otro rey blanco en la posición (6, 4)
-        self.assertFalse(self.white_king.move_king((6, 4), positions))  # Movimiento inválido, casilla ocupada
-
-    def test_move_king_capture_opponent(self):
-        # Verifica que el rey pueda capturar una pieza del color contrario
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[6][4] = Rey("black", (6, 4))  # Colocamos un rey negro en la posición (6, 4)
-        self.assertTrue(self.white_king.move_king((6, 4), positions))  # Movimiento válido, captura
-
+    def test_king_invalid(self):
+        # Verifica que los movimientos inválidos del rey no sean permitido
+        self.assertFalse(self.White_king.piece_move(self.__positions__,(5, 4)))  # Movimiento de 2 casillas hacia abajo
+        self.assertFalse(self.White_king.piece_move(self.__positions__,(7, 6)))  # Movimiento de 2 casillas hacia la derecha 
 
 
 class TestAlfil(unittest.TestCase):
 
     def setUp(self):
+        #iniiclizacion de tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
         # Creamos alfiles blanco y negro antes de cada test
-        self.white_alfil = Alfil("white", (7, 2))  # Alfil blanco en la posición inicial
-        self.black_alfil = Alfil("black", (0, 2))  # Alfil negro en la posición inicial
+        self.__White_alfil__ = Alfil("White", (7, 2))  # Alfil blanco en la posición inicial
+        self.__Black_alfil__ = Alfil("Black", (0, 2))  # Alfil negro en la posición inicial
+        self.__positions__[7][2] = self.__White_alfil__
+        self.__positions__[0][2] = self.__Black_alfil__
 
     def test_assign_value(self):
         # Verifica que el valor del alfil sea 3
-        self.assertEqual(self.white_alfil.assign_value(), 3)
-        self.assertEqual(self.black_alfil.assign_value(), 3)
+        self.assertEqual(self.__White_alfil__.assign_value(), 3)
+        self.assertEqual(self.__Black_alfil__.assign_value(), 3)
 
     def test_str(self):
         # Verifica que el símbolo del alfil se muestre correctamente
-        self.assertEqual(str(self.white_alfil), "♗")
-        self.assertEqual(str(self.black_alfil), "♝")
+        self.assertEqual(str(self.__Black_alfil__), "♗")
+        self.assertEqual(str(self.__White_alfil__), "♝")
 
-    def test_alfil_move_valid(self):
+    def test_alfil_white_move_valid(self):
         # Prueba movimientos válidos en diagonal
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertTrue(self.white_alfil.alfil_move((5, 0), positions))  # Movimiento diagonal válido
-        self.assertTrue(self.white_alfil.alfil_move((4, 5), positions))  # Otro movimiento diagonal válido
+        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__,(5, 0) ))  # Movimiento diagonal válido
+        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__,(4, 5) ))  # Otro movimiento diagonal válido
 
-    def test_alfil_move_invalid(self):
+    def test_alfil_black_move_valid(self):
+        # Prueba movimientos válidos en diagonal
+        self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__,(3, 5) ))  # Movimiento diagonal válido
+        self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__,(2, 0) ))  # Movimiento diagonal válido 
+
+    def test_alfil_white_move_invalid(self):
         # Prueba movimientos inválidos (no diagonales) para el alfil
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertFalse(self.white_alfil.alfil_move((7, 3), positions))  # Movimiento horizontal inválido
-        self.assertFalse(self.white_alfil.alfil_move((5, 2), positions))  # Movimiento vertical inválido
+        self.assertFalse(self.__White_alfil__.piece_move(self.__positions__,(7, 3)))
+        self.assertFalse(self.__White_alfil__.piece_move(self.__positions__,(5, 2)))
+    
+    def test_alfil_black_move_invalid(self):
+        # Prueba movimientos inválidos (no diagonales) para el alfil
+        self.assertFalse(self.__Black_alfil__.piece_move(self.__positions__,(0, 3)))
+        self.assertFalse(self.__Black_alfil__.piece_move(self.__positions__,(2, 2)))
 
-    def test_alfil_move_blocked(self):
-        # Verifica que el movimiento del alfil sea inválido si hay una pieza bloqueando el camino
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[6][3] = Alfil("white", (6, 3))  # Colocamos una pieza en la diagonal del alfil
-        self.assertFalse(self.white_alfil.alfil_move((5, 4), positions))  # Movimiento inválido, bloqueado
-
-
-    def test_alfil_move_blocked_by_same_color(self):
+    def test_piece_move_blocked_by_same_color(self):
         # Verifica que el alfil no pueda moverse a una casilla ocupada por una pieza del mismo color
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[5][0] = Alfil("white", (5, 0))  # Colocamos un alfil blanco en la diagonal
-        self.assertFalse(self.white_alfil.alfil_move((5, 0), positions))  # Movimiento inválido, casilla ocupada
+        self.__positions__[5][0] = Alfil("White", (5, 0))  # Colocamos un alfil blanco en la diagonal
+        self.assertFalse(self.__White_alfil__.piece_move(self.__positions__,(5, 0)))  # Movimiento inválido, casilla ocupada
 
         
 class TestReina(unittest.TestCase):
     def setUp(self):
-        self.reina_white = Reina('white',(0,4))
-        self.reina_black = Reina('black', (7, 4))
+        #inicializacion de tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
+        self.reina_White = Reina('White',(0,4))
+        self.reina_Black = Reina('Black', (7, 4))
+        self.__positions__[0][4] = self.reina_White
+        self.__positions__[7][4] = self.reina_Black
 
-    def test_initialization(self):
-        # Test initialization and inherited properties
-        self.assertEqual(self.reina_white.color, "white")
-        self.assertEqual(self.reina_white.position, (0,4))
-        self.assertEqual(self.reina_black.color, "black")
-        self.assertEqual(self.reina_black.position, (7, 4))
-    
     def test_assign_value(self):
         # Test the assign_value method
-        self.assertEqual(self.reina_white.assign_value(), 9)
-        self.assertEqual(self.reina_black.assign_value(), 9)
+        self.assertEqual(self.reina_White.assign_value(), 9)
+        self.assertEqual(self.reina_Black.assign_value(), 9)
 
+    def test_valid_white_move(self):
+        # Test a valid move for the white queen
+        self.assertTrue(self.reina_White.piece_move(self.__positions__,(2, 6)))
+        self.assertTrue(self.reina_White.piece_move(self.__positions__,(0, 0)))
+        self.assertTrue(self.reina_White.piece_move(self.__positions__,(1, 3)))
+        self.assertTrue(self.reina_White.piece_move(self.__positions__,(1, 4)))
+
+    def test_valid_black_move(self):
+        # Test a valid move for the black queen
+        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(6, 3)))
+        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(6, 5)))
+        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(7, 0)))
+        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(0, 4)))
+
+    def test_invalid_move(self):
+        self.assertFalse(self.reina_White.piece_move(self.__positions__,(5, 6)))
+        self.assertFalse(self.reina_Black.piece_move(self.__positions__,(6, 6)))
 class TestCaballo(unittest.TestCase):
 
     def setUp(self):
+        #inicializacion de tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
         # Creamos caballos blanco y negro antes de cada test
-        self.white_knight = Caballo("white", (7, 1))  # Caballo blanco en la fila 7, columna 1 (posición inicial)
-        self.black_knight = Caballo("black", (0, 1))  # Caballo negro en la fila 0, columna 1 (posición inicial)
-
+        self.White_knight = Caballo("White", (7, 1))  # Caballo blanco en la fila 7, columna 1 (posición inicial)
+        self.Black_knight = Caballo("Black", (0, 1))  # Caballo negro en la fila 0, columna 1 (posición inicial)
+        self.__positions__[7][1] = self.White_knight
+        self.__positions__[0][1] = self.Black_knight
     def test_assign_value(self):
         # Verifica que el valor del caballo sea 3
-        self.assertEqual(self.white_knight.assign_value(), 3)
-        self.assertEqual(self.black_knight.assign_value(), 3)
+        self.assertEqual(self.White_knight.assign_value(), 3)
+        self.assertEqual(self.Black_knight.assign_value(), 3)
 
     def test_str(self):
         # Verifica que el símbolo del caballo se muestre correctamente
-        self.assertEqual(str(self.white_knight), "♘")
-        self.assertEqual(str(self.black_knight), "♞")
+        self.assertEqual(str(self.Black_knight), "♘")
+        self.assertEqual(str(self.White_knight), "♞")
 
     def test_is_valid_move(self):
         # Verifica que los movimientos en "L" sean válidos
-        self.assertTrue(self.white_knight.is_valid_move(2, 1))  # Movimiento válido
-        self.assertTrue(self.white_knight.is_valid_move(1, 2))  # Movimiento válido
-        self.assertFalse(self.white_knight.is_valid_move(2, 2))  # Movimiento inválido
-        self.assertFalse(self.white_knight.is_valid_move(3, 0))  # Movimiento inválido
-
-    def test_is_valid_destination(self):
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-
-        # Casilla vacía
-        self.assertTrue(self.white_knight.is_valid_destination(5, 2, positions))
-
-        # Casilla ocupada por una pieza del mismo color (invalida)
-        positions[5][2] = Caballo("white", (5, 2))
-        self.assertFalse(self.white_knight.is_valid_destination(5, 2, positions))
-
-        # Casilla ocupada por una pieza de color contrario (válido para captura)
-        positions[5][2] = Caballo("black", (5, 2))
-        self.assertTrue(self.white_knight.is_valid_destination(5, 2, positions))
-
-    def test_move_caballo_valid(self):
-        # Prueba un movimiento válido en forma de "L"
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertTrue(self.white_knight.move_caballo((5, 2), positions))  # Movimiento válido
-        self.assertTrue(self.white_knight.move_caballo((6, 3), positions))  # Movimiento válido
-
-    def test_move_caballo_invalid(self):
-        # Prueba un movimiento inválido que no es en forma de "L"
-        positions = [[None for _ in range(8)] for _ in range(8)]  # Tablero vacío
-        self.assertFalse(self.white_knight.move_caballo((6, 6), positions))  # Movimiento inválido
-        self.assertFalse(self.white_knight.move_caballo((7, 3), positions))  # Movimiento inválido
-
-    def test_move_caballo_capture(self):
-        # Prueba un movimiento válido de captura
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[5][2] = Caballo("black", (5, 2))  # Colocamos un caballo negro en la casilla (5, 2)
-        self.assertTrue(self.white_knight.move_caballo((5, 2), positions))  # Movimiento válido de captura
-
-    def test_move_caballo_blocked_by_same_color(self):
-        # Prueba que el caballo no pueda moverse a una casilla ocupada por una pieza del mismo color
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        positions[5][2] = Caballo("white", (5, 2))  # Colocamos un caballo blanco en la casilla (5, 2)
-        self.assertFalse(self.white_knight.move_caballo((5, 2), positions))  # Movimiento inválido (casilla ocupada)
-
+        self.assertTrue(self.White_knight.piece_move(self.__positions__,(5, 0)))  # Movimiento válido
+        self.assertTrue(self.White_knight.piece_move(self.__positions__,(5, 2)))  # Movimiento válido
+        #
+        self.assertTrue(self.Black_knight.piece_move(self.__positions__,(2, 0)))  # Movimiento 
+        self.assertTrue(self.Black_knight.piece_move(self.__positions__,(2, 2)))  # Movimiento 
     
+    def test_invalid_move(self):
+        # Verifica que los movimientos inválidos no sean permitidos
+        self.assertFalse(self.White_knight.piece_move(self.__positions__,(7, 2)))
+        self.assertFalse(self.Black_knight.piece_move(self.__positions__,(0, 0)))
 
 class TestPeon(unittest.TestCase):
-
-
     def setUp(self):
+        #inicializamos tablero
+        self.__positions__ = [[None] * 8 for _ in range(8)]
         # Creamos peones blanco y negro antes de cada test
-        self.white_peon = Peon("white", (6, 0))  # Peón blanco en la fila 6 (posición inicial)
-        self.black_peon = Peon("black", (1, 0))  # Peón negro en la fila 1 (posición inicial)
+        self.White_peon = Peon("White", (6, 0))  # Peón blanco en la fila 6 (posición inicial)
+        self.White_peon3 = Peon("White", (6, 4))  # Peón blanco en la fila 6 (posición inicial)
+        self.White_peon2 = Peon("White", (6, 2))  # Peón blanco en la fila 6 (posición inicial)
+        self.Black_peon = Peon("Black", (1, 0))  # Peón negro en la fila 1 (posición inicial)
+        self.Black_peon2 = Peon("Black", (1, 2))  # Peón negro en la fila 1 (posición inicial)
+        self.__positions__[6][0] = self.White_peon
+        self.__positions__[6][2] = self.White_peon2
+        self.__positions__[1][0] = self.Black_peon
+        self.__positions__[1][2] = self.Black_peon2
 
     def test_assign_value(self):
         # Verifica que el valor del peón sea 1
-        self.assertEqual(self.white_peon.assign_value(), 1)
-        self.assertEqual(self.black_peon.assign_value(), 1)
+        self.assertEqual(self.White_peon.assign_value(), 1)
+        self.assertEqual(self.Black_peon.assign_value(), 1)
+        self.assertEqual(self.White_peon2.assign_value(), 1)
+        self.assertEqual(self.Black_peon2.assign_value(), 1)
 
     def test_str(self):
         # Verifica que el símbolo del peón se muestre correctamente
-        self.assertEqual(str(self.white_peon), "♙")
-        self.assertEqual(str(self.black_peon), "♟")
+        self.assertEqual(str(self.Black_peon), "♙")
+        self.assertEqual(str(self.White_peon), "♟")
 
-    def test_valid_white_move_initial(self):
-        # Prueba un movimiento válido para el peón blanco en su posición inicial (2 pasos adelante)
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        #self.assertTrue(self.white_peon.validate_movimiento(positions, (4, 0)))  # Mover dos filas hacia adelante
-        self.assertFalse(self.white_peon.validate_movimiento(positions, (5, 0)))  # Mover una fila hacia adelante
+    def test_ataque_white_peon(self):
+        self.__positions__[5][5] = Peon("Black", (5, 5))  # Coloca un peón negro en la posición (5, 5)
+        #print("Peón negro en: ", (5, 5))
+        #print("Estado del tablero: ", self.__positions__)
+        self.assertTrue(self.White_peon3.piece_move(self.__positions__, (5, 5)))  # Captura diagonal
 
-    def test_valid_black_move_initial(self):
-        # Prueba un movimiento válido para el peón negro en su posición inicial (2 pasos adelante)
-        positions = [[None for _ in range(8)] for _ in range(8)]
-        #self.assertTrue(self.black_peon.validate_movimiento(positions, (3, 0)))  # Mover dos filas hacia adelante
-        self.assertFalse(self.black_peon.validate_movimiento(positions, (2, 0)))  # Mover una fila hacia adelante
+    def test_movimiento_inicial_dos_casillas_blanco(self):
+        # Movimiento inicial válido de dos casillas para el peón blanco
+        self.assertTrue(self.White_peon.piece_move(self.__positions__, (4, 0)))
+
+    def test_movimiento_inicial_dos_casillas_negro(self):
+        # Movimiento inicial válido de dos casillas para el peón negro
+        self.assertTrue(self.Black_peon.piece_move(self.__positions__, (3, 0)))
+
+
+    def test_movimiento_invalido_vertical_obstaculo(self):
+        # Intentar mover un peón hacia adelante cuando hay una pieza en el camino
+        self.__positions__[5][0] = Peon("White", (5, 0))  # Obstáculo delante del peón blanco
+        self.assertFalse(self.White_peon.piece_move(self.__positions__, (5, 0)))
+
+    def test_movimiento_invalido_horizontal(self):
+        # Intentar mover el peón horizontalmente (lo cual no es permitido)
+        self.assertFalse(self.White_peon.piece_move(self.__positions__, (6, 1)))
+
+    def test_captura_diagonal_blanco(self):
+        # Colocamos un peón negro en una posición que el peón blanco puede capturar
+        self.__positions__[5][1] = Peon("Black", (5, 1))
+        self.assertTrue(self.White_peon.piece_move(self.__positions__, (5, 1)))
+
+    def test_captura_diagonal_negro(self):
+        # Colocamos un peón blanco en una posición que el peón negro puede capturar
+        self.__positions__[2][1] = Peon("White", (2, 1))
+        self.assertTrue(self.Black_peon.piece_move(self.__positions__, (2, 1)))
+
+    def test_movimiento_vertical_simple_blanco(self):
+        # Movimiento válido de una casilla hacia adelante para el peón blanco
+        self.assertTrue(self.White_peon.piece_move(self.__positions__, (5, 0)))
+
+    def test_movimiento_vertical_simple_negro(self):
+        # Movimiento válido de una casilla hacia adelante para el peón negro
+        self.assertTrue(self.Black_peon.piece_move(self.__positions__, (2, 0)))
+
+    def test_movimiento_invalido_fuera_de_limites(self):
+        # Intentar mover el peón fuera del tablero
+        self.assertFalse(self.White_peon.piece_move(self.__positions__, (8, 0)))
+        self.assertFalse(self.Black_peon.piece_move(self.__positions__, (-1, 0)))
+
+    def test_movimiento_invalido_sin_captura_diagonal(self):
+        # Intentar mover diagonalmente sin que haya una pieza enemiga para capturar
+        self.assertFalse(self.White_peon.piece_move(self.__positions__, (5, 1)))
+
+    def test_captura_invalida_vertical(self):
+        # Intentar capturar en movimiento vertical (lo cual no es permitido)
+        self.__positions__[5][0] = Peon("Black", (5, 0))  # Peón enemigo justo en frente
+        self.assertFalse(self.White_peon.piece_move(self.__positions__, (5, 0)))
+
+    def test_piece_move_invalid_color(self):
+        """Prueba que `piece_move` devuelva False si el color del peón es inválido."""
+        # Creamos un peón con un color inválido
+        invalid_peon = Peon("Green", (6, 0))  
+        self.assertFalse(invalid_peon.piece_move(self.__positions__, (5, 0)))
+
+    def test_move_invalid_no_forward(self):
+        """Prueba que `move` devuelva False si el peón no avanza correctamente."""
+        white_peon = Peon("White", (6, 0))
+        black_peon = Peon("Black", (1, 0))
+        
+        # Colocamos los peones en el tablero
+        self.__positions__[6][0] = white_peon
+        self.__positions__[1][0] = black_peon
+
+        # Prueba de movimiento inválido hacia una posición no permitida
+        self.assertFalse(white_peon.move(self.__positions__, (7, 0), -1))  # Movimiento hacia atrás
+        self.assertFalse(black_peon.move(self.__positions__, (0, 0), 1))   # Movimiento hacia fuera del tablero
+
+    def test_move_invalid_destination_occupied(self):
+        """Prueba que `move` devuelva False si la posición de destino está ocupada."""
+        white_peon = Peon("White", (6, 0))
+        blocking_piece = Peon("Black", (5, 0))
+
+        # Colocamos el peón blanco y una pieza bloqueadora en el tablero
+        self.__positions__[6][0] = white_peon
+        self.__positions__[5][0] = blocking_piece
+
+        # Intento de mover el peón blanco adelante, lo cual debería fallar por estar ocupado
+        self.assertFalse(white_peon.move(self.__positions__, (5, 0), -1))
 
 
 if __name__ == '__main__':

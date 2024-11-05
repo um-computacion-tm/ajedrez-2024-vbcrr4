@@ -2,6 +2,60 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+## (0.4.4) 22/10/24
+### Issue 
+- error en el movimiento de un peón
+### Changed
+- actualizacion de codigo de las piezas
+## (0.4.3) 22/10/24
+### Fixed
+- arreglo de actualizacion de la posicion, el metodo de traduccion de input estaba retornando de forma incorrecta las posiciones y eso me impedía realizar los movimientos correctos. :/
+## (0.4.2) 22/10/24
+### Added 
+- cracion de cli.py t de test_cli.py
+### Removed
+- eliminacion de carpetas __pychache__ y de env
+## (0.4.1) 21/10/24
+### Fixed
+- arreglo de codigo de chess.py
+- arreglo de tests de chess.py
+## (0.4.0) 21/10/24
+### Changed
+- cambio en el codigo de chess.py y de board.py
+- cambio en los test de chess.py y de board.py
+## (0.3.9) 21/10/24
+### Changed
+- cambio en el codigo de chess.py, nuevos metodos agregados para manejar el juego
+### Issues
+- arrgelar problemas al realizar movimientos dentro del tablero en chess.py
+## (0.3.8) 21/10/24
+### Added
+- nuevos metodos para board.py
+- nuevos tests para board.py
+### Changed
+- cambio en el codigo de peon.py y piece.py
+## (0.3.7) 18/10/24
+### Added
+- nueva exepcion para un input invalido
+### Changed
+- arreglo en los test de las piezas
+- cambio en la estructuracion de algunos metodos como los de las piezas
+### Issues
+- subir chess.py con el codigo nuevo, pero antes debo de terminar de testear todo de manera correcta.
+## (0.3.6) 15/10/24
+### Added
+- nueva exepcion para un input invalido.
+## (0.3.5) 15/10/24
+### Changed
+- arreglo en la representacion del board para que se coloquen bien las representaciones de las piezas.
+- cambio en la representacion de las piezas las blancas se reprensentan con "♜" y las negras con "♖"
+- cambio en los test de piece.py y de board.py 
+## (0.3.4) 14/10/24
+### Added
+- nuevos metodos para chess.py
+- nuevos test para chess.py
+### Changed 
+- cambio en ".coveragerc"
 ## (0.3.3) 11/10/24
 ### Changed
 - cambio en el codigo de los test para alfil.py
