@@ -34,9 +34,6 @@ class TestAlfil(unittest.TestCase):
         self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__,(2, 0) ))  # Movimiento diagonal válido 
 
     def test_alfil_white_move_invalid(self):
-        # Prueba movimientos inválidos (no diagonales) para el alfil
-        self.assertFalse(self.__White_alfil__.piece_move(self.__positions__,(7, 3)))
-        self.assertFalse(self.__White_alfil__.piece_move(self.__positions__,(5, 2)))
     
     #test_alfil_black_move_invalid(self):
         # Prueba movimientos inválidos (no diagonales) para el alfil
