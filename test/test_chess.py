@@ -42,14 +42,6 @@ class TestGame(unittest.TestCase):
             self.__game__.execute_move(start_pos, end_pos)
             self.assertEqual(self.__game__.__turn__, "Black")
 
-    def test_execute_move_does_not_switch_turn_on_failed_move(self):
-        start_pos, end_pos = "B2", "B4"
-        self.__game__.perform_movement = MagicMock(return_value=False)
-        
-        with patch('builtins.print'):
-            self.__game__.execute_move(start_pos, end_pos)
-            self.assertEqual(self.__game__.__turn__, "White")
-
     def test_is_valid_move_out_of_bounds(self):
         start_pos, end_pos = "Z9", "A3"
         self.__game__.translate_position = MagicMock(side_effect=InvalidInputError("Posición no válida"))

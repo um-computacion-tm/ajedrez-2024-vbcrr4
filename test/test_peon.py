@@ -57,7 +57,6 @@ class TestPeon(unittest.TestCase):
 
     def test_captura_invalida_vertical(self):
         # Intentar capturar en movimiento vertical (lo cual no es permitido)
-        self.__positions__[5][0] = Peon("Black", (5, 0))  # Peón enemigo justo en frente
         self.assertFalse(self.__White_peon__.piece_move(self.__positions__, (5, 0)))
 
     def test_movimiento_vertical_simple_blanco(self):

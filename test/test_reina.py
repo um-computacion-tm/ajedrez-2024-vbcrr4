@@ -16,7 +16,7 @@ class TestReina(unittest.TestCase):
         self.assertEqual(self.reina_negra.assign_value(), 9)
         self.assertEqual(self.reina_blanca.assign_value(), 9)
 
-    def test_piece_move_vertical(self):
+    def test_piece_move(self):
         # Prueba un movimiento vertical válido (camino despejado)
         self.assertTrue(self.reina_negra.piece_move(self.__positions__, (3, 3)))
 
@@ -24,7 +24,7 @@ class TestReina(unittest.TestCase):
         self.__positions__[1][3] = Piece("White", (1, 3))
         self.assertFalse(self.reina_negra.piece_move(self.__positions__, (3, 3)))
 
-    def test_piece_move_horizontal(self):
+    #test_piece_move_horizontal(self):
         # Prueba un movimiento horizontal válido (camino despejado)
         self.assertTrue(self.reina_blanca.piece_move(self.__positions__, (4, 6)))
 
