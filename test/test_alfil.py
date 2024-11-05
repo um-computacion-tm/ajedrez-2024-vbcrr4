@@ -3,11 +3,10 @@ from game.alfil import Alfil
 class TestAlfil(unittest.TestCase):
 
     def setUp(self):
-        #iniiclizacion de tablero
+    
         self.__positions__ = [[None] * 8 for _ in range(8)]
-        # Creamos alfiles blanco y negro antes de cada test
-        self.__White_alfil__ = Alfil("White", (7, 2))  # Alfil blanco en la posición inicial
-        self.__Black_alfil__ = Alfil("Black", (2, 0))  # Alfil negro en la posición inicial
+        self.__White_alfil__ = Alfil("White", (7, 2))  
+        self.__Black_alfil__ = Alfil("Black", (2, 0))  
         self.__posicionocupada__ = Alfil("White", (5, 0)) 
         self.__positions__[7][2] = self.__White_alfil__
         self.__positions__[2][0] = self.__Black_alfil__
@@ -19,13 +18,12 @@ class TestAlfil(unittest.TestCase):
         self.assertEqual(self.__Black_alfil__.assign_value(), 3)
 
     def test_alfil_white_move_valid(self):
-        # Prueba movimientos válidos en diagonal
-        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__,(5, 4) ))  # Movimiento diagonal válido
-        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__,(4, 5) ))  # Otro movimiento diagonal válido
+        # Movimientos válidos en diagonal del alfil blanco
+        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__, (5, 4)))  # Movimiento diagonal válido
+        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__, (4, 5)))  # Otro movimiento diagonal válido
 
-    #test_alfil_black_move_valid
-        # Prueba movimientos válidos en diagonal
-        self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__,(4, 2) ))  # Movimiento diagonal válido
+        # Movimiento válido del alfil negro
+        self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__, (4, 2)))  # Movimiento diagonal vál
 
     def test_alfil_move_invalid(self):
         # Prueba movimientos inválidos (no diagonales) para el alfil
