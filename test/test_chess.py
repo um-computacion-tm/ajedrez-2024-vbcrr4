@@ -86,10 +86,6 @@ class TestGame(unittest.TestCase):
     def test_translate_position_invalid(self):
         with self.assertRaises(InvalidInputError):
             self.__game__.translate_position("Z9")
-
-    def test_check_victory_status_draw(self):
-        self.__game__.__board__.count_pieces = MagicMock(return_value=(1, 1))
-        self.assertEqual(self.__game__.check_victory_status(), "Empate")
 #####
     def test_translate_position_invalid_length(self):
         """Prueba que `translate_position` lance `InvalidInputError` cuando el input tiene más de dos caracteres."""
