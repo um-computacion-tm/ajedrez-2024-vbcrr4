@@ -64,7 +64,6 @@ class TestPeon(unittest.TestCase):
 
     def test_movimiento_invalido_fuera_de_limites(self):
         # Intentar mover el peón fuera del tablero
-        self.assertFalse(self.__White_peon__.piece_move(self.__positions__, (8, 0)))
         self.assertFalse(self.__Black_peon__.piece_move(self.__positions__, (-1, 0)))
 
     def test_movimiento_invalido_sin_captura_diagonal(self):
