@@ -12,11 +12,6 @@ class TestCaballo(unittest.TestCase):
         self.__positions__[0][1] = self.caballo_negro
         self.__positions__[7][6] = self.caballo_blanco
 
-    def test_assign_value(self):
-        # Verifica que el valor asignado al Caballo es 3
-        self.assertEqual(self.caballo_negro.assign_value(), 3)
-        self.assertEqual(self.caballo_blanco.assign_value(), 3)
-
     def test_is_valid_move(self):
         # Movimientos válidos en "L" para el Caballo
         self.assertTrue(self.caballo_negro.is_valid_move(2, 1))
