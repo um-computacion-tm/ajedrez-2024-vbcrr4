@@ -1,36 +1,41 @@
 import unittest
 from game.reina import Reina
+from game.piece import Piece 
+
 class TestReina(unittest.TestCase):
+
     def setUp(self):
-        #inicializacion de tablero
-        self.__positions__ = [[None] * 8 for _ in range(8)]
-        self.reina_White = Reina('White',(0,4))
-        self.reina_Black = Reina('Black', (7, 4))
-        self.__positions__[0][4] = self.reina_White
-        self.__positions__[7][4] = self.reina_Black
+        # Inicializa una Reina negra y una blanca para las pruebas
+        self.reina_negra = Reina("Black", (0, 3))
+        self.reina_blanca = Reina("White", (7, 3))
+        # Crea un tablero vacío de 8x8
+        self.positions = [[None for _ in range(8)] for _ in range(8)]
 
     def test_assign_value(self):
-        # Test the assign_value method
-        self.assertEqual(self.reina_White.assign_value(), 9)
-        self.assertEqual(self.reina_Black.assign_value(), 9)
+        # Verifica que el valor asignado a la Reina es 9
+        self.assertEqual(self.reina_negra.assign_value(), 9)
+        self.assertEqual(self.reina_blanca.assign_value(), 9)
 
-    def test_valid_white_move(self):
-        # Test a valid move for the white queen
-        self.assertTrue(self.reina_White.piece_move(self.__positions__,(2, 6)))
-        self.assertTrue(self.reina_White.piece_move(self.__positions__,(0, 0)))
-        self.assertTrue(self.reina_White.piece_move(self.__positions__,(1, 3)))
-        self.assertTrue(self.reina_White.piece_move(self.__positions__,(1, 4)))
+    def test_piece_move_vertical(self):
+        # Prueba un movimiento vertical válido (camino despejado)
+        self.assertTrue(self.reina_negra.piece_move(self.positions, (3, 3)))
 
-    def test_valid_black_move(self):
-        # Test a valid move for the black queen
-        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(6, 3)))
-        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(6, 5)))
-        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(7, 0)))
-        self.assertTrue(self.reina_Black.piece_move(self.__positions__,(0, 4)))
+        # Prueba un movimiento vertical bloqueado
+        self.positions[1][3] = Piece("White", (1, 3))
+        self.assertFalse(self.reina_negra.piece_move(self.positions, (3, 3)))
 
-    def test_invalid_move(self):
-        self.assertFalse(self.reina_White.piece_move(self.__positions__,(5, 6)))
-        self.assertFalse(self.reina_Black.piece_move(self.__positions__,(6, 6)))
+    def test_piece_move_horizontal(self):
+        # Prueba un movimiento horizontal válido (camino despejado)
+        self.assertTrue(self.reina_negra.piece_move(self.positions, (0, 7)))
+
+        # Prueba un movimiento horizontal bloqueado
+        self.positions[0][5] = Piece("White", (0, 5))
+        self.assertFalse(self.reina_negra.piece_move(self.positions, (0, 7)))
+
+    def test_str_representation(self):
+        # Verifica la representación visual de la Reina
+        self.assertEqual(str(self.reina_negra), "♕")
+        self.assertEqual(str(self.reina_blanca), "♛")
 
 if __name__ == '__main__':
     unittest.main()
