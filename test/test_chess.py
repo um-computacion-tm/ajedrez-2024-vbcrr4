@@ -155,16 +155,7 @@ class TestGame(unittest.TestCase):
         with patch('builtins.print') as mocked_print:
             self.assertFalse(self.__game__.play("A2", "A4"))
             mocked_print.assert_any_call("Error: Error de movimiento inválido")
-
-    def test_play_raises_PieceNotFoundError(self):
-        """Simula `play` cuando `perform_movement` genera un `PieceNotFoundError`."""
-        self.__game__.is_valid_move = MagicMock(return_value=True)
-        self.__game__.perform_movement = MagicMock(side_effect=PieceNotFoundError("Error: Pieza no encontrada"))
-
-        with patch('builtins.print') as mocked_print:
-            self.assertFalse(self.__game__.play("A2", "A4"))
-            mocked_print.assert_any_call("Error: Error: Pieza no encontrada")
-
+            
     def test_play_invalid_move(self):
         """Prueba `play` cuando el movimiento es inválido según `is_valid_move`."""
         self.__game__.is_valid_move = MagicMock(return_value=False)

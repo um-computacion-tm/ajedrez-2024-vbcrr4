@@ -5,11 +5,12 @@ from game.piece import Piece
 class TestCaballo(unittest.TestCase):
 
     def setUp(self):
-        # Inicializa un Caballo negro y uno blanco para las pruebas
+    
+        self.__positions__ = [[None for _ in range(8)] for _ in range(8)]
         self.caballo_negro = Caballo("Black", (0, 1))
         self.caballo_blanco = Caballo("White", (7, 6))
-        # Crea un tablero vacío de 8x8
-        self.positions = [[None for _ in range(8)] for _ in range(8)]
+        self.__positions__[0][1] = self.caballo_negro
+        self.__positions__[7][6] = self.caballo_blanco
 
     def test_assign_value(self):
         # Verifica que el valor asignado al Caballo es 3
@@ -28,34 +29,34 @@ class TestCaballo(unittest.TestCase):
 
     def test_is_valid_destination(self):
         # Prueba una casilla vacía
-        self.assertTrue(self.caballo_negro.is_valid_destination(2, 2, self.positions))
+        self.assertTrue(self.caballo_negro.is_valid_destination(2, 2, self.__positions__))
 
         # Prueba una casilla ocupada por una pieza del mismo color
-        self.positions[2][2] = Piece("Black", (2, 2))
-        self.assertFalse(self.caballo_negro.is_valid_destination(2, 2, self.positions))
+        self.__positions__[2][2] = Piece("Black", (2, 2))
+        self.assertFalse(self.caballo_negro.is_valid_destination(2, 2, self.__positions__))
 
         # Prueba una casilla ocupada por una pieza de diferente color
-        self.positions[2][2] = Piece("White", (2, 2))
-        self.assertTrue(self.caballo_negro.is_valid_destination(2, 2, self.positions))
+        self.__positions__[2][2] = Piece("White", (2, 2))
+        self.assertTrue(self.caballo_negro.is_valid_destination(2, 2, self.__positions__))
 
     def test_piece_move_valid(self):
         # Prueba un movimiento válido para el Caballo a una casilla vacía
         new_position = (2, 2)
-        self.assertTrue(self.caballo_negro.piece_move(self.positions, new_position))
+        self.assertTrue(self.caballo_negro.piece_move(self.__positions__, new_position))
 
         # Prueba un movimiento válido para el Caballo a una casilla ocupada por una pieza del color contrario
-        self.positions[2][2] = Piece("White", (2, 2))
-        self.assertTrue(self.caballo_negro.piece_move(self.positions, new_position))
+        self.__positions__[2][2] = Piece("White", (2, 2))
+        self.assertTrue(self.caballo_negro.piece_move(self.__positions__, new_position))
 
     def test_piece_move_invalid(self):
         # Prueba un movimiento no válido para el Caballo (no en "L")
         new_position = (2, 3)
-        self.assertFalse(self.caballo_negro.piece_move(self.positions, new_position))
+        self.assertFalse(self.caballo_negro.piece_move(self.__positions__, new_position))
 
         # Prueba un movimiento válido pero a una casilla ocupada por una pieza del mismo color
         new_position = (2, 2)
-        self.positions[2][2] = Piece("Black", (2, 2))
-        self.assertFalse(self.caballo_negro.piece_move(self.positions, new_position))
+        self.__positions__[2][2] = Piece("Black", (2, 2))
+        self.assertFalse(self.caballo_negro.piece_move(self.__positions__, new_position))
 
     def test_str_representation(self):
         # Verifica la representación visual del Caballo
