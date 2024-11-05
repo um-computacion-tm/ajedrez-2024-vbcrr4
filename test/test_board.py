@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 from game.board import Board
 from game.piece import *
 from game.alfil import *
@@ -121,49 +122,6 @@ class TestBoard(unittest.TestCase):
         # Verifica la búsqueda de una pieza no presente
         self.assertIsNone(self.__board__.search_piece(None))
 
-
-    def test_only_kings_left(self):
-        """Prueba si solo quedan los reyes en el tablero."""
-        self.__board__.reset_board()
-        self.__board__.place_piece(0, 3, Rey("Black", (0, 3)))
-        self.__board__.place_piece(7, 3, Rey("White", (7, 3)))
-        self.assertTrue(self.__board__.only_kings_left())
-
-        # Si hay alguna otra pieza, debería retornar False
-        self.__board__.place_piece(1, 1, Peon("Black", (1, 1)))
-        self.assertFalse(self.__board__.only_kings_left())
-
-    def test_find_king(self):
-        """Prueba la búsqueda del rey por su color."""
-        self.assertEqual(self.__board__.find_king("Black"), (0, 3))
-        self.assertEqual(self.__board__.find_king("White"), (7, 3))
-
-    def test_is_diagonal_move(self):
-        # Prueba que el método is_diagonal_move funcione correctamente
-        self.assertTrue(self.__board__.is_diagonal_move((0, 0), (2, 2)))
-        self.assertFalse(self.__board__.is_diagonal_move((0, 0), (2, 3)))
-
-    def test_is_vertical_move(self):
-        # Prueba que el método is_vertical_move funcione correctamente
-        self.assertTrue(self.__board__.is_vertical_move((0, 0), (3, 0)))
-        self.assertFalse(self.__board__.is_vertical_move((0, 0), (3, 1)))
-
-    def test_is_horizontal_move(self):
-        # Prueba que el método is_horizontal_move funcione correctamente
-        self.assertTrue(self.__board__.is_horizontal_move((0, 0), (0, 3)))
-        self.assertFalse(self.__board__.is_horizontal_move((0, 0), (1, 3)))
-
-    def test_torre_move(self):
-        """ Test para verificar los movimientos válidos e inválidos de una torre """
-        # Colocar una torre blanca en (7, 0)
-        self.__board__.get_piece(7, 0)
-        # Movimiento válido (horizontal)
-        self.assertFalse(self.__board__.is_valid_move((7, 0), (7, 5)))
-
-
-        # Movimiento inválido (diagonal)
-        self.assertFalse(self.__board__.is_valid_move((7, 0), (5, 2)))
-
     def test_torre_move2(self):
         # Coloca una torre blanca en la posición inicial (5, 0)
         torre = Torre("White", (5, 0))
@@ -183,12 +141,12 @@ class TestBoard(unittest.TestCase):
 
     def test_validate_out_of_board(self):
         """Prueba que la validación de posiciones fuera del tablero funcione correctamente."""
-        self.assertTrue(self.__board__.validate_out_of_board((-1, 0)))
-        self.assertTrue(self.__board__.validate_out_of_board((8, 0)))
-        self.assertTrue(self.__board__.validate_out_of_board((0, -1)))
-        self.assertTrue(self.__board__.validate_out_of_board((0, 8)))
-        self.assertFalse(self.__board__.validate_out_of_board((0, 0)))  # dentro del tablero
-        self.assertFalse(self.__board__.validate_out_of_board((7, 7)))  # dentro del tablero
+        self.assertFalse(self.__board__.validate_out_of_board((-1, 0)))
+        self.assertFalse(self.__board__.validate_out_of_board((8, 0)))
+        self.assertFalse(self.__board__.validate_out_of_board((0, -1)))
+        self.assertFalse(self.__board__.validate_out_of_board((0, 8)))
+        self.assertTrue(self.__board__.validate_out_of_board((0, 0)))  # dentro del tablero
+        self.assertTrue(self.__board__.validate_out_of_board((7, 7)))  # dentro del tablero
 
 
     def test_reset_board(self):
@@ -228,6 +186,167 @@ class TestBoard(unittest.TestCase):
  
         self.assertEqual(repr(__board__), expected_board)
 
+    def test_move_valid(self):
+        """Prueba un movimiento válido y verifica su resultado en el tablero."""
+        peon_blanco = Peon("White", (6, 0))
+        destino = (5, 0)
+        self.__board__.place_piece(6, 0, peon_blanco)
+        self.__board__.move((6, 0), destino)
+        
+        # Verificar que la pieza se haya movido correctamente
+        self.assertIsNone(self.__board__.get_piece(6, 0))
+        self.assertEqual(self.__board__.get_piece(*destino), peon_blanco)
+
+    def test_move_invalid_out_of_bounds(self):
+        """Prueba el manejo de un movimiento fuera de los límites del tablero."""
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.move((-1, 0), (0, 0))
+
+    def test_move_invalid_no_piece_at_origin(self):
+        """Prueba el manejo de un movimiento desde una posición sin pieza."""
+        destino = (4, 4)
+        with self.assertRaises(PieceNotFoundError):
+            self.__board__.move((4, 4), destino)
+
+    def test_can_move_valid(self):
+        """Prueba que `can_move` permita un movimiento válido."""
+        peon_blanco = Peon("White", (6, 0))
+        self.__board__.place_piece(6, 0, peon_blanco)
+        destino = (5, 0)
+
+        # No debe lanzar ninguna excepción
+        try:
+            self.__board__.can_move((6, 0), destino)
+        except Exception as e:
+            self.fail(f"can_move lanzó una excepción inesperada: {e}")
+
+    def test_can_move_invalid_blocked_by_same_color(self):
+        """Prueba que `can_move` prohíba movimientos a una posición ocupada por una pieza del mismo color."""
+        torre_blanca = Torre("White", (7, 0))
+        peon_blanco = Peon("White", (6, 0))
+        self.__board__.place_piece(7, 0, torre_blanca)
+        self.__board__.place_piece(6, 0, peon_blanco)
+
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.can_move((7, 0), (6, 0))
+
+    def test_is_valid_move_capturing_opponent(self):
+        """Prueba `is_valid_move` con una captura válida de una pieza oponente."""
+        peon_blanco = Peon("White", (6, 0))
+        peon_negro = Peon("Black", (5, 1))
+        self.__board__.place_piece(6, 0, peon_blanco)
+        self.__board__.place_piece(5, 1, peon_negro)
+
+        self.assertTrue(self.__board__.is_valid_move((6, 0), (5, 1)))
+
+    def test_is_valid_move_blocked_by_own_piece(self):
+        """Prueba `is_valid_move` en un intento de moverse a una posición ocupada por una pieza propia."""
+        torre_blanca = Torre("White", (7, 0))
+        peon_blanco = Peon("White", (6, 0))
+        self.__board__.place_piece(7, 0, torre_blanca)
+        self.__board__.place_piece(6, 0, peon_blanco)
+
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.is_valid_move((7, 0), (6, 0))
+
+    def test_execute_move(self):
+        """Prueba `execute_move` para verificar que actualice correctamente el tablero."""
+        peon_blanco = Peon("White", (6, 0))
+        destino = (5, 0)
+        self.__board__.place_piece(6, 0, peon_blanco)
+
+        self.__board__.execute_move((6, 0), destino)
+
+        # Comprobar que la pieza se movió
+        self.assertIsNone(self.__board__.get_piece(6, 0))
+        self.assertEqual(self.__board__.get_piece(*destino), peon_blanco)
+        self.assertEqual(peon_blanco.position, destino)  # Verificar actualización de posición interna
+
+
+####
+    def test_execute_move_piece_origen_is_none(self):
+        """Prueba que `execute_move` lance `PieceNotFoundError` si `pieza_origen` es `None`."""
+        with self.assertRaises(PieceNotFoundError):
+            self.__board__.execute_move((4, 4), (5, 5))
+
+    def test_execute_move_piece_destino_not_none(self):
+        """Prueba que `execute_move` actualice `pieza_destino` si no es `None`."""
+        # Mock de las piezas de origen y destino
+        pieza_origen = MagicMock()
+        pieza_destino = MagicMock()
+        self.__board__.get_piece = MagicMock(side_effect=[pieza_origen, pieza_destino])
+
+        # Ejecutar movimiento
+        self.__board__.execute_move((4, 4), (5, 5))
+
+        # Verificar que `pieza_destino.update_position` se llame con `None`
+        pieza_destino.update_position.assert_called_once_with(None)
+
+    def test_is_valid_move_destino_piece_is_king(self):
+        """Prueba que `is_valid_move` lance `CantEatKingError` si `destino_piece` es un Rey."""
+        origen_piece = MagicMock(color="White")
+        destino_piece = Rey("Black", (7, 7))
+
+        # Mock de piezas de origen y destino
+        self.__board__.get_piece = MagicMock(side_effect=[origen_piece, destino_piece])
+
+        with self.assertRaises(CantEatKingError):
+            self.__board__.is_valid_move((6, 6), (7, 7))
+
+    def test_is_valid_move_destino_out_of_bounds(self):
+        """Prueba que `is_valid_move` lance `InvalidMoveError` si `destino` está fuera del tablero."""
+        origen = (3, 3)
+        destino = (8, 8)  # fuera del tablero
+        self.__board__.validate_out_of_board = MagicMock(return_value=False)
+
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.is_valid_move(origen, destino)
+
+    def test_is_valid_move_origen_out_of_bounds(self):
+        """Prueba que `is_valid_move` lance `InvalidMoveError` si `origen` está fuera del tablero."""
+        origen = (-1, 0)  # fuera del tablero
+        destino = (3, 3)
+        self.__board__.validate_out_of_board = MagicMock(side_effect=[False, True])
+
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.is_valid_move(origen, destino)
+
+    def test_can_move_invalid_piece_movement(self):
+        """Prueba que `can_move` lance `InvalidPieceMovement` si `is_valid_move` es False."""
+        origen_piece = MagicMock()
+        self.__board__.get_piece = MagicMock(return_value=origen_piece)
+        self.__board__.is_valid_move = MagicMock(return_value=False)
+
+        with self.assertRaises(InvalidPieceMovement):
+            self.__board__.can_move((2, 2), (3, 3))
+
+    def test_move_destino_out_of_bounds(self):
+        """Prueba que `move` lance `InvalidMoveError` si `destino` está fuera del tablero."""
+        origen = (2, 2)
+        destino = (9, 9)  # fuera del tablero
+        self.__board__.validate_out_of_board = MagicMock(side_effect=[True, False])
+
+        with self.assertRaises(InvalidMoveError):
+            self.__board__.move(origen, destino)
+
+    def test_move_cant_eat_king_error(self):
+        """Prueba que `move` maneje la excepción `CantEatKingError` correctamente."""
+        origen = (2, 2)
+        destino = (3, 3)
+        self.__board__.validate_out_of_board = MagicMock(return_value=True)
+        self.__board__.can_move = MagicMock(side_effect=CantEatKingError("No puedes capturar al rey del oponente."))
+
+        with self.assertRaises(CantEatKingError):
+            self.__board__.move(origen, destino)
+
+    def test_color_pieces_piece_not_found(self):
+        """Prueba que `color_pieces` retorne `PieceNotFoundError` si no hay ninguna pieza en la posición."""
+        row, col = 4, 4
+        self.__board__.get_piece = MagicMock(return_value=None)  # No hay pieza en la posición
+
+        result = self.__board__.color_pieces(row, col)
+        self.assertIsInstance(result, PieceNotFoundError)
+        self.assertEqual(str(result), "No hay ninguna pieza en la posición de origen.")
 
 if __name__ == "__main__":
     unittest.main()

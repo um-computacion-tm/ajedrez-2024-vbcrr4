@@ -1,114 +1,89 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from game.cli import Interfaz
-from game.chess import Game
-from game.exepciones import *
+import sys
+from io import StringIO
+from game.cli import main, iniciar_juego
 
-class TestInterfaz(unittest.TestCase):
+class TestChessCLI(unittest.TestCase):
 
-    def setUp(self):
-        """Se ejecuta antes de cada prueba."""
-        self.interfaz = Interfaz()
-        self.interfaz.__game__ = MagicMock(spec=Game)  # Mock para evitar comportamiento real de Game
+    @patch('game.cli.Game')  # Mockear la clase Game
+    def test_argument_parsing(self, MockGame):
+        """Testea que el argumento `comando` acepte sólo el valor 'iniciar'."""
+        test_args = ['cli.py', 'iniciar']
+        with patch.object(sys, 'argv', test_args):
+            with patch('game.cli.iniciar_juego') as mock_iniciar:
+                main()
+                mock_iniciar.assert_called_once()  # Asegurarse que iniciar_juego se llama con 'iniciar'
 
-    """@patch('builtins.input', side_effect=['1', '4', 's'])  # Simula más entradas
-    #@patch('game.cli.Interfaz.rendirse')
-    @patch('builtins.print')
-    def test_menu_principal(self,mock_print , mock_input):
-        self.interfaz.iniciar()
-        #self.interfaz.bucle_juego()
-        #self.interfaz.rendirse()
-        #mock_rendirse.assert_called_once()
-        mock_print.assert_called_with("Game Over")"""
+    @patch('builtins.input', side_effect=['A2', 'A4', 'Q'])  # Secuencia de inputs de usuario
+    @patch('game.cli.Game')  # Mockear la clase Game
+    def test_iniciar_juego_normal_play(self, MockGame, mock_input):
+        """Simula un juego en el que el usuario realiza un movimiento y luego sale."""
+        mock_game_instance = MockGame.return_value
 
-    @patch('builtins.input', side_effect=["5", "5"])  # Agrega suficientes valores para el mock de input
-    def test_iniciar_partida2(self, mock_input):
-        self.interfaz = Interfaz()
-        self.interfaz.iniciar_partida()
-        self.assertEqual(self.interfaz.contador_turnos, 0)
-        # Agrega más aserciones según sea necesario para verificar el comportamiento
+        # Mockear métodos de la clase Game
+        mock_game_instance.play.return_value = True  # Suponer que el movimiento es válido
+        mock_game_instance.game_over.return_value = False  # No se termina hasta que se introduce 'Q'
+        
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            iniciar_juego()
+            output = fake_out.getvalue()
 
+            # Validar llamadas clave
+            mock_game_instance.show_board.assert_called()  # Tablero mostrado inicialmente y después de cada turno
+            self.assertIn("Turno de las", output)
+            mock_game_instance.play.assert_called_with(start_pos='A2', end_pos='A4')
+            mock_game_instance.game_over.assert_called()
 
-    @patch('builtins.input', side_effect=['B1', 'C3'])  # Opción de menú + posiciones de ajedrez
-    @patch('os.system')
-    def test_realizar_movimiento_valido1(self, mock_os, mock_input):
-        """Test para realizar un movimiento válido pasando por el menú."""
-        self.interfaz.__game__.valid_moves.return_value = True
-        self.interfaz.realizar_movimiento('B1', 'C3')  # Ahora se pasan los argumentos
-        self.interfaz.__game__.play.assert_called_once_with('B1', 'C3')  # Verifica la llamada correcta
-        self.assertEqual(self.interfaz.contador_turnos, 1)
+    @patch('builtins.input', side_effect=['A2', 'A11', 'Q'])  # Secuencia de inputs inválidos
+    @patch('game.cli.Game')
+    def test_iniciar_juego_invalid_input(self, MockGame, mock_input):
+        """Simula entradas inválidas del usuario para verificar el manejo de errores."""
+        mock_game_instance = MockGame.return_value
 
+        # Asegurarse de que game_over devuelva False hasta que se envíe la entrada 'Q'
+        mock_game_instance.game_over.side_effect = [False, False, True]
 
-    @patch('builtins.input', side_effect=[ 'A2', 'A3'])  # Menú: opción 1, movimiento: A2 a A3
-    @patch('os.system')
-    def test_realizar_movimiento_valido2(self, mock_os, mock_input):
-        """Test para realizar un movimiento válido."""
-        self.interfaz.__game__.valid_moves.return_value = True
-        self.interfaz.realizar_movimiento('A2', 'A3')  # Ahora se pasan los argumentos
-        self.interfaz.__game__.play.assert_called_once_with('A2', 'A3')  # Verifica la llamada correcta
-        self.assertEqual(self.interfaz.contador_turnos, 1)
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            iniciar_juego()
+            output = fake_out.getvalue()
 
+            # Validar mensajes de error y manejo de entradas inválidas
+            self.assertIn("Entrada inválida en la posición final. Asegúrate de ingresar las posiciones en formato correcto (ej. A2, H8).", output)
+            mock_game_instance.play.assert_not_called()  # No debería intentar jugar con entrada inválida
+            self.assertIn("Turno de las", output)
 
-    @patch('builtins.input', side_effect=[ 'A2', 'A3'])  # Menú: opción 1, mover de A2 a A3
-    @patch('os.system')
-    def test_realizar_movimiento_invalido1(self, mock_os, mock_input):
-        """Test para un movimiento inválido que lanza una excepción."""
-        self.interfaz.__game__.play.side_effect = InvalidMoveError("Movimiento inválido")
-        self.interfaz.realizar_movimiento('A2', 'A3')  # Ahora se pasan los argumentos
-        self.interfaz.__game__.play.assert_called_once_with('A2', 'A3')
-        self.assertEqual(self.interfaz.contador_turnos, 0)  # No debe incrementar el turno
+    @patch('builtins.input', side_effect=['A11', 'A3', 'Q'])  # Secuencia de inputs inválidos
+    @patch('game.cli.Game')
+    def test_iniciar_juego_invalid_input2(self, MockGame, mock_input):
+        """Simula entradas inválidas del usuario para verificar el manejo de errores."""
+        mock_game_instance = MockGame.return_value
 
+        # Asegurarse de que game_over devuelva False hasta que se envíe la entrada 'Q'
+        mock_game_instance.game_over.side_effect = [False, False, True]
 
-    @patch('builtins.input', side_effect=[ 'A1', 'A3'])  # Menú: opción 1, mover de A2 a A3
-    @patch('os.system')
-    def test_realizar_movimiento_invalido2(self, mock_os, mock_input):
-        """Test para un movimiento inválido que lanza una excepción."""
-        self.interfaz.__game__.play.side_effect = InvalidMoveError("Movimiento inválido")
-        self.interfaz.realizar_movimiento( 'A1', 'A3')
-        self.interfaz.__game__.play.assert_called_once_with('A1', 'A3')
-        self.assertEqual(self.interfaz.contador_turnos, 0)  # No debe incrementar el turno
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            iniciar_juego()
+            output = fake_out.getvalue()
 
+            # Validar mensajes de error y manejo de entradas inválidas
+            self.assertIn("Entrada inválida en la posición inicial. Asegúrate de ingresar las posiciones en formato correcto (ej. A2, H8).", output)
+            mock_game_instance.play.assert_not_called()  # No debería intentar jugar con entrada inválida
+            self.assertIn("Turno de las", output)
+    @patch('builtins.input', side_effect=['Q'])
+    @patch('game.cli.Game')
+    def test_iniciar_juego_exit(self, MockGame, mock_input):
+        """Simula la salida del juego con la entrada 'Q'."""
+        mock_game_instance = MockGame.return_value
 
-    @patch('builtins.input', side_effect=['s'])
-    def test_ofrecer_empate_aceptado(self, mock_input):
-        """Test para verificar si el empate es aceptado."""
-        self.assertTrue(self.interfaz.ofrecer_empate())
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            iniciar_juego()
+            output = fake_out.getvalue()
 
-    @patch('builtins.input', side_effect=['n'])
-    def test_ofrecer_empate_rechazado(self, mock_input):
-        """Test para verificar si el empate es rechazado."""
-        self.assertFalse(self.interfaz.ofrecer_empate())
-
-    @patch('builtins.input', side_effect=['s'])
-    def test_rendirse(self, mock_input):
-        """Test para verificar la rendición de un jugador."""
-        self.interfaz.__game__.get_turn.return_value = "Blancas"
-        self.assertTrue(self.interfaz.rendirse())
-
-    @patch('builtins.input', side_effect=['n'])
-    def test_cancelar_rendicion(self, mock_input):
-        """Test para verificar si la rendición es cancelada."""
-        self.interfaz.__game__.get_turn.return_value = "Blancas"
-        self.assertFalse(self.interfaz.rendirse())
-
-    @patch('builtins.input', side_effect=['2'])
-    @patch('os.system')
-    def test_mostrar_reglas(self, mock_os, mock_input):
-        """Test para mostrar las reglas del __game__."""
-        with patch('builtins.print') as mock_print:
-            self.interfaz.mostrar_reglas()
-            self.assertTrue(mock_print.called)
-            self.assertIn("Reglas del __game__ de ajedrez", mock_print.call_args[0][0])
-
-    @patch('builtins.input', side_effect=['3'])
-    @patch('os.system')
-    def __game__(self, mock_os, mock_input):
-        """Test para la opción de salir del __game__."""
-        with patch('builtins.print') as mock_print:
-            self.interfaz.iniciar()  # Simula la salida del __game__
-            self.assertIn("Saliendo de ChessGame", mock_print.call_args[0][0])
-
+            # Validar que se muestra el mensaje de salida
+            self.assertIn("Saliendo del juego...", output)
+            mock_game_instance.show_board.assert_called_once()  # Mostrar el tablero solo una vez al inicio
+            mock_game_instance.play.assert_not_called()  # No debería intentar jugar si se elige 'Q'
 
 if __name__ == '__main__':
     unittest.main()
- 

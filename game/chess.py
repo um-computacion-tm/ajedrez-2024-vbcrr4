@@ -1,6 +1,5 @@
 from .board import Board
 from .exepciones import *
-
 class Game:
     def __init__(self):
         self.__board__ = Board()
@@ -8,173 +7,212 @@ class Game:
         self.__turn__ = "White"
 
     def show_board(self):
+        """
+        Muestra el estado actual del tablero.
+        """
         print(self.__board__)
-    
-    def play(self, start_pos=None, end_pos=None):
-        while not self.game_over():
-            if not start_pos or not end_pos:
-                start_pos = input(f"Es el turno de {self.__turn__}. Ingresa la posición de la pieza que deseas mover: ")
-                if start_pos == "Q":
-                    break
-                end_pos = input("Ingrese la posición a donde te quieres mover: ")
 
-            print(f"Intentando mover desde {start_pos} hasta {end_pos}")  # Depuración
-            if self.valid_moves(start_pos, end_pos):
-                print(f"Movimiento válido de {start_pos} a {end_pos}")  # Depuración
-                self.movimiento(start_pos, end_pos)
-                self.change_turn()  # Cambiar turno solo después de un movimiento válido
-                print(f"Turno cambiado a: {self.__turn__}")  # Depuración
-            else:
-                print(f"Movimiento inválido de {start_pos} a {end_pos}")  # Depuración
-                return  # Salir de la función en caso de un movimiento inválido en los tests
-            start_pos, end_pos = None, None  # Reset para el siguiente ciclo
+    def play(self, start_pos, end_pos):
+        """
+        Controla el flujo principal de una jugada, verificando y ejecutando el movimiento.
 
-        print(self.verify_victory())
+        Args:
+            start_pos (str): Posición inicial en formato textual (ej. 'A2').
+            end_pos (str): Posición final en formato textual (ej. 'A3').
 
+        Returns:
+            bool: True si el movimiento fue exitoso, False en caso contrario.
+        """
+        if start_pos == "Q":
+            return  # Salir del juego si el usuario elige 'Q' para finalizar
 
-
-    def movimiento(self, pos_actual, pos_destino):
         try:
-            # Traducir input de texto a coordenadas en el tablero
-            start_x, start_y = self.traductor_de_input(pos_actual)
-            end_x, end_y = self.traductor_de_input(pos_destino)
-            # Obtener la pieza en la posición inicial y verificar que sea del color correcto
-            origen = self.own_pieces(start_x, start_y, pos_actual)
-            print(f"desde row{start_x},desde col{start_y} pos actual{pos_actual}.hasta row{end_x},hasta col{end_y}")
-            destino = (end_x, end_y)
+            if self.is_valid_move(start_pos, end_pos):
+                self.execute_move(start_pos, end_pos)  # Ejecuta y procesa el movimiento
+                return True  # Retornar éxito si el movimiento fue válido
+            else:
+                print(f"Movimiento inválido de {start_pos} a {end_pos}")
+                return False
+        except (InvalidMoveError, PieceNotFoundError, InvalidPieceMovement, CantEatKingError, InvalidInputError) as e:
+            print(f"Error: {str(e)}")
+            return False
+
+    def execute_move(self, start_pos, end_pos):
+        """
+        Intenta ejecutar un movimiento en el tablero y cambia el turno si es exitoso.
+
+        Args:
+            start_pos (str): Posición inicial.
+            end_pos (str): Posición final.
+        """
+        print(f"Intentando mover desde {start_pos} hasta {end_pos}")
+        if self.perform_movement(start_pos, end_pos):
+            self.switch_turn()
+            #print(f"Turno cambiado a: {self.__turn__}")
+
+    def perform_movement(self, start_pos, end_pos):
+        """
+        Realiza el movimiento traduciendo las posiciones de texto a coordenadas.
+
+        Args:
+            start_pos (str): Posición inicial.
+            end_pos (str): Posición final.
+
+        Returns:
+            bool: True si el movimiento es válido.
+        """
+        try:
+            start_coords = self.translate_position(start_pos)
+            end_coords = self.translate_position(end_pos)
+
+            # Verificar si la pieza en la posición de inicio pertenece al jugador en turno
+            origin = self.get_own_piece(start_coords)
+            
             # Mover la pieza en el tablero
-            print(f"origen{origen}, destino{destino}")
-            mover_pieza = self.__board__.move(origen, destino)
-            # Verificar si el movimiento es válido
-            movimiento_check = self.check_move(mover_pieza)
-            return movimiento_check
+            move_successful = self.__board__.move(origin, end_coords)
+
+            # Validar si el movimiento es aceptable en el juego actual
+            return self.validate_move_result(move_successful)
 
         except (InvalidMoveError, PieceNotFoundError, InvalidPieceMovement, CantEatKingError, ValueError, InvalidColorError) as e:
             print(f"Error: {str(e)}")
             raise
 
-    def valid_moves(self, start_pos, end_pos):
+    def is_valid_move(self, start_pos, end_pos):
         """
-        Verifica si los movimientos son válidos.
-        :param start_pos: Cadena con la posición inicial (ej. 'A2').
-        :param end_pos: Cadena con la posición final (ej. 'A3').
-        :return: True si el movimiento es válido, False en caso contrario.
+        Verifica si un movimiento es legal y pertenece al jugador en turno.
+
+        Args:
+            start_pos (str): Posición inicial.
+            end_pos (str): Posición final.
+
+        Returns:
+            bool: True si el movimiento es válido, False en caso contrario.
         """
         try:
-            # Traducir las posiciones de entrada a coordenadas
-            start_row, start_col = self.traductor_de_input(start_pos)
-            end_row, end_col = self.traductor_de_input(end_pos)
+            start_coords = self.translate_position(start_pos)
+            end_coords = self.translate_position(end_pos)
 
-            # Verificar si las posiciones están dentro del tablero
-            if not self.__board__.validate_out_of_board((start_row, start_col)) or not self.__board__.validate_out_of_board((end_row, end_col)):
+            if not self.__board__.validate_out_of_board(start_coords) or not self.__board__.validate_out_of_board(end_coords):
+                print(f"error de afuera de los limites {self.__board__.validate_out_of_board(start_coords)}")
                 return False
 
-            # Obtener la pieza en la posición inicial
-            piece = self.__board__.get_piece(start_row, start_col)
+            piece = self.__board__.get_piece(*start_coords)
             if piece is None:
                 return False
 
-            # Verificar si puede atacar (que no sea su propia pieza)
-            target_piece = self.__board__.get_piece(end_row, end_col)
+            target_piece = self.__board__.get_piece(*end_coords)
             if target_piece is not None and target_piece.color == piece.color:
                 return False
 
             return True
-        
+
         except InvalidInputError as e:
             print(f"Error en la entrada: {e}")
             return False
-        
-    def own_pieces(self, row, col, pos_actual):
-        # Obtener la pieza en la posición dada
-        piece = self.__board__.get_piece(row, col)
-        
-        # Depuración: Verificar qué pieza hay en la posición
-        print(f"Verificando pieza en {pos_actual} -> ({row}, {col}): {piece}")
-        
+
+    def get_own_piece(self, coords):
+        """
+        Verifica si la pieza en la posición dada pertenece al jugador en turno.
+
+        Args:
+            coords (tuple): Coordenadas de la pieza.
+
+        Returns:
+            tuple: Coordenadas de la pieza si pertenece al jugador en turno.
+
+        Raises:
+            PieceNotFoundError: Si no hay una pieza en la posición dada.
+            InvalidColorError: Si la pieza no pertenece al jugador en turno.
+        """
+        piece = self.__board__.get_piece(*coords)
         if piece is None:
             raise PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
+
+        if self.__turn__ != piece.color:
+            raise InvalidColorError("No puedes mover una pieza de otro color.")
         
-        color_turn = self.__turn__
-        piece_color = self.__board__.color_pieces(row, col)
+        return coords
 
-        # Depuración: Mostrar el color de la pieza y el turno actual
-        print(f"Color de la pieza en {pos_actual}: {piece_color}, Turno actual: {color_turn}")
-        #print(f"row ({row}), col ({col})")
-
-        if color_turn != piece_color:
-            raise InvalidColorError("No puedes mover una pieza de otro color.(chess)")
-        
-        return (row,col)
-
-    def check_move(self, move):
+    def validate_move_result(self, move_result):
         """
-        Verifica el estado del juego después de un movimiento.
-        Si hay victoria o empate, retorna el resultado.
-        De lo contrario, indica que el juego continúa.
+        Evalúa el estado del juego después de un movimiento.
+
+        Args:
+            move_result (bool): Resultado del intento de movimiento.
+
+        Returns:
+            bool | str: True si el juego continúa, de lo contrario, un mensaje de victoria o empate.
         """
-        estado_victoria = self.verify_victory()
-        if move:
-            if estado_victoria == "Ganan las Blancas":
-                return "Ganan las Blancas"
-            elif estado_victoria == "Ganan las Negras":
-                return "Ganan las Negras"
-            elif estado_victoria == "Empate":
-                return "Empate"
-            else:
-                return True  # El juego continúa
+        status = self.check_victory_status()
+        if move_result:
+            if status != "El juego continúa":
+                return status
+            return True
+        return False
+
+    def switch_turn(self):
+        """
+        Cambia el turno al jugador contrario.
+        """
+        self.__turn__ = "Black" if self.__turn__ == "White" else "White"
 
     def get_turn(self):
+        """
+        Devuelve el jugador en turno.
+        """
         return self.__turn__
-    
-    def change_turn(self):
-        self.__turn__ = "Black" if self.__turn__ == "White" else "White"
-        #return self.__turn__
-    
-    def verify_victory(self):
-        # Verificar si algún rey ha sido capturado
-        rey_blanco = self.__board__.find_king('White')
-        rey_negro = self.__board__.find_king('Black')
+    def check_victory_status(self):
+        """
+        Verifica el estado de victoria del juego, evaluando condiciones de victoria y empate.
 
-        if rey_blanco is None:
-            self.__winner__ = "Ganan las Negras"
-            return "Ganan las Negras"
-        elif rey_negro is None:
-            self.__winner__ = "Ganan las Blancas"
+        Returns:
+            str: Mensaje de estado de victoria o empate, o si el juego continúa.
+        """
+        pieces_count = self.__board__.count_pieces()
+
+    
+        if pieces_count[0] > 1 and pieces_count[1] < 2 and self.__turn__ == "Black":
             return "Ganan las Blancas"
 
-        # Verificar si hay empate (por ejemplo, si solo quedan los reyes)
-        if self.__board__.only_kings_left():
+        if pieces_count[1] > 1 and pieces_count[0] < 2 and self.__turn__ == "White":
+            return "Ganan las Negras"
+
+        if pieces_count[0] + pieces_count[1] == 2:
             return "Empate"
-
-        # Si no hay victoria ni empate, el juego continúa
+        
         return "El juego continúa."
-    
+
     def game_over(self):
-        estado = self.verify_victory()
-        return estado != "El juego continúa."
+        """
+        Verifica si el juego ha concluido.
+        """
+        return self.check_victory_status() != "El juego continúa."
 
+    def translate_position(self, pos):
+        """
+        Traduce una posición en formato textual a coordenadas del tablero.
 
-    def traductor_de_input(self, pos):
-        try:
-            # Limpiar input y validar longitud
-            pos = pos.strip()
-            if len(pos) != 2:
-                raise InvalidInputError
-            # Diccionario para traducir letras a números
-            letras_de_col = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
-            numeros_de_row = {'8': 0, '7': 1, '6': 2, '5': 3, '4': 4, '3': 5, '2': 6, '1': 7}
+        Args:
+            pos (str): Posición en formato de texto (ej. 'A2').
 
-            # Convertir la letra a una columna
-            letra = letras_de_col.get(pos[0].upper())
-            numero = numeros_de_row.get(pos[1])
+        Returns:
+            tuple: Coordenadas correspondientes.
 
-            # Verificar que ambas coordenadas sean válidas
-            if letra is None or numero is None:
-                raise InvalidInputError(f"El input ingresado [{pos}] no es válido.")
+        Raises:
+            InvalidInputError: Si la posición es inválida o está fuera de los límites.
+        """
+        pos = pos.strip().upper()
+        if len(pos) != 2:
+            raise InvalidInputError(f"Posición '{pos}' no válida")
 
-            return numero, letra 
-        except InvalidInputError as e:
-            print(e)
-            raise
+        col_dict = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
+        row_dict = {'8': 0, '7': 1, '6': 2, '5': 3, '4': 4, '3': 5, '2': 6, '1': 7}
 
+        col = col_dict.get(pos[0])
+        row = row_dict.get(pos[1])
+
+        if col is None or row is None:
+            raise InvalidInputError(f"Posición '{pos}' fuera de los límites")
+
+        return (row, col)

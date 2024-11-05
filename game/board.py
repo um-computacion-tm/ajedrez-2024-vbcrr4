@@ -8,9 +8,16 @@ from .rey import Rey
 from .piece import Piece
 from .exepciones import * 
 class Board:
+    """
+    Representa el tablero de ajedrez y maneja las posiciones de las piezas y las reglas básicas de movimiento.
+
+    Atributos:
+        __positions__ (list): Matriz 8x8 que almacena las posiciones de las piezas en el tablero.
+    """
     def __init__(self):
-        #creacion del tablero de 8x8
-        #inicializacion de las piezas
+        """
+        Inicializa el tablero de ajedrez y coloca las piezas en sus posiciones iniciales.
+        """
         self.__positions__ = []
         for fila in range(8):
             col = []
@@ -43,14 +50,40 @@ class Board:
             self.__positions__[6][i] = Peon("White", (6, i))
     
     def get_piece(self, row, col):
+        """
+        Devuelve la pieza en una posición dada.
+
+        Args:
+            row (int): Fila de la posición.
+            col (int): Columna de la posición.
+
+        Returns:
+            Piece | None: La pieza en la posición dada, o None si está vacía.
+        """
         piece = self.__positions__[row][col]
-        #print(f"Pieza en ({row}, {col}): {piece}")
         return piece
     
     def place_piece(self, row, col, piece):
+        """
+        Coloca una pieza en una posición específica.
+
+        Args:
+            row (int): Fila de la posición.
+            col (int): Columna de la posición.
+            piece (Piece): La pieza a colocar.
+        """
         self.__positions__[row][col] = piece
 
     def search_piece(self, piece):
+        """
+        Busca la posición de una pieza específica en el tablero.
+
+        Args:
+            piece (Piece): La pieza a buscar.
+
+        Returns:
+            tuple | None: Coordenadas de la pieza o None si no se encuentra.
+        """
         if piece is not None:
             for row in range(8):
                 for col in range(8):
@@ -61,23 +94,54 @@ class Board:
             return None
     
     def color_pieces(self, row, col):
+        """
+        Devuelve el color de la pieza en una posición dada.
+
+        Args:
+            row (int): Fila de la posición.
+            col (int): Columna de la posición.
+
+        Returns:
+            str | Exception: El color de la pieza o un error si no hay pieza.
+        """
         piece = self.get_piece(row, col)
         if piece is None:
             return PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
         return piece.color
         
     def validate_out_of_board(self, position):
+        """
+        Verifica si una posición está dentro del tablero.
+
+        Args:
+            position (tuple): Posición a verificar.
+
+        Returns:
+            bool: True si la posición está dentro del tablero, False en caso contrario.
+        """
         row, col = position
-        return row < 0 or row > 7 or col < 0 or col > 7
-
-        
-
+        return 0 <= row < 8 and 0 <= col < 8
     def move(self, origen, destino):
+        """
+        Intenta mover una pieza de una posición origen a una posición destino.
+
+        Args:
+            origen (tuple): Posición de inicio.
+            destino (tuple): Posición final.
+
+        Returns:
+            bool: True si el movimiento es exitoso.
+
+        Raises:
+            PieceNotFoundError: Si no hay ninguna pieza en origen.
+            InvalidMoveError: Si el movimiento es inválido.
+            CantEatKingError: Si se intenta capturar al rey.
+        """
         try:
             # Verifica si las posiciones de origen y destino están dentro del tablero
-            if self.validate_out_of_board(origen):
+            if not self.validate_out_of_board(origen):
                 raise InvalidMoveError(f"El origen {origen} está fuera del tablero.")
-            if self.validate_out_of_board(destino):
+            if not self.validate_out_of_board(destino):
                 raise InvalidMoveError(f"El destino {destino} está fuera del tablero.")
 
             #print(f"Metodo move:Intentando mover pieza desde {origen} hasta {destino}")
@@ -99,11 +163,22 @@ class Board:
 
 
     def can_move(self, origen, destino):
+        """
+        Verifica si una pieza puede moverse de origen a destino.
+
+        Args:
+            origen (tuple): Posición de inicio.
+            destino (tuple): Posición final.
+
+        Raises:
+            InvalidMoveError: Si el destino tiene una pieza del mismo color.
+            InvalidPieceMovement: Si el movimiento no es válido para la pieza.
+        """
         row, col = origen
         origen_piece = self.get_piece(row, col)
         destino_piece = self.get_piece(destino[0], destino[1])
     
-        print(f"Verificando movimiento de {origen_piece} desde {origen} a {destino}")
+        #print(f"Verificando movimiento de {origen_piece} desde {origen} a {destino}")
         if origen_piece is None:
             raise PieceNotFoundError("No hay ninguna pieza en la posición de origen. (board)")
         
@@ -115,127 +190,73 @@ class Board:
         if destino_piece is not None and origen_piece.color == destino_piece.color:
             raise InvalidMoveError("No puedes moverte donde tienes otra pieza del mismo color.(board)")
     
-
-    
     def is_valid_move(self, origen, destino):
-        """Verifica si el movimiento es válido para la pieza y el camino está despejado"""
+        """
+        Verifica si un movimiento es válido, incluyendo todas las restricciones de la pieza y del tablero.
 
-        origen_piece = self.get_piece(origen[0], origen[1])  # Obtener la pieza en la posición de origen
+        Args:
+            origen (tuple): Posición inicial de la pieza.
+            destino (tuple): Posición de destino.
 
+        Returns:
+            bool: True si el movimiento es válido, False en caso contrario.
+        """
+        # Verifica si las posiciones de origen y destino están dentro del tablero
+        if not self.validate_out_of_board(origen):
+            raise InvalidMoveError(f"El origen {origen} está fuera del tablero.")
+        if not self.validate_out_of_board(destino):
+            raise InvalidMoveError(f"El destino {destino} está fuera del tablero.")
+
+        # Obtiene las piezas de origen y destino
+        origen_piece = self.get_piece(origen[0], origen[1])
+        destino_piece = self.get_piece(destino[0], destino[1])
+
+        # Verifica que exista una pieza en el origen
         if origen_piece is None:
-            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen. (board)")
+            raise PieceNotFoundError("No hay ninguna pieza en la posición de origen.")
 
-        #print(f"Verificando movimiento de {origen_piece} desde {origen} a {destino}")
+        # Verifica si el tipo de movimiento es válido para la pieza de origen
+        if not origen_piece.piece_move(self.__positions__, destino):
+            raise InvalidPieceMovement("Movimiento de pieza inválido.")
 
-        # Verificar si la pieza es una torre
-        if isinstance(origen_piece, Torre):
-            return origen_piece.torre_move(self.__positions__, destino)
+        # Verifica si hay una pieza en el destino que sea del mismo color
+        if destino_piece is not None and origen_piece.color == destino_piece.color:
+            raise InvalidMoveError("No puedes moverte donde tienes otra pieza del mismo color.")
         
-        # Verificar si la pieza es una reina
-        if isinstance(origen_piece, Reina):
-            return origen_piece.reina_move(self.__positions__, destino)
+        #Verifica si el destino es el rey oponente (no se puede capturar al rey)
+        if isinstance(destino_piece, Rey):
+            raise CantEatKingError("No puedes capturar al rey del oponente.")
 
-        # Verificar si la pieza es un caballo
-        if isinstance(origen_piece, Caballo):
-            return origen_piece.move_caballo(self.__positions__, destino)
-
-        # Verificar si la pieza es un rey
-        if isinstance(origen_piece, Rey):
-            return origen_piece.move_king(self.__positions__, destino)
-
-        # Verificar si la pieza es un peón
-        if isinstance(origen_piece, Peon):
-            return origen_piece.validate_movimiento(self.__positions__, destino)
-
-        # Verificar si la pieza es un alfil
-        if isinstance(origen_piece, Alfil):
-            return origen_piece.alfil_move(self.__positions__, destino)
-        
-        #print(f"Movimiento inválido para {origen_piece}")
-        return False
-    
+        # Si pasa todas las verificaciones, el movimiento es válido
+        return True
 
     def execute_move(self, origen, destino):
+        """
+        Ejecuta el movimiento de una pieza desde origen hasta destino.
+
+        Args:
+            origen (tuple): Posición de inicio.
+            destino (tuple): Posición final.
+
+        Raises:
+            PieceNotFoundError: Si no hay ninguna pieza en la posición origen.
+        """
         # Obtiene la pieza en la posición de origen
         pieza_origen = self.get_piece(origen[0], origen[1])
         
         if pieza_origen is None:
             raise PieceNotFoundError(f"No hay ninguna pieza en {origen}.")
-        
         # Obtiene la pieza en la posición de destino (si existe)
         pieza_destino = self.get_piece(destino[0], destino[1])
-
         # Actualiza la posición de la pieza de origen en el tablero
         self.place_piece(destino[0], destino[1], pieza_origen)
         self.place_piece(origen[0], origen[1], None)  # Vacía la posición de origen
-
         # Actualiza la posición interna de la pieza de origen
         pieza_origen.update_position(destino)
         #verificar el si se esta llamando a update position
         # Si hay una pieza en el destino (es decir, fue capturada), actualizar su posición
         if pieza_destino is not None:
             pieza_destino.update_position(None)
-
-    
-    def find_king(self, color):
-        """Busca el rey del color dado en el tablero.
-        Retorna la posición (fila, columna) del rey o None si no se encuentra.
-        """
-        for row in range(8):
-            for col in range(8):
-                piece = self.get_piece(row, col)
-                if piece is not None and isinstance(piece, Rey) and piece.color.lower() == color.lower():
-                    return (row, col)  # Retorna la posición del rey
-        return None  # Si no se encuentra el rey
-
-    def only_kings_left(self):
-        """Verifica si solo quedan los reyes en el tablero.
-        Retorna True si solo quedan los dos reyes, False en caso contrario.
-        """
-        king_count = 0
-        for row in range(8):
-            for col in range(8):
-                piece = self.get_piece(row, col)
-                if piece is not None:
-                    if isinstance(piece, Rey):
-                        king_count += 1
-                    else:
-                        # Si hay alguna pieza que no es un rey, retornar False
-                        return False
-        # Si hay exactamente 2 reyes en el tablero, retornar True
-        return king_count == 2
-    def is_caballo_move(self, origen, destino):
-        start_row, start_col = origen
-        end_row, end_col = destino
-        row_diff = abs(end_row - start_row)
-        col_diff = abs(end_col - start_col)
-        if (row_diff == 2 and col_diff == 1) or (row_diff == 1 and col_diff == 2):
-            return True
-        else:
-            return False
-    def is_diagonal_move(self, origen, destino):
-        start_row, start_col = origen
-        end_row, end_col = destino
-        if abs(start_row - end_row) == abs(start_col - end_col):
-            return True
-        else:
-            return False
-
-    def is_vertical_move(self, origen, destino):
-        start_row, start_col = origen
-        end_row, end_col = destino
-        if start_col == end_col and start_row != end_row:
-            return True
-        else:
-            return False
-
-    def is_horizontal_move(self, origen, destino):
-        start_row, start_col = origen
-        end_row, end_col = destino
-        if start_row == end_row and start_col != end_col:
-            return True
-        else:
-            return False
 
     def __repr__(self):
         spaces = " " * 3
@@ -267,6 +288,31 @@ class Board:
         return board_repr
 
     def reset_board(self):
+        """
+        Restablece el tablero eliminando todas las piezas.
+        """
         for row in range(8):
             for col in range(8):
                 self.__positions__[row][col] = None
+
+    def count_pieces(self):
+        """
+        Cuenta el número de piezas de cada color en el tablero.
+
+        Returns:
+            tuple: Número de piezas blancas y negras.
+        """
+        white_pieces = 0
+        black_pieces = 0
+        for row in range(8):
+            for col in range(8):
+                piece = self.get_piece(row, col)
+                if piece is not None:
+                    if piece.color == "White":
+                        white_pieces += 1
+                    else:
+                        black_pieces += 1
+        return (white_pieces, black_pieces)
+
+    
+    

@@ -1,158 +1,214 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from game.chess import Game
+from game.board import Board
 from game.exepciones import *
 from game.rey import Rey
 from game.peon import Peon
-from game.piece import Piece
-from game.caballo import Caballo
-from game.alfil import Alfil
-from game.torre import Torre
-from game.reina import Reina
-
 
 class TestGame(unittest.TestCase):
     def setUp(self):
         self.__game__ = Game()
-       
-    def test_initial_turn(self):
-        # Verificar que el turno inicial sea "White"
-        self.assertEqual(self.__game__.get_turn(), "White")
 
-    def test_change_turn(self):
-        # Verificar el cambio de turnos
-        self.__game__.change_turn()
-        self.assertEqual(self.__game__.get_turn(), "Black")
-        self.__game__.change_turn()
-        self.assertEqual(self.__game__.get_turn(), "White")
+    def test_check_victory_status_draw(self):
+        # Mock específico para simular un empate
+        self.__game__.__board__.count_pieces = MagicMock(return_value=(1, 1))
+        self.assertEqual(self.__game__.check_victory_status(), "Empate")
 
-    def test_translate_input_valid(self):
-        # Verificar que se traduzcan correctamente las entradas válidas
-        self.assertEqual(self.__game__.traductor_de_input("A2"), (6, 0))
-        self.assertEqual(self.__game__.traductor_de_input("H8"), (0, 7))
+    def test_check_victory_status_white_wins(self):
+        # Mock para simular una victoria de las Blancas
+        self.__game__.__board__.count_pieces = MagicMock(return_value=(2, 0))
+        self.__game__.__turn__ = "Black"
+        self.assertEqual(self.__game__.check_victory_status(), "Ganan las Blancas")
 
-    def test_translate_input_invalid(self):
-        # Verificar que se levanten excepciones para entradas inválidas
+    def test_soloq(self):
+        self.assertFalse(self.__game__.play("Q", None))
+
+    def test_move(self):
+        resultado = self.__game__.play("A2", "A3")
+        self.assertTrue(resultado)
+
+    def test_invalidate(self):
+        self.assertFalse(self.__game__.play("A2", "C8"))
+
+    def test_initial_turn_is_white(self):
+        self.assertEqual(self.__game__.__turn__, "White")
+
+    def test_execute_move_switches_turn(self):
+        start_pos, end_pos = "A2", "A4"
+        self.__game__.perform_movement = MagicMock(return_value=True)
+        
+        with patch('builtins.print'):
+            self.__game__.execute_move(start_pos, end_pos)
+            self.assertEqual(self.__game__.__turn__, "Black")
+
+    def test_execute_move_does_not_switch_turn_on_failed_move(self):
+        start_pos, end_pos = "A2", "A4"
+        self.__game__.perform_movement = MagicMock(return_value=False)
+        
+        with patch('builtins.print'):
+            self.__game__.execute_move(start_pos, end_pos)
+            self.assertEqual(self.__game__.__turn__, "White")
+
+    def test_is_valid_move_out_of_bounds(self):
+        start_pos, end_pos = "Z9", "A3"
+        self.__game__.translate_position = MagicMock(side_effect=InvalidInputError("Posición no válida"))
+        
+        with patch('builtins.print'):
+            self.assertFalse(self.__game__.is_valid_move(start_pos, end_pos))
+
+    def test_get_own_piece_valid(self):
+        self.__game__.__board__ = MagicMock(spec=Board)
+        coords = (6, 0)
+        piece = MagicMock(color="White")
+        self.__game__.__board__.get_piece.return_value = piece
+        self.assertEqual(self.__game__.get_own_piece(coords), coords)
+
+    def test_get_own_piece_invalid_color(self):
+        self.__game__.__board__ = MagicMock(spec=Board)
+        coords = (6, 0)
+        piece = MagicMock(color="Black")
+        self.__game__.__board__.get_piece.return_value = piece
+        
+        with self.assertRaises(InvalidColorError):
+            self.__game__.get_own_piece(coords)
+
+    def test_validate_move_result_game_continues(self):
+        self.__game__.check_victory_status = MagicMock(return_value="El juego continúa")
+        self.assertTrue(self.__game__.validate_move_result(True))
+
+    def test_validate_move_result_game_over(self):
+        self.__game__.check_victory_status = MagicMock(return_value="Ganan las Blancas")
+        self.assertEqual(self.__game__.validate_move_result(True), "Ganan las Blancas")
+
+    def test_switch_turn(self):
+        self.__game__.switch_turn()
+        self.assertEqual(self.__game__.__turn__, "Black")
+        self.__game__.switch_turn()
+        self.assertEqual(self.__game__.__turn__, "White")
+
+    def test_translate_position_valid(self):
+        self.assertEqual(self.__game__.translate_position("A1"), (7, 0))
+        self.assertEqual(self.__game__.translate_position("H8"), (0, 7))
+
+    def test_translate_position_invalid(self):
         with self.assertRaises(InvalidInputError):
-            self.__game__.traductor_de_input("QI9")  # Fuera del rango de tablero
+            self.__game__.translate_position("Z9")
+
+    def test_check_victory_status_draw(self):
+        self.__game__.__board__.count_pieces = MagicMock(return_value=(1, 1))
+        self.assertEqual(self.__game__.check_victory_status(), "Empate")
+#####
+    def test_translate_position_invalid_length(self):
+        """Prueba que `translate_position` lance `InvalidInputError` cuando el input tiene más de dos caracteres."""
         with self.assertRaises(InvalidInputError):
-            self.__game__.traductor_de_input("AQ9")  # Fila inválida
-        with self.assertRaises(InvalidInputError):
-            self.__game__.traductor_de_input("A")   # Longitud incorrecta
-        with self.assertRaises(InvalidInputError):
-            self.__game__.traductor_de_input("1QA")  # Formato incorrecto
+            self.__game__.translate_position("A12")  # Input inválido con longitud mayor a 2
 
-    @patch('builtins.input', side_effect=["B1", "C3", "A7", "A6", "Q"])  # Simula entradas de usuario
-    @patch('builtins.print')  # Para evitar la salida de impresión en los tests
-    def test_play(self, mock_print, mock_input):
-        """
-        Testea el método `play` simulando algunos movimientos y verificando el flujo de turnos.
-        Las entradas simuladas son: "B1", "C3", "A7", "A6", "B2", "B3", "Q" (para terminar).
-        """
-        # Colocar el caballo blanco en B1 y el rey negro en A7 para poder realizar movimientos
-        self.__game__.__board__.place_piece(7, 1, Caballo('White', (7, 1)))  
-        self.__game__.__board__.place_piece(1, 0, Peon('Black', (1, 0)))  
-        self.__game__.__board__.place_piece(6, 1, Peon("White", (6, 1)))
-
-        # Iniciar el juego simulando entradas de usuario para jugar
-        self.__game__.play("B1", "C3")
-
-        # Verificar que después del primer movimiento, el turno haya cambiado a "Black"
-        self.__game__.change_turn()  # Depuración
-        self.assertEqual(self.__game__.get_turn(), "Black")
-
-        # Simular otro movimiento y verificar el cambio de turno
-        self.__game__.play("A7", "A6")
-        self.__game__.change_turn()  # Depuración
-        self.assertEqual(self.__game__.get_turn(), "White")
-
-        # Verificar que el juego continúa correctamente con las entradas
-        self.__game__.play("B2", "B3")  # Simula otro movimiento blanco
-        self.__game__.change_turn() # Depuración
-        self.assertEqual(self.__game__.get_turn(), "Black")
-
-    def test_verify_victory(self):
-        # Simular que las blancas ganan
-        self.__game__.__board__.reset_board()
-        self.__game__.change_turn()
-        self.__game__.__board__.place_piece(5, 2, Peon('White', (5, 2)))
-        self.__game__.__board__.place_piece(4, 2, Rey('White', (4, 2)))
-        self.assertEqual(self.__game__.verify_victory(), "Ganan las Blancas")
-
-
-        # Simular un empate (solo quedan los reyes)
-        self.__game__.__board__.reset_board()
-        self.__game__.__board__.place_piece(0, 0, Rey('White', (0, 0)))
-        self.__game__.__board__.place_piece(7, 7, Rey('Black', (7, 7)))
-        self.assertEqual(self.__game__.verify_victory(), "Empate")
-
-        # Simular victoria de las negras
-        self.__game__.__board__.reset_board()
-        self.__game__.change_turn()
-        self.__game__.__board__.place_piece(5, 2, Peon('Black', (5, 2)))
-        self.__game__.__board__.place_piece(4, 2, Rey('Black', (4, 2)))
-
-        self.assertEqual(self.__game__.verify_victory(), "Ganan las Negras")
-
-    def test_invalid_moves_chess(self):
-
-        # Movimiento inválido (fuera del tablero)
-        #self.assertFalse(self.__game__.valid_moves("A2", "A9"))
-
-        # Movimiento inválido (misma pieza en destino)
-        self.assertFalse(self.__game__.valid_moves("A2", "A1"))
-
-        # Movimiento inválido (posición vacía)
-        self.assertFalse(self.__game__.valid_moves("C3", "C4"))
-
-    def test_valid_moves_chess(self):
-    
-        # Forzar el turno a White antes de mover
+    def test_check_victory_status_black_wins(self):
+        """Prueba que `check_victory_status` retorne 'Ganan las Negras' cuando cumplen las condiciones de victoria."""
+        self.__game__.__board__.count_pieces = MagicMock(return_value=(0, 2))  # Solo quedan piezas negras
         self.__game__.__turn__ = "White"
-        # Depuración: Imprimir el turno actual
-        print(f"Turno actual: {self.__game__.get_turn()}")
+        self.assertEqual(self.__game__.check_victory_status(), "Ganan las Negras")
+
+    def test_get_turn(self):
+        """Prueba que `get_turn` devuelva el turno actual."""
+        self.assertEqual(self.__game__.get_turn(), "White")  # Turno inicial debe ser White
+        self.__game__.switch_turn()
+        self.assertEqual(self.__game__.get_turn(), "Black")  # Después del cambio debe ser Black
+
+    def test_validate_move_result_returns_false(self):
+        """Prueba que `validate_move_result` retorne False si `move_result` es False."""
+        self.assertFalse(self.__game__.validate_move_result(False))
+
+    def test_get_own_piece_piece_is_none(self):
+        """Prueba que `get_own_piece` lance `PieceNotFoundError` si no hay ninguna pieza en `coords`."""
+        self.__game__.__board__ = MagicMock(spec=Board)
+        self.__game__.__board__.get_piece.return_value = None  # No hay pieza en las coordenadas
+        with self.assertRaises(PieceNotFoundError):
+            self.__game__.get_own_piece((4, 4))
+
+    def test_is_valid_move_target_piece_same_color_returns_false(self):
+        """Prueba que `is_valid_move` retorne False si `target_piece` es del mismo color que `piece`."""
+        piece_mock = MagicMock(color="White")
+        target_piece_mock = MagicMock(color="White")
         
-        # Depuración: Mostrar el tablero antes del movimiento
-        print("Tablero antes del movimiento:")
-        self.__game__.show_board()
+        self.__game__.__board__ = MagicMock(spec=Board)
+        self.__game__.__board__.get_piece.side_effect = [piece_mock, target_piece_mock]  # Simula pieza y destino del mismo color
+        self.assertFalse(self.__game__.is_valid_move("A2", "A3"))
 
-        # Intentar mover el peón blanco de A2 a A3
-        result = self.__game__.movimiento("A2", "A3")
+    def test_is_valid_move_piece_is_none_returns_false(self):
+        """Prueba que `is_valid_move` retorne False si `piece` es None en la posición inicial."""
+        self.__game__.__board__ = MagicMock(spec=Board)
+        self.__game__.__board__.get_piece.return_value = None  # No hay pieza en la posición inicial
+        self.assertFalse(self.__game__.is_valid_move("A2", "A3"))
 
-        # Depuración: Verificar si el movimiento fue exitoso
-        print(f"Resultado del movimiento: {result}")
-        
-        # Depuración: Mostrar el tablero después del movimiento
-        print("Tablero después del movimiento:")
-        self.__game__.show_board()
+    def test_game_over_when_game_finished(self):
+        """Test para verificar que el juego termina cuando se ha decidido un ganador o empate."""
+        self.__game__.check_victory_status = MagicMock(return_value="Ganan las Blancas")
+        self.assertTrue(self.__game__.game_over())
 
-        # Verificar que el movimiento sea válido
-        self.assertTrue(result)
+    def test_play_raises_InvalidMoveError(self):
+        """Simula `play` cuando `perform_movement` genera un `InvalidMoveError`."""
+        self.__game__.is_valid_move = MagicMock(return_value=True)
+        self.__game__.perform_movement = MagicMock(side_effect=InvalidMoveError("Error de movimiento inválido"))
 
-    def test_valid_moves_chess2(self):
+        with patch('builtins.print') as mocked_print:
+            self.assertFalse(self.__game__.play("A2", "A4"))
+            mocked_print.assert_any_call("Error: Error de movimiento inválido")
+
+    def test_play_raises_PieceNotFoundError(self):
+        """Simula `play` cuando `perform_movement` genera un `PieceNotFoundError`."""
+        self.__game__.is_valid_move = MagicMock(return_value=True)
+        self.__game__.perform_movement = MagicMock(side_effect=PieceNotFoundError("Error: Pieza no encontrada"))
+
+        with patch('builtins.print') as mocked_print:
+            self.assertFalse(self.__game__.play("A2", "A4"))
+            mocked_print.assert_any_call("Error: Error: Pieza no encontrada")
+
+    def test_play_invalid_move(self):
+        """Prueba `play` cuando el movimiento es inválido según `is_valid_move`."""
+        self.__game__.is_valid_move = MagicMock(return_value=False)
+
+        with patch('builtins.print') as mocked_print:
+            self.assertFalse(self.__game__.play("A2", "A8"))
+            mocked_print.assert_any_call("Movimiento inválido de A2 a A8")
+
+    def test_execute_move_turn_stays_same_on_failed_move(self):
+        """Prueba `execute_move` para verificar que el turno no cambia si el movimiento falla."""
+        start_pos, end_pos = "A2", "A4"
+        self.__game__.perform_movement = MagicMock(return_value=False)
+
+        with patch('builtins.print'):
+            self.__game__.execute_move(start_pos, end_pos)
+            self.assertEqual(self.__game__.__turn__, "White")  # El turno debe permanecer igual
+
+    def test_perform_movement_successful(self):
+        """Prueba `perform_movement` cuando el movimiento es exitoso."""
+        start_pos, end_pos = "A2", "A4"
+        self.__game__.translate_position = MagicMock(side_effect=[(6, 0), (4, 0)])
+        self.__game__.get_own_piece = MagicMock(return_value=(6, 0))
+        self.__game__.__board__.move = MagicMock(return_value=True)
+        self.__game__.validate_move_result = MagicMock(return_value=True)
+
+        self.assertTrue(self.__game__.perform_movement(start_pos, end_pos))
+        self.__game__.__board__.move.assert_called_once_with((6, 0), (4, 0))
+
+    def test_perform_movement_invalid_input_error(self):
+        """Prueba `perform_movement` cuando ocurre un `InvalidInputError`."""
+        start_pos, end_pos = "Z9", "A4"
+        self.__game__.translate_position = MagicMock(side_effect=InvalidInputError("Posición no válida"))
+
+        with self.assertRaises(InvalidInputError):
+            self.__game__.perform_movement(start_pos, end_pos)
+
+    def test_translate_position_invalid_format(self):
+        """Prueba `translate_position` cuando la entrada tiene formato incorrecto."""
+        with self.assertRaises(InvalidInputError):
+            self.__game__.translate_position("AA")
+        with self.assertRaises(InvalidInputError):
+            self.__game__.translate_position("1A")  # Formato incorrecto
+
     
-        self.__game__.change_turn()
-        # Depuración: Imprimir el turno actual
-        #print(f"Turno actual: {self.__game__.get_turn()}")
-        
-        # Depuración: Mostrar el tablero antes del movimiento
-        #print("Tablero antes del movimiento:")
-        #self.__game__.show_board()
-
-        # Intentar mover 
-        result = self.__game__.movimiento("B8", "C6")
-
-        # Depuración: Verificar si el movimiento fue exitoso
-        #print(f"Resultado del movimiento: {result}")
-        
-        # Depuración: Mostrar el tablero después del movimiento
-        #print("Tablero después del movimiento:")
-        #self.__game__.show_board()
-
-        # Verificar que el movimiento sea válido
-        self.assertTrue(result)
-        
-
 
 if __name__ == "__main__":
     unittest.main()
