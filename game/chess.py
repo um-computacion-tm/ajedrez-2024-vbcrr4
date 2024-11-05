@@ -93,19 +93,25 @@ class Game:
             start_coords = self.translate_position(start_pos)
             end_coords = self.translate_position(end_pos)
 
-            if not self.__board__.validate_out_of_board(start_coords) or not self.__board__.validate_out_of_board(end_coords):
-                print(f"error de afuera de los limites {self.__board__.validate_out_of_board(start_coords)}")
-                return False
+            # Inicializamos la variable de resultado como True
+            is_valid = True
 
+            # Verificamos si alguna de las posiciones está fuera de los límites
+            if not (self.__board__.validate_out_of_board(start_coords) and self.__board__.validate_out_of_board(end_coords)):
+                print(f"Error: movimiento fuera de los límites del tablero.")
+                is_valid = False
+
+            # Obtenemos la pieza en la posición inicial
             piece = self.__board__.get_piece(*start_coords)
             if piece is None:
-                return False
+                is_valid = False
 
+            # Verificamos que la pieza destino no sea del mismo color
             target_piece = self.__board__.get_piece(*end_coords)
             if target_piece is not None and target_piece.color == piece.color:
-                return False
+                is_valid = False
 
-            return True
+            return is_valid
 
         except InvalidInputError as e:
             print(f"Error en la entrada: {e}")
