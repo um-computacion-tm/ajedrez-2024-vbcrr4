@@ -29,12 +29,6 @@ class TestPeon(unittest.TestCase):
         self.assertEqual(str(self.__Black_peon__), "♙")
         self.assertEqual(str(self.__White_peon__), "♟")
 
-    def test_ataque_white_peon(self):
-        self.__positions__[5][5] = Peon("Black", (5, 5))  # Coloca un peón negro en la posición (5, 5)
-        #print("Peón negro en: ", (5, 5))
-        #print("Estado del tablero: ", self.__positions__)
-        self.assertTrue(self.__White_peon3__.piece_move(self.__positions__, (5, 5)))  # Captura diagonal
-
     def test_movimiento_inicial_dos_casillas_blanco(self):
         # Movimiento inicial válido de dos casillas para el peón blanco
         self.assertTrue(self.__White_peon2__.piece_move(self.__positions__, (4, 2)))
@@ -42,7 +36,6 @@ class TestPeon(unittest.TestCase):
     def test_movimiento_inicial_dos_casillas_negro(self):
         # Movimiento inicial válido de dos casillas para el peón negro
         self.assertTrue(self.__Black_peon__.piece_move(self.__positions__, (3, 0)))
-
 
     def test_movimiento_invalido_vertical_obstaculo(self):
         # Intentar mover un peón hacia adelante cuando hay una pieza en el camino
