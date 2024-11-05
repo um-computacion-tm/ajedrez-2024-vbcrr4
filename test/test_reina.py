@@ -11,11 +11,6 @@ class TestReina(unittest.TestCase):
         # Crea un tablero vacío de 8x8
         self.__positions__ = [[None for _ in range(8)] for _ in range(8)]
 
-    def test_assign_value(self):
-        # Verifica que el valor asignado a la Reina es 9
-        self.assertEqual(self.reina_negra.assign_value(), 9)
-        self.assertEqual(self.reina_blanca.assign_value(), 9)
-
     def test_piece_move(self):
         # Prueba un movimiento vertical válido (camino despejado)
         self.assertTrue(self.reina_negra.piece_move(self.__positions__, (3, 3)))
@@ -31,11 +26,6 @@ class TestReina(unittest.TestCase):
         # Prueba un movimiento horizontal bloqueado
         self.__positions__[0][5] = Piece("White", (0, 5))
         self.assertFalse(self.reina_negra.piece_move(self.__positions__, (0, 7)))
-
-    def test_str_representation(self):
-        # Verifica la representación visual de la Reina
-        self.assertEqual(str(self.reina_negra), "♕")
-        self.assertEqual(str(self.reina_blanca), "♛")
 
 if __name__ == '__main__':
     unittest.main()

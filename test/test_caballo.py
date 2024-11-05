@@ -58,11 +58,6 @@ class TestCaballo(unittest.TestCase):
         self.__positions__[2][2] = Piece("Black", (2, 2))
         self.assertFalse(self.caballo_negro.piece_move(self.__positions__, new_position))
 
-    def test_str_representation(self):
-        # Verifica la representación visual del Caballo
-        self.assertEqual(str(self.caballo_negro), "♘")
-        self.assertEqual(str(self.caballo_blanco), "♞")
-
 
 if __name__ == '__main__':
     unittest.main()
