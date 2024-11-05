@@ -18,13 +18,13 @@ class TestRey(unittest.TestCase):
         self.assertEqual(str(self.__king__), "♚")
  
     def test_king_white_move_valid(self):
-        # Verifica que los movimientos válidos del rey sean permitidos
-        self.assertTrue(self.__king__.piece_move(self.__positions__,(6, 4)))  # Movimiento hacia abajo  
+        # Movimientos válidos del rey
+        self.assertTrue(self.__king__.piece_move(self.__positions__, (6, 4)))  # Movimiento hacia abajo
 
-    #test_king_invalid(self):
-        # Verifica que los movimientos inválidos del rey no sean permitido
-        self.assertFalse(self.__king__.piece_move(self.__positions__,(5, 4)))  # Movimiento de 2 casillas hacia abajo
-        self.assertFalse(self.__king__.piece_move(self.__positions__,(7, 6)))  # Movimiento de 2 casillas hacia la derecha 
+        # Movimientos inválidos del rey
+        self.assertFalse(self.__king__.piece_move(self.__positions__, (5, 4)))  # Movimiento de 2 casillas hacia abajo
+        self.assertFalse(self.__king__.piece_move(self.__positions__, (7, 6)))  # Movimiento de 2 casillas hacia la derecha
+
 
 if __name__ == '__main__':
     unittest.main()
