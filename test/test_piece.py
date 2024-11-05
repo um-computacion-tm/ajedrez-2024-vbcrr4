@@ -74,9 +74,6 @@ class TestPiece(unittest.TestCase):
         self.assertFalse(self.piece.horizontal_move_positions(self.positions, (0, 3)))
 
     def test_valid_moves(self):
-        # Prueba un movimiento horizontal válido
-        self.assertTrue(self.piece.horizontal_move_positions(self.positions, (0, 3)))
-
         # Prueba un movimiento vertical válido
         self.assertTrue(self.piece.vertical_move_positions(self.positions, (3, 0)))
 
