@@ -44,14 +44,14 @@ class TestChessCLI(unittest.TestCase):
         # Asegurarse de que game_over devuelva False hasta que se envíe la entrada 'Q'
         mock_instance.game_over.side_effect = [False, False, True]
 
-        with patch('sys.stdout', new=StringIO()) as fake_out:
+        with patch('sys.stdout', new=StringIO()) as false_out:
             iniciar_juego()
-            output = fake_out.getvalue()
+            salida = false_out.getvalue()
 
             # Validar mensajes de error y manejo de entradas inválidas
-            self.assertIn("Entrada inválida en la posición final. Asegúrate de ingresar las posiciones en formato correcto (ej. A2, H8).", output)
+            self.assertIn("Entrada inválida en la posición final. Asegúrate de ingresar las posiciones en formato correcto (ej. A2, H8).", salida)
             mock_instance.play.assert_not_called()  # No debería intentar jugar con entrada inválida
-            self.assertIn("Turno de las", output)
+            self.assertIn("Turno de las", salida)
 
     @patch('builtins.input', side_effect=['A11', 'A3', 'Q'])  # Secuencia de inputs inválidos
     @patch('game.cli.Game')
