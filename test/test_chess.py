@@ -43,7 +43,7 @@ class TestGame(unittest.TestCase):
             self.assertEqual(self.__game__.__turn__, "Black")
 
     def test_execute_move_does_not_switch_turn_on_failed_move(self):
-        start_pos, end_pos = "A2", "A4"
+        start_pos, end_pos = "B2", "B4"
         self.__game__.perform_movement = MagicMock(return_value=False)
         
         with patch('builtins.print'):
