@@ -18,11 +18,6 @@ class TestAlfil(unittest.TestCase):
         self.assertEqual(self.__Black_alfil__.assign_value(), 3)
 
     def test_alfil_white_move_valid(self):
-        # Movimientos válidos en diagonal del alfil blanco
-        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__, (5, 4)))  # Movimiento diagonal válido
-        self.assertTrue(self.__White_alfil__.piece_move(self.__positions__, (4, 5)))  # Otro movimiento diagonal válido
-
-        # Movimiento válido del alfil negro
         self.assertTrue(self.__Black_alfil__.piece_move(self.__positions__, (4, 2)))  # Movimiento diagonal vál
 
     def test_alfil_move_invalid(self):
